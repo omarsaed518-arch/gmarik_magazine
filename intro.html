@@ -296,6 +296,8 @@
         });
 
         function goToIndex() {
+            // تسجيل أن الزائر شاهد الإنترو بنجاح ليدخل الإندكس دون إعادة تحويله
+            sessionStorage.setItem('has_seen_intro', 'true');
             document.body.classList.add('fade-out');
             setTimeout(() => {
                 window.location.href = 'index.html';
