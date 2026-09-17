@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>استكمال البيانات - جمارك نيوز</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon.png">
+     <link rel="apple-touch-icon" sizes="180x180" href="assets/images/favicon.png">
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .card {
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+        h2 {
+            text-align: center;
+            color: #0a2540;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            font-size: 0.85rem;
+            color: #475569;
+            margin-bottom: 5px;
+        }
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-family: 'Cairo', sans-serif;
+            box-sizing: border-box;
+            outline: none;
+        }
+        .row {
+            display: flex;
+            gap: 10px;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            font-family: 'Cairo', sans-serif;
+            background: #0a2540;
+            color: #d4af37;
+            margin-top: 10px;
+            font-size: 1rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h2>أهلاً بك! يرجى استكمال بياناتك</h2>
+        <form id="profile-form">
+            <div class="row">
+                <div class="form-group" style="flex: 1;">
+                    <label>الاسم الأول</label>
+                    <input type="text" id="google-first" placeholder="الاسم الأول" required>
+                </div>
+                <div class="form-group" style="flex: 1;">
+                    <label>الاسم الثاني</label>
+                    <input type="text" id="google-last" placeholder="الاسم الثاني" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>تاريخ الميلاد</label>
+                <input type="date" id="google-birthdate" required>
+            </div>
+
+           <!-- ده زرار أو الكود اللي هتربط بيه الأحداث -->
+<form id="roleForm">
+    <!-- هنا القائمة المنسدلة بتاعتك -->
+    <select id="roleSelect" class="form-control">
+        <option value="" disabled selected>اختر الصلاحية</option>
+        <option value="index.html">متفرج (تصفح الأخبار والمتابعة)</option>
+        <option value="reporter-register.html">ناشر (كتابة ونشر المقالات)</option>
+        <option value="editor-writer.html">المحرر (صياغة وتطوير المحتوى)</option>
+        <option value="translator.html">المترجم</option>
+        <option value="References.html">المدقق او المراجع    </option>
+        <option value="Editor.html">مدير التحرير</option>
+        <option value="managing-editor.html">رئيس التحرير</option>
+        <option value="proofreader.html">المراجع اللغوي</option>
+    </select>
+    
+    <button type="button" id="submitBtn" style="margin-top: 15px;">انتقال</button>
+</form>
+
+<script>
+    document.getElementById('submitBtn').addEventListener('click', function() {
+        var selectElement = document.getElementById('roleSelect');
+        var selectedFile = selectElement.value; // بيجيب اسم الفايل المكتوب في الـ value
+        
+        if(selectedFile) {
+            // بيفتح الفايل المخصص حسب الاختيار
+            window.location.href = selectedFile;
+        } else {
+            alert('من فضلك اختر صلاحية أولاً!');
+        }
+    });
+</script>
+
+</body>
+</html>

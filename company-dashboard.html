@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم الاحترافية - الدليل الجمركي الدولي</title>
+    <!-- استدعاء مكتبات فايربيز المجانية (Firebase SDK) -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --sidebar-bg: rgba(11, 15, 25, 0.98);
+            --sidebar-border: rgba(255, 255, 255, 0.06);
+            --text-color: #f8fafc;
+            --text-muted: #94a3b8;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --accent-color: #d4af37;
+            --accent-hover: rgba(212, 175, 55, 0.15);
+            --topbar-bg: rgba(11, 15, 25, 0.85);
+            --table-border: rgba(255, 255, 255, 0.05);
+            --input-bg: rgba(0, 0, 0, 0.2);
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+        }
+
+        [data-theme="light"] {
+            --bg-color: #f4f6f9;
+            --sidebar-bg: rgba(255, 255, 255, 0.98);
+            --sidebar-border: rgba(0, 0, 0, 0.08);
+            --text-color: #1e293b;
+            --text-muted: #64748b;
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --card-border: rgba(0, 0, 0, 0.06);
+            --accent-color: #b8860b;
+            --accent-hover: rgba(184, 134, 11, 0.1);
+            --topbar-bg: rgba(244, 246, 249, 0.9);
+            --table-border: rgba(0, 0, 0, 0.06);
+            --input-bg: #ffffff;
+            --success-color: #059669;
+            --danger-color: #dc2626;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            height: 100vh;
+            height: 100dvh;
+            overflow: hidden;
+            background-image: radial-gradient(circle at 15% 15%, var(--accent-hover) 0%, transparent 45%),
+                              radial-gradient(circle at 85% 85%, rgba(30, 41, 59, 0.4) 0%, transparent 40%);
+        }
+
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(3px);
+            z-index: 99;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .sidebar-overlay.active { opacity: 1; visibility: visible; }
+
+        .sidebar {
+            width: 280px;
+            background: var(--sidebar-bg);
+            backdrop-filter: blur(20px);
+            border-left: 1px solid var(--sidebar-border);
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+            height: 100%;
+            position: relative;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            font-size: 1.05rem;
+            font-weight: bold;
+            color: var(--accent-color);
+            border-bottom: 1px solid var(--sidebar-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .close-sidebar-btn {
+            background: transparent;
+            border: 1px solid var(--sidebar-border);
+            color: var(--text-muted);
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+        .close-sidebar-btn:hover { color: var(--danger-color); border-color: var(--danger-color); }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 15px;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        .sidebar-menu li { margin-bottom: 6px; }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            color: var(--text-muted);
+            text-decoration: none;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .sidebar-menu a:hover, .sidebar-menu a.active {
+            background: var(--accent-hover);
+            color: var(--accent-color);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+
+        .main-container {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            width: 100%;
+        }
+
+        .topbar {
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--topbar-bg);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid var(--sidebar-border);
+            position: sticky;
+            top: 0;
+            z-index: 90;
+        }
+
+        .topbar-actions { display: flex; align-items: center; gap: 10px; }
+
+        .control-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--sidebar-border);
+            color: var(--text-color);
+            padding: 8px 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        .control-btn:hover { border-color: var(--accent-color); color: var(--accent-color); }
+
+        .welcome-banner {
+            background: var(--card-bg);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--card-border);
+            padding: 20px;
+            border-radius: 16px;
+            margin: 20px 20px 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+
+        .company-profile-header { display: flex; align-items: center; gap: 15px; }
+
+        .company-logo-wrapper {
+            position: relative;
+            width: 65px;
+            height: 65px;
+            min-width: 65px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 2px solid var(--accent-color);
+            background: var(--input-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .company-logo-wrapper img { width: 100%; height: 100%; object-fit: cover; }
+
+        .welcome-banner h1 { font-size: 1.25rem; color: var(--accent-color); margin-bottom: 2px; }
+
+        .content-body { padding: 0 20px 20px 20px; }
+        .page-section { display: none; animation: fadeIn 0.3s ease forwards; }
+        .page-section.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.04);
+        }
+
+        .glass-card h2, .glass-card h3 { margin-bottom: 6px; color: var(--text-color); }
+        .card-desc { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 16px; }
+
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; }
+        .form-group label { display: block; margin-bottom: 6px; font-size: 0.8rem; color: var(--text-muted); }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 10px 14px;
+            background: var(--input-bg);
+            border: 1px solid var(--sidebar-border);
+            border-radius: 10px;
+            color: var(--text-color);
+            outline: none;
+            font-size: 0.9rem;
+        }
+        .form-group input:focus, .form-group select:focus { border-color: var(--accent-color); }
+        .form-group input:disabled { opacity: 0.65; cursor: not-allowed; }
+        .form-group input[type="file"] { padding: 8px 10px; cursor: pointer; }
+
+        .glass-btn {
+            background: linear-gradient(135deg, var(--accent-hover), var(--card-bg));
+            border: 1px solid var(--accent-color);
+            color: var(--accent-color);
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .glass-btn:hover { background: var(--accent-color); color: #fff; box-shadow: 0 0 15px var(--accent-hover); }
+
+        .table-responsive { width: 100%; overflow-x: auto; margin-top: 10px; }
+        .data-table { width: 100%; border-collapse: collapse; min-width: 500px; }
+        .data-table th, .data-table td { padding: 12px 14px; text-align: right; border-bottom: 1px solid var(--table-border); font-size: 0.85rem; }
+        .data-table th { color: var(--text-muted); font-weight: 600; }
+
+        .badge-verified {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--success-color);
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            white-space: nowrap;
+        }
+
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        .stat-box { background: var(--card-bg); border: 1px solid var(--card-border); padding: 16px; border-radius: 12px; display: flex; flex-direction: column; gap: 6px; }
+        .stat-header-row { display: flex; justify-content: space-between; align-items: center; }
+        .stat-number { font-size: 1.6rem; font-weight: bold; color: var(--accent-color); }
+        
+        .trend-indicator { display: inline-flex; align-items: center; gap: 4px; font-size: 0.75rem; font-weight: 600; padding: 2px 6px; border-radius: 6px; }
+        .trend-up { background: rgba(16, 185, 129, 0.12); color: var(--success-color); }
+
+        @media (max-width: 992px) {
+            .sidebar { position: fixed; top: 0; right: 0; height: 100%; transform: translateX(100%); }
+            .sidebar.open { transform: translateX(0); }
+            .menu-toggle { display: flex !important; }
+            .close-sidebar-btn { display: flex !important; }
+        }
+        .menu-toggle { display: none; }
+    </style>
+</head>
+<body data-theme="dark">
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Sidebar القائمة الجانبية -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <span>🛡️ الدليل الجمركي الدولي</span>
+            <button class="close-sidebar-btn" id="closeSidebarBtn">✕</button>
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="#" class="nav-link active" data-target="home-page">🏠 لوحة المؤشرات والإحصائيات</a></li>
+            <li><a href="#" class="nav-link" data-target="profile-page">🏢 إعدادات البروفايل والملف</a></li>
+            <li><a href="#" class="nav-link" data-target="products-page">📦 المنتجات والمعرض التجاري</a></li>
+            <li><a href="#" class="nav-link" data-target="categories-page">📑 التصنيفات السلعية المخصصة</a></li>
+            <li><a href="#" class="nav-link" data-target="tariffs-page">⚖️ سجل التعريفة الجمركية</a></li>
+            <li><a href="#" class="nav-link" data-target="ai-page">🤖 الترجمة والذكاء الاصطناعي</a></li>
+            <li><a href="#" class="nav-link" data-target="security-page">🔒 الأمان وكلمة المرور</a></li>
+            <li><a href="#" class="nav-link" data-target="subscription-page">👑 إدارة باقة الاشتراك</a></li>
+        </ul>
+    </aside>
+
+    <!-- Main Content Area -->
+    <div class="main-container">
+        
+        <!-- Topbar -->
+        <header class="topbar">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <button class="control-btn menu-toggle" id="menuToggle">☰</button>
+                <span style="font-weight: 600; font-size: 0.9rem;">بوابة الشركات والمصانع (قاعدة البيانات السحابية)</span>
+            </div>
+            <div class="topbar-actions">
+                <button class="control-btn" id="themeToggle" title="تغيير المظهر">🌙</button>
+                <span class="badge-verified" id="badgePlanText">عضوية نشطة ✅</span>
+            </div>
+        </header>
+
+        <!-- Welcome Banner -->
+        <div class="welcome-banner">
+            <div class="company-profile-header">
+                <div class="company-logo-wrapper" title="شعار الشركة">
+                    <img id="companyLogoPreview" src="https://via.placeholder.com/150" alt="شعار الشركة">
+                </div>
+                <div>
+                    <p style="color: var(--text-muted); font-size: 0.75rem;" id="userEmailDisplay">جاري التحميل...</p>
+                    <h1 id="company-welcome-name">جاري جلب البيانات...</h1>
+                    <span style="color: var(--text-muted); font-size: 0.75rem;" id="bannerPlanName">الباقة: نشطة</span>
+                </div>
+            </div>
+            <div style="font-size: 1.8rem;">⭐</div>
+        </div>
+
+        <div class="content-body">
+            
+            <!-- 1. الرئيسية والإحصائيات -->
+            <section id="home-page" class="page-section active">
+                <div class="glass-card">
+                    <h2>لوحة المؤشرات وتحليلات الأداء السحابية</h2>
+                    <p class="card-desc">بيانات حية ومحدثة مباشرة من سحاب فايربيز.</p>
+                    <div class="stats-grid">
+                        <div class="stat-box">
+                            <div class="stat-header-row">
+                                <span style="color: var(--text-muted); font-size: 0.8rem;">إجمالي المنتجات المرفوعة</span>
+                                <span class="trend-indicator trend-up">↗ نشط</span>
+                            </div>
+                            <div class="stat-number" id="statProductsCount">0 منتج</div>
+                            <span style="color: var(--text-muted); font-size: 0.7rem;">محفوظ في سحاب فايربيز</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. البروفايل والملف التجاري -->
+            <section id="profile-page" class="page-section">
+                <div class="glass-card">
+                    <h2>إعدادات الملف التجاري للشركة</h2>
+                    <p class="card-desc">عدل بياناتك براحتك، وتتم مزامنتها تلقائياً.</p>
+                    <div class="form-grid">
+                        <div class="form-group"><label>اسم الشركة الرسمي</label><input type="text" id="inputCompanyName"></div>
+                        <div class="form-group"><label>البريد الإلكتروني (بريد تسجيل الدخول)</label><input type="email" id="inputCompanyEmail" disabled></div>
+                        <div class="form-group"><label>رقم هاتف الواتساب التجاري</label><input type="text" id="inputCompanyPhone" placeholder="أدخل رقم الواتساب"></div>
+                        <div class="form-group"><label>الموقع الإلكتروني</label><input type="text" id="inputCompanyWebsite" placeholder="أدخل رابط موقعك"></div>
+                        <div class="form-group"><label>شعار الشركة (ارفع صورة من جهازك)</label><input type="file" id="inputCompanyLogoFile" accept="image/*"></div>
+                        <div class="form-group" style="grid-column: 1 / -1;"><label>نبذة تعريفية عن نشاط الشركة</label><textarea id="inputCompanyDesc" rows="3" placeholder="اكتب نبذة عن نشاطك..."></textarea></div>
+                    </div>
+                    <button class="glass-btn" style="margin-top: 15px; width: 100%;" id="saveProfileBtn">حفظ جميع بيانات الملف التجاري ☁️</button>
+                </div>
+            </section>
+
+            <!-- 3. المنتجات والمعرض -->
+            <section id="products-page" class="page-section">
+                <div class="glass-card">
+                    <h2>إدارة المنتجات والمنشورات (نظام الـ Index العام)</h2>
+                    <p class="card-desc">أضف منتجاتك ليتم نشرها في أرشيف الـ Index للمستوردين.</p>
+                    <div class="form-grid" style="margin-bottom: 15px;">
+                        <div class="form-group"><label>اسم المنتج أو المنشور</label><input type="text" id="inputProdName" placeholder="مثال: محولات طاقة شمسية"></div>
+                        <div class="form-group"><label>القسم التصنيفي</label><input type="text" id="inputProdCategory" placeholder="مثال: معدات طاقة"></div>
+                    </div>
+                    <button class="glass-btn" style="width: 100%;" id="addProductBtn">نشر المنتج في الـ Index السحابي 🚀</button>
+
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>اسم المنتج</th>
+                                    <th>القسم</th>
+                                    <th>حالة النشر</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="productsTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4. التصنيفات السلعية المخصصة -->
+            <section id="categories-page" class="page-section">
+                <div class="glass-card">
+                    <h2>إدارة التصنيفات السلعية المخصصة</h2>
+                    <p class="card-desc">اكتب التصنيفات السلعية الخاصة بنشاط شركتك ليتم اعتمادها في البحث.</p>
+                    <div class="form-group">
+                        <label>التصنيفات السلعية (اكتب تصنيفاتك مفصولة بفاصلة أو سطر جديد)</label>
+                        <textarea id="inputCustomCategories" rows="3" placeholder="مثال: معدات صناعية، إلكترونيات دقيقة، طاقة متجددة"></textarea>
+                    </div>
+                    <button class="glass-btn" style="margin-top: 15px; width: 100%;" id="saveCategoryBtn">حفظ وتحديث التصنيفات 📑</button>
+                </div>
+            </section>
+
+            <!-- 5. التعريفة الجمركية -->
+            <section id="tariffs-page" class="page-section">
+                <div class="glass-card">
+                    <h2>سجل استعلامات التعريفة الجمركية</h2>
+                    <p class="card-desc">سجل تفاعلي لعمليات البحث الخاصة بك.</p>
+                    <div class="form-grid" style="margin-bottom: 15px;">
+                        <div class="form-group"><label>بند الـ (HS Code)</label><input type="text" id="inputHsCode" placeholder="مثال: 8471.30"></div>
+                        <div class="form-group"><label>اسم السلعة المستوردة</label><input type="text" id="inputHsDesc" placeholder="مثال: حواسيب محمولة"></div>
+                    </div>
+                    <button class="glass-btn" style="width: 100%;" id="addTariffBtn">إضافة للسجل الجمركي ⚖️</button>
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>البند (HS)</th>
+                                    <th>السلع المستوردة</th>
+                                    <th>الإجراء</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tariffsTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 6. الذكاء الاصطناعي -->
+            <section id="ai-page" class="page-section">
+                <div class="glass-card">
+                    <h2>الترجمة الآلية بالذكاء الاصطناعي</h2>
+                    <p class="card-desc">ترجمة وصف شركتك للأسواق العالمية.</p>
+                    <button class="glass-btn" style="width: 100%;">تشغيل الترجمة الفورية بالذكاء الاصطناعي ⚡</button>
+                </div>
+            </section>
+
+            <!-- 7. الأمان وكلمة المرور -->
+            <section id="security-page" class="page-section">
+                <div class="glass-card">
+                    <h2>إعدادات الأمان وحساب فايربيز</h2>
+                    <p class="card-desc">إدارة حسابك والدخول الآمن.</p>
+                    <div class="form-grid">
+                        <div class="form-group"><label>البريد المسجل</label><input type="text" id="secEmail" disabled></div>
+                    </div>
+                    <button class="glass-btn" style="margin-top: 15px; width: 100%; background: var(--danger-color); border-color: var(--danger-color); color: #fff;" id="logoutBtn">تسجيل الخروج الآمن 🔒</button>
+                </div>
+            </section>
+
+            <!-- 8. إدارة باقة الاشتراك -->
+            <section id="subscription-page" class="page-section">
+                <div class="glass-card">
+                    <h2>تفاصيل باقة الاشتراك الحالية</h2>
+                    <p class="card-desc">اختر أو حدّث باقة شركتك بكل سهولة.</p>
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label>اختر نوع الباقة المفعلة</label>
+                        <select id="selectPlanType">
+                            <option value="العضوية الذهبية (Gold VIP)">العضوية الذهبية (Gold VIP)</option>
+                            <option value="العضوية الفضية (Silver)">العضوية الفضية (Silver)</option>
+                            <option value="عضوية البلاتين الشاملة (Platinum)">عضوية البلاتين الشاملة (Platinum)</option>
+                        </select>
+                    </div>
+                    <button class="glass-btn" style="width: 100%;" id="savePlanBtn">تحديث باقة الاشتراك 👑</button>
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+    <script>
+        // --- اعدادات اتصال فايربيز (نفس مشروع صفحة تسجيل الدخول بالظبط) ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyD_pyEgRtBzObOTf-msTwC0nbhsyCmJ92s",
+            authDomain: "gamarek.firebaseapp.com",
+            projectId: "gamarek",
+            storageBucket: "gamarek.firebasestorage.app",
+            messagingSenderId: "139734553489",
+            appId: "1:139734553489:web:1339f96b98cebd32610030"
+        };
+
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const db = firebase.firestore();
+
+        // ---- التحقق من جلسة تسجيل الدخول (نفس البيانات اللي بتتحفظ في صفحة الدخول) ----
+        const sessionRaw = localStorage.getItem('gmarik_logged_company');
+        if (!sessionRaw) {
+            // مفيش جلسة تسجيل دخول - رجّعه لصفحة الدخول
+            window.location.href = 'reporter-login.html';
+        }
+        const session = JSON.parse(sessionRaw);
+        const companyId = session.id;
+        const userDocRef = db.collection('users').doc(companyId);
+
+        // متغير مؤقت لصورة اللوجو الجديدة (لحد ما يضغط حفظ)
+        let pendingLogoDataUrl = null;
+
+        // تصغير الصورة قبل رفعها عشان متبقاش تقيلة على قاعدة البيانات
+        function resizeImageFile(file, maxSize) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        let w = img.width, h = img.height;
+                        if (w > h) { if (w > maxSize) { h = Math.round(h * (maxSize / w)); w = maxSize; } }
+                        else { if (h > maxSize) { w = Math.round(w * (maxSize / h)); h = maxSize; } }
+                        const canvas = document.createElement('canvas');
+                        canvas.width = w; canvas.height = h;
+                        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                        resolve(canvas.toDataURL('image/jpeg', 0.85));
+                    };
+                    img.onerror = reject;
+                    img.src = e.target.result;
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+
+        document.getElementById('inputCompanyLogoFile').addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            try {
+                pendingLogoDataUrl = await resizeImageFile(file, 400);
+                document.getElementById('companyLogoPreview').src = pendingLogoDataUrl;
+
+                // حفظ اللوجو فورًا في قاعدة البيانات وقت اختياره (مش بس عند الضغط على زرار الحفظ الرئيسي)
+                await userDocRef.set({ logo: pendingLogoDataUrl }, { merge: true });
+                pendingLogoDataUrl = null; // خلاص اتحفظ، منستناش زرار الحفظ الرئيسي يحفظه تاني
+            } catch (err) {
+                console.error('logo save error:', err);
+                alert('حصلت مشكلة أثناء حفظ الشعار، تأكد من اتصالك بالإنترنت وحاول تاني.');
+            }
+        });
+
+        const navLinks = document.querySelectorAll('.nav-link');
+        const sections = document.querySelectorAll('.page-section');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        const menuToggle = document.getElementById('menuToggle');
+        const closeSidebarBtn = document.getElementById('closeSidebarBtn');
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+
+        function openSidebar() { sidebar.classList.add('open'); sidebarOverlay.classList.add('active'); }
+        function closeSidebar() { sidebar.classList.remove('open'); sidebarOverlay.classList.remove('active'); }
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                navLinks.forEach(item => item.classList.remove('active'));
+                sections.forEach(sec => sec.classList.remove('active'));
+                link.classList.add('active');
+                document.getElementById(link.getAttribute('data-target')).classList.add('active');
+                if(window.innerWidth <= 992) closeSidebar();
+            });
+        });
+
+        menuToggle.addEventListener('click', openSidebar);
+        closeSidebarBtn.addEventListener('click', closeSidebar);
+        sidebarOverlay.addEventListener('click', closeSidebar);
+
+        const savedTheme = localStorage.getItem('dashboard_theme') || 'dark';
+        body.setAttribute('data-theme', savedTheme);
+        themeToggle.textContent = savedTheme === 'dark' ? '🌙' : '☀️';
+
+        themeToggle.addEventListener('click', () => {
+            const current = body.getAttribute('data-theme');
+            const next = current === 'dark' ? 'light' : 'dark';
+            body.setAttribute('data-theme', next);
+            localStorage.setItem('dashboard_theme', next);
+            themeToggle.textContent = next === 'dark' ? '🌙' : '☀️';
+        });
+
+        // جلب بيانات الشركة من مستند users/{companyId}
+        userDocRef.get().then((doc) => {
+            const data = doc.exists ? doc.data() : {};
+            const loginEmail = data.email || session.email || "";
+            const companyName = data.companyName || session.companyName || "شركتك";
+
+            document.getElementById('company-welcome-name').textContent = companyName;
+            document.getElementById('inputCompanyName').value = companyName;
+
+            document.getElementById('userEmailDisplay').textContent = loginEmail || "مستخدم معتمد سحابياً";
+            document.getElementById('inputCompanyEmail').value = loginEmail;
+            document.getElementById('secEmail').value = loginEmail;
+
+            document.getElementById('inputCompanyPhone').value = data.phone || "";
+            document.getElementById('inputCompanyWebsite').value = data.website || "";
+            document.getElementById('inputCompanyDesc').value = data.desc || "";
+            document.getElementById('inputCustomCategories').value = data.categories || "";
+
+            const plan = data.plan || session.plan || "العضوية الذهبية (Gold VIP)";
+            document.getElementById('selectPlanType').value = plan;
+            document.getElementById('bannerPlanName').textContent = "الباقة: " + plan;
+            document.getElementById('badgePlanText').textContent = plan + " ✅";
+
+            if (data.logo) document.getElementById('companyLogoPreview').src = data.logo;
+        }).catch((err) => {
+            console.error('load company data error:', err);
+            alert('حصلت مشكلة أثناء تحميل بيانات شركتك، جرّب تحدّث الصفحة.');
+        });
+
+        // حفظ الملف التجاري (بدون تعديل بريد تسجيل الدخول)
+        document.getElementById('saveProfileBtn').addEventListener('click', () => {
+            const updateData = {
+                companyName: document.getElementById('inputCompanyName').value,
+                phone: document.getElementById('inputCompanyPhone').value,
+                website: document.getElementById('inputCompanyWebsite').value,
+                desc: document.getElementById('inputCompanyDesc').value
+            };
+            if (pendingLogoDataUrl) {
+                updateData.logo = pendingLogoDataUrl;
+            }
+            userDocRef.set(updateData, { merge: true }).then(() => {
+                document.getElementById('company-welcome-name').textContent = updateData.companyName;
+                pendingLogoDataUrl = null;
+                alert('تم حفظ وتحديث بيانات الملف التجاري بنجاح في فايربيز!');
+            }).catch((err) => {
+                console.error('save profile error:', err);
+                alert('حصل خطأ أثناء الحفظ، تأكد من اتصالك بالإنترنت وحاول تاني.');
+            });
+        });
+
+        // حفظ التصنيفات السلعية
+        document.getElementById('saveCategoryBtn').addEventListener('click', () => {
+            userDocRef.set({
+                categories: document.getElementById('inputCustomCategories').value
+            }, { merge: true }).then(() => {
+                alert('تم تحديث التصنيفات السلعية بنجاح!');
+            }).catch((err) => {
+                console.error('save categories error:', err);
+                alert('حصل خطأ أثناء الحفظ، حاول تاني.');
+            });
+        });
+
+        // حفظ وتحديث الباقة
+        document.getElementById('savePlanBtn').addEventListener('click', () => {
+            const selectedPlan = document.getElementById('selectPlanType').value;
+            userDocRef.set({
+                plan: selectedPlan
+            }, { merge: true }).then(() => {
+                document.getElementById('bannerPlanName').textContent = "الباقة: " + selectedPlan;
+                document.getElementById('badgePlanText').textContent = selectedPlan + " ✅";
+                alert('تم تحديث باقة الاشتراك بنجاح!');
+            }).catch((err) => {
+                console.error('save plan error:', err);
+                alert('حصل خطأ أثناء الحفظ، حاول تاني.');
+            });
+        });
+
+        // إدارة المنتجات
+        const productsRef = db.collection("users").doc(companyId).collection("products");
+        document.getElementById('addProductBtn').addEventListener('click', () => {
+            const pName = document.getElementById('inputProdName').value;
+            const pCategory = document.getElementById('inputProdCategory').value;
+            if(pName.trim() !== '') {
+                productsRef.add({
+                    name: pName,
+                    category: pCategory,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                }).then(() => {
+                    document.getElementById('inputProdName').value = '';
+                    document.getElementById('inputProdCategory').value = '';
+                    alert('تم نشر المنتج في الـ Index بنجاح!');
+                });
+            }
+        });
+
+        productsRef.onSnapshot((snapshot) => {
+            const tbody = document.getElementById('productsTableBody');
+            tbody.innerHTML = '';
+            let count = 0;
+            snapshot.forEach((doc) => {
+                count++;
+                const p = doc.data();
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${p.name}</td>
+                        <td>${p.category || 'عام'}</td>
+                        <td><span class="badge-verified">منشور في الـ Index ✅</span></td>
+                        <td><button onclick="deleteDocItem('products', '${doc.id}')" style="background:transparent; border:none; color:var(--danger-color); cursor:pointer;">حذف</button></td>
+                    </tr>
+                `;
+            });
+            document.getElementById('statProductsCount').textContent = count + " منتج";
+        });
+
+        // إدارة السجل الجمركي
+        const tariffsRef = db.collection("users").doc(companyId).collection("tariffs");
+        document.getElementById('addTariffBtn').addEventListener('click', () => {
+            const hsCode = document.getElementById('inputHsCode').value;
+            const hsDesc = document.getElementById('inputHsDesc').value;
+            if(hsCode.trim() !== '') {
+                tariffsRef.add({
+                    code: hsCode,
+                    desc: hsDesc,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                }).then(() => {
+                    document.getElementById('inputHsCode').value = '';
+                    document.getElementById('inputHsDesc').value = '';
+                    alert('تمت إضافة البند للسجل الجمركي بنجاح!');
+                });
+            }
+        });
+
+        tariffsRef.onSnapshot((snapshot) => {
+            const tbody = document.getElementById('tariffsTableBody');
+            tbody.innerHTML = '';
+            snapshot.forEach((doc) => {
+                const t = doc.data();
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${t.code}</td>
+                        <td>${t.desc || 'غير محدد'}</td>
+                        <td><button onclick="deleteDocItem('tariffs', '${doc.id}')" style="background:transparent; border:none; color:var(--danger-color); cursor:pointer;">حذف</button></td>
+                    </tr>
+                `;
+            });
+        });
+
+        window.deleteDocItem = function(subCol, docId) {
+            db.collection("users").doc(companyId).collection(subCol).doc(docId).delete();
+        }
+
+        // تسجيل الخروج - مسح الجلسة والرجوع لصفحة الدخول
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            localStorage.removeItem('gmarik_logged_company');
+            localStorage.removeItem('gmarik_logged_user');
+            localStorage.removeItem('gmarik_user');
+            alert('تم تسجيل الخروج بنجاح');
+            window.location.href = 'reporter-login.html';
+        });
+    </script>
+</body>
+</html>

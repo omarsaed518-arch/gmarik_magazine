@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>قناة الناشر | Gmarik Magazine</title>
+     <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon.png">
+     <link rel="apple-touch-icon" sizes="180x180" href="assets/images/favicon.png">
+    <script src="favicon.js"></script>
+    <style>
+        body { font-family: 'Cairo', Tahoma, sans-serif; background-color: #f4f6f9; margin: 0; padding: 0; color: #333; }
+        header { background: #0a2540; color: #fff; padding: 15px 40px; display: flex; justify-content: space-between; align-items: center; }
+        .logo-text { font-size: 1.5rem; font-weight: bold; color: #fff; cursor: pointer; }
+        .logo-text span { color: #d4af37; }
+        .container { max-width: 900px; margin: 40px auto; padding: 0 20px; }
+        .channel-profile-card { background: #ffffff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); text-align: center; border: 1px solid #e2e8f0; margin-bottom: 30px; }
+        .channel-big-avatar { width: 80px; height: 80px; border-radius: 50%; background: #0a2540; color: #d4af37; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; font-weight: bold; margin: 0 auto 15px auto; }
+        h1 { color: #0a2540; margin-bottom: 10px; }
+    
+        .channel-posts-title { font-size: 1.3rem; color: #0a2540; margin-bottom: 20px; border-right: 4px solid #d4af37; padding-right: 10px; }
+        .news-feed-grid { display: flex; flex-direction: column; gap: 20px; }
+        .news-card { background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; padding: 20px; }
+        .news-card h3 { margin: 10px 0; color: #0a2540; cursor: pointer; font-size: 1.2rem; }
+        .news-card h3:hover { color: #d4af37; }
+        .news-card img { width: 100%; height: 220px; object-fit: cover; border-radius: 6px; cursor: pointer; margin-top: 10px; }
+        .back-link { display: inline-block; margin-top: 25px; color: #0a2540; font-weight: bold; text-decoration: none; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-text" onclick="location.href='index.html'">GMARIK <span>MAGAZINE</span></div>
+    </header>
+
+    <div class="container" id="channel-page-container">
+        <h2 style="text-align:center; color:#64748b;">جاري تحميل بيانات القناة...</h2>
+    </div>
+
+    <script>
+        const channelsDatabase = {
+            "wco": {
+                name: "منظمة الجمارك العالمية",
+                avatar: "WCO",
+                posts: [
+                    {
+                        id: 1,
+                        title: "تطبيق نظام الفحص بالأشعة الذكي للContainers في الموانئ الرئيسية",
+                        img: "https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=800&q=80",
+                        text: "أعلنت الإدارة العامة للجمارك عن بدء تشغيل أحدث المنظومات المعتمدة على الذكاء الاصطناعي لتقليل وقت التخليص الجمركي بنسبة 40%...",
+                        time: "منذ ساعتين"
+                    },
+                    {
+                        id: 3,
+                        title: "توقيع بروتوكول تعاون لتسهيل التجارة العابرة للحدود",
+                        img: "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=800&q=80",
+                        text: "وقعت المنظمة اتفاقية جديدة لربط الأنظمة الجمركية إلكترونياً بين الدول الأعضاء لتسريع وتيرة الشحن البري...",
+                        time: "منذ يوم"
+                    }
+                ]
+            },
+            "egypt_customs": {
+                name: "مصلحة الجمارك المصرية",
+                avatar: "م ج",
+                posts: [
+                    {
+                        id: 2,
+                        title: "تحديث قائمة السلع المعفاة من الرسوم الجمركية لعام 2026",
+                        img: "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=800&q=80",
+                        text: "نشرت الجريدة الرسمية القرار الجديد بشأن تعديل قائمة السلع الأساسية والمعدات الصناعية المعفاة لدعم التصنيع المحلي...",
+                        time: "منذ 4 ساعات"
+                    }
+                ]
+            }
+        };
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const channelId = urlParams.get('id');
+        const channel = channelsDatabase[channelId];
+
+        const container = document.getElementById('channel-page-container');
+
+        if (channel) {
+            let postsHtml = '';
+            channel.posts.forEach(post => {
+                postsHtml += `
+                    <div class="news-card">
+                        <small style="color:#94a3b8;">${post.time}</small>
+                        <h3 onclick="location.href='post.html?id=${post.id}'">${post.title}</h3>
+                        <p style="color:#64748b; font-size:0.95rem;">${post.text}</p>
+                        <img src="${post.img}" onclick="location.href='post.html?id=${post.id}'">
+                    </div>
+                `;
+            });
+
+            container.innerHTML = `
+                <div class="channel-profile-card">
+                    <div class="channel-big-avatar">${channel.avatar}</div>
+                    <h1>${channel.name}</h1>
+                </div>
+
+                <div class="channel-posts-title">منشورات وقرارات القناة</div>
+                <div class="news-feed-grid">
+                    ${postsHtml}
+                </div>
+                <br>
+                <a href="index.html" class="back-link">← العودة للرئيسية</a>
+            `;
+            
+            // تحديث شكل الزرار بناءً على الذاكرة فور فتح الصفحة
+            updateChannelFollowUI(channelId);
+        } else {
+            container.innerHTML = `
+                <div class="channel-profile-card">
+                    <h2 style="color:#d9534f;">عذراً، هذه القناة غير موجودة.</h2>
+                    <a href="index.html" class="back-link">العودة للرئيسية</a>
+                </div>
+            `;
+        }
+
+        function getChannelKey(id) {
+            return 'followed_channel_' + id;
+        }
+
+        function updateChannelFollowUI(id) {
+            const btn = document.getElementById('channel-follow-btn');
+            if (!btn) return;
+
+            const isFollowed = localStorage.getItem(getChannelKey(id)) === 'true';
+
+            if (isFollowed) {
+                btn.innerText = 'تمت المتابعة ✓';
+                btn.style.background = '#0a2540';
+                btn.style.color = '#fff';
+            } else {
+                btn.innerText = 'متابعة القناة';
+                btn.style.background = 'transparent';
+                btn.style.color = '#0a2540';
+            }
+        }
+
+        function toggleChannelFollow(id) {
+            const key = getChannelKey(id);
+            const isFollowed = localStorage.getItem(key) === 'true';
+
+            if (isFollowed) {
+                localStorage.setItem(key, 'false');
+                alert('تم إلغاء المتابعة بنجاح');
+            } else {
+                localStorage.setItem(key, 'true');
+                alert('تمت المتابعة بنجاح!');
+            }
+
+            updateChannelFollowUI(id);
+        }
+    </script>
+</body>
+</html>

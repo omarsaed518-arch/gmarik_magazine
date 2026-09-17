@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مركز البث المباشر - مجلة جمارك</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <script src="https://download.agora.io/sdk/release/AgoraRTC_N-4.20.0.js"></script>
+    
+    <style>
+        :root {
+            --primary: #0b0f19;
+            --card-bg: #131b2e;
+            --accent: #d4af37;
+            --danger: #ef4444;
+            --secondary: #3b82f6;
+            --purple: #8b5cf6;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: rgba(255, 255, 255, 0.08);
+            --success: #10b981;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
+
+        body {
+            background-color: var(--primary);
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.08), transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(212, 175, 55, 0.06), transparent 40%);
+            background-attachment: fixed;
+        }
+
+        #intro-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #070d1b;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            animation: fadeOutOverlay 0.8s ease 1.6s forwards;
+        }
+
+        .intro-text {
+            font-size: 2.2rem;
+            font-weight: 900;
+            background: linear-gradient(45deg, var(--danger), var(--accent), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 1s ease 0.2s forwards;
+            text-align: center;
+        }
+
+        @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeOutOverlay { to { opacity: 0; visibility: hidden; } }
+
+        .container { max-width: 1250px; margin: 0 auto; padding: 40px 20px; }
+        .page-header { text-align: center; margin-bottom: 35px; }
+        .page-header h1 { font-size: 2.2rem; font-weight: 900; color: #fff; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        .page-header h1 i { color: var(--danger); animation: pulse-icon 1.5s infinite; }
+        .page-header p { color: var(--text-muted); font-size: 1rem; }
+
+        @keyframes pulse-icon {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.8; }
+        }
+
+        .tabs-container { display: flex; justify-content: center; gap: 15px; margin-bottom: 35px; flex-wrap: wrap; }
+        .tab-btn {
+            background: var(--card-bg);
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+            padding: 12px 28px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            border-radius: 30px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+        .tab-btn:hover { color: #fff; background: #1e293b; transform: translateY(-2px); }
+        .tab-btn.active[data-target="human"] {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: #fff;
+            box-shadow: 0 6px 25px rgba(239, 68, 68, 0.4);
+            border-color: #ef4444;
+        }
+        .tab-btn.active[data-target="ai"] {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            color: #fff;
+            box-shadow: 0 6px 25px rgba(139, 92, 246, 0.4);
+            border-color: #8b5cf6;
+        }
+
+        .stream-section { display: none; }
+        .stream-section.active { display: block; animation: fadeInSection 0.4s ease forwards; }
+
+        @keyframes fadeInSection {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .streams-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px; }
+
+        .stream-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .stream-card:hover {
+            transform: translateY(-6px) scale(1.02);
+            box-shadow: 0 15px 35px rgba(239, 68, 68, 0.25);
+            border-color: rgba(239, 68, 68, 0.5);
+        }
+
+        .stream-card.ai-card:hover {
+            box-shadow: 0 15px 35px rgba(139, 92, 246, 0.3);
+            border-color: rgba(139, 92, 246, 0.6);
+        }
+
+        .thumbnail-container {
+            position: relative;
+            width: 100%;
+            height: 190px;
+            background: #0f172a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .thumbnail-container img { width: 100%; height: 100%; object-fit: cover; }
+        .thumbnail-container .thumb-bg-icon { font-size: 4rem; color: rgba(255, 255, 255, 0.08); }
+
+        .live-badge {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            background: #ef4444;
+            color: #fff;
+            padding: 5px 12px;
+            font-size: 0.78rem;
+            font-weight: 800;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.6);
+            z-index: 2;
+        }
+
+        .ai-live-badge {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            background: linear-gradient(135deg, var(--purple), #7c3aed);
+            color: #fff;
+            padding: 5px 12px;
+            font-size: 0.78rem;
+            font-weight: 800;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.6);
+            z-index: 2;
+        }
+
+        .pulse-dot { width: 8px; height: 8px; background-color: #fff; border-radius: 50%; animation: pulse-dot 1.2s infinite; }
+        @keyframes pulse-dot { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.4); opacity: 0.5; } }
+
+        .card-content { padding: 20px; }
+        .stream-title { font-size: 1.15rem; font-weight: 700; margin-bottom: 10px; color: #fff; }
+        .streamer-info { display: flex; justify-content: space-between; align-items: center; color: var(--text-muted); font-size: 0.88rem; }
+        .streamer-name { display: flex; align-items: center; gap: 8px; color: var(--accent); font-weight: 600; }
+
+        .empty-state { text-align: center; padding: 70px 20px; background: var(--card-bg); border-radius: 20px; border: 1px dashed var(--border); grid-column: 1 / -1; }
+        .empty-state i { font-size: 3.5rem; color: var(--text-muted); margin-bottom: 15px; opacity: 0.6; }
+        .empty-state p { color: var(--text-muted); font-size: 1.15rem; font-weight: 600; }
+
+        /* شاشة المشاهدة السينمائية */
+        .watch-modal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(7, 13, 27, 0.96);
+            z-index: 5000;
+            display: none;
+            flex-direction: column;
+            padding: 20px;
+            box-sizing: border-box;
+            backdrop-filter: blur(10px);
+        }
+        .watch-modal.active { display: flex; animation: fadeInSection 0.3s ease forwards; }
+
+        .watch-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--card-bg);
+            padding: 15px 25px;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            margin-bottom: 20px;
+        }
+        .watch-header h2 { font-size: 1.25rem; color: #fff; display: flex; align-items: center; gap: 12px; margin: 0; }
+        .btn-close-watch {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--danger);
+            border: 1px solid var(--danger);
+            padding: 8px 18px;
+            border-radius: 10px;
+            font-family: 'Cairo';
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-close-watch:hover { background: var(--danger); color: #fff; }
+
+        .watch-body { display: flex; flex: 1; gap: 20px; overflow: hidden; flex-wrap: wrap; }
+        .video-player-box {
+            flex: 2;
+            background: #000;
+            border-radius: 16px;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 400px;
+            border: 2px solid var(--border);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+        #remoteVideoPlayer { width: 100%; height: 100%; position: absolute; top: 0; left: 0; display: flex; align-items: center; justify-content: center; background: #000; }
+        #remoteStreamVideo { width: 100%; height: 100%; object-fit: cover; display: block; }
+        
+        .video-loading-placeholder {
+            color: var(--text-muted);
+            text-align: center;
+            font-size: 1.1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            z-index: 5;
+            position: absolute;
+        }
+        .video-loading-placeholder i { font-size: 2.5rem; color: var(--danger); animation: spin 2s linear infinite; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        .stream-ended-overlay {
+            display: none;
+            color: #fff;
+            text-align: center;
+            font-size: 1.15rem;
+            font-weight: 700;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            z-index: 10;
+            position: absolute;
+            background: rgba(11, 17, 32, 0.92);
+            width: 100%;
+            height: 100%;
+            justify-content: center;
+        }
+        .stream-ended-overlay i { font-size: 2.8rem; color: var(--danger); }
+
+        .chat-sidebar {
+            flex: 1;
+            background: var(--card-bg);
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            max-width: 380px;
+            min-width: 300px;
+            overflow: hidden;
+        }
+        .chat-header { padding: 15px 20px; background: #0f172a; border-bottom: 1px solid var(--border); font-weight: 700; color: var(--accent); display: flex; justify-content: space-between; align-items: center; }
+        .chat-messages-list { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
+        .chat-msg { display: flex; gap: 10px; align-items: flex-start; }
+        .chat-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--secondary); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 0.8rem; }
+        .chat-msg.is-editor .chat-avatar { background: var(--accent); color: #0f172a; }
+        .chat-bubble { background: #1e293b; border: 1px solid var(--border); border-radius: 10px; padding: 8px 12px; flex: 1; }
+        .chat-user { color: var(--accent); font-weight: 700; font-size: 0.8rem; margin-bottom: 3px; display: block; }
+        .chat-msg.is-editor .chat-user { color: #38bdf8; }
+        .chat-text { color: var(--text-main); font-size: 0.88rem; }
+
+        .chat-form { padding: 12px; background: #0f172a; border-top: 1px solid var(--border); display: flex; gap: 8px; }
+        .chat-form input { flex: 1; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border); background: #1e293b; color: #fff; font-family: 'Cairo'; outline: none; }
+        .chat-form button { background: var(--secondary); color: #fff; border: none; padding: 10px 18px; border-radius: 8px; cursor: pointer; font-weight: 700; }
+        .chat-locked-banner { display: none; padding: 12px; background: rgba(239, 68, 68, 0.15); border-top: 1px solid var(--danger); color: var(--danger); font-size: 0.88rem; font-weight: 700; text-align: center; }
+        .chat-guest-notice { display: none; padding: 10px 14px; background: rgba(212, 175, 55, 0.12); border-top: 1px solid var(--accent); color: #facc15; font-size: 0.82rem; font-weight: 700; text-align: center; }
+    </style>
+</head>
+<body>
+
+    <div id="intro-overlay">
+        <h1 class="intro-text">🔴 البث المباشر - مجلة جمارك</h1>
+    </div>
+
+    <!-- نافذة المشاهدة الحية -->
+    <div class="watch-modal" id="liveWatchModal">
+        <div class="watch-header">
+            <h2 id="activeWatchTitle"><i class="fa-solid fa-tower-broadcast" style="color:var(--danger);"></i> بث مباشر</h2>
+            <button class="btn-close-watch" onclick="leaveLiveStream()"><i class="fa-solid fa-xmark"></i> مغادرة البث</button>
+        </div>
+        <div class="watch-body">
+            <div class="video-player-box">
+                <div id="remoteVideoPlayer">
+                    <video id="remoteStreamVideo" playsinline style="display:none;"></video>
+                    <button id="unmuteStreamBtn" onclick="toggleStreamAudio()" style="display:none; position:absolute; bottom:20px; left:20px; background:rgba(15,23,42,0.85); color:#fff; border:1px solid rgba(255,255,255,0.25); padding:8px 16px; border-radius:20px; font-family:'Cairo'; font-size:0.85rem; font-weight:bold; cursor:pointer; z-index:20;">
+                        <i class="fa-solid fa-volume-high"></i> اضغط لتشغيل الصوت 🔊
+                    </button>
+                </div>
+                <div class="video-error-overlay" id="videoErrorOverlay" style="display:none; position:absolute; inset:0; flex-direction:column; align-items:center; justify-content:center; gap:10px; background:rgba(11,17,32,0.92); color:#fca5a5; text-align:center; padding:20px; z-index:15;">
+                    <i class="fa-solid fa-triangle-exclamation" style="font-size:2rem;"></i>
+                    <span id="videoErrorText">تعذر الاتصال بالبث المباشر، جارٍ المحاولة مرة أخرى...</span>
+                </div>
+                <div class="video-loading-placeholder" id="videoPlaceholder">
+                    <i class="fa-solid fa-spinner"></i>
+                    <span>جاري استقبال البث المباشر...</span>
+                </div>
+                <div class="stream-ended-overlay" id="streamEndedOverlay">
+                    <i class="fa-solid fa-circle-stop"></i>
+                    <span>تم إنهاء البث المباشر</span>
+                </div>
+            </div>
+            <div class="chat-sidebar">
+                <div class="chat-header">
+                    <span><i class="fa-solid fa-comments"></i> الدردشة التفاعلية المباشرة</span>
+                    <span id="currentUserTag" style="font-size: 0.78rem; color: var(--text-muted);"></span>
+                </div>
+                <div class="chat-messages-list" id="viewerChatMessages">
+                    <div style="color: var(--text-muted); text-align: center; font-size: 0.82rem; margin-top: 20px;">مرحباً بك في البث المباشر لمجلة جمارك.</div>
+                </div>
+                
+                <div class="chat-locked-banner" id="chatLockedBanner">
+                    <i class="fa-solid fa-lock"></i> تم إيقاف التعليقات مؤقتاً من قِبل إدارة البث
+                </div>
+
+                <div class="chat-guest-notice" id="chatGuestNotice">
+                    <i class="fa-solid fa-triangle-exclamation"></i> يرجى تسجيل الدخول باسمك للمشاركة في التعليقات
+                </div>
+
+                <form class="chat-form" id="viewerChatForm" onsubmit="sendViewerMessage(event)">
+                    <input type="text" id="viewerChatInput" placeholder="شارك برأيك في البث..." required>
+                    <button type="submit" id="viewerChatSendBtn"><i class="fa-solid fa-paper-plane"></i></button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="page-header">
+            <h1><i class="fa-solid fa-tower-broadcast"></i> مركز البثوث المباشرة</h1>
+            <p>تابع التغطيات الحية، الحوارات، والمؤتمرات الجمركية أولاً بأول</p>
+        </div>
+
+        <div class="tabs-container">
+            <button class="tab-btn active" data-target="human" onclick="switchTab('human')">
+                <i class="fa-solid fa-user-tie"></i> التغطيات والبثوث الحية
+            </button>
+            <button class="tab-btn" data-target="ai" onclick="switchTab('ai')">
+                <i class="fa-solid fa-robot"></i> البث الذكي والمساعد
+            </button>
+        </div>
+
+        <!-- 1. قسم البث البشري -->
+        <div id="human-section" class="stream-section active">
+            <div class="streams-grid" id="human-grid">
+                <div class="empty-state">
+                    <i class="fa-solid fa-tower-cell"></i>
+                    <p>لا يوجد بث مباشر نشط حالياً.. تابعنا لاحقاً!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. قسم بثوث الذكاء الاصطناعي (HeyGen) -->
+        <div id="ai-section" class="stream-section">
+            <div class="streams-grid" id="ai-grid">
+                <div class="empty-state">
+                    <i class="fa-solid fa-robot"></i>
+                    <p>لا توجد بثوث ذكية نشطة حالياً</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, doc, onSnapshot, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyD_pyEgRtBzObOTf-msTwC0nbhsyCmJ92s",
+            authDomain: "gamarek.firebaseapp.com",
+            databaseURL: "https://gamarek-default-rtdb.firebaseio.com",
+            projectId: "gamarek",
+            storageBucket: "gamarek.firebasestorage.app",
+            messagingSenderId: "139734553489",
+            appId: "1:139734553489:web:1339f96b98cebd32610030",
+            measurementId: "G-H1FRFXK1FG"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const AGORA_APP_ID = "710459b97c0b46789a4601b175cd24c5".trim();
+
+        let currentWatchStreamId = null;
+        let agoraClient = null;
+        let chatUnsubscribe = null;
+        let streamDocUnsubscribe = null;
+
+        const liveBroadcastBus = new BroadcastChannel('gmarik_live_stream_bus');
+        liveBroadcastBus.onmessage = (event) => {
+            if (event.data && event.data.type === 'STREAM_ENDED') {
+                handleStreamEnded();
+                renderActiveStreams([]);
+            } else if (event.data && event.data.type === 'STREAM_STARTED') {
+                renderActiveStreams([event.data.data]);
+            }
+        };
+
+        function getRegisteredUserName() {
+            try {
+                const plainName = localStorage.getItem('gmarik_logged_user') || localStorage.getItem('gmarik_user') || localStorage.getItem('userName');
+                if (plainName && plainName.trim() !== '') return plainName.trim();
+                const userObj = JSON.parse(localStorage.getItem('currentUser'));
+                if (userObj && (userObj.name || userObj.fullName)) return userObj.name || userObj.fullName;
+            } catch (e) {}
+            return null;
+        }
+
+        // 1. عرض البثوث البشرية
+        function renderActiveStreams(activeStreams) {
+            const grid = document.getElementById("human-grid");
+            if (!grid) return;
+
+            let validStreams = activeStreams.filter(s => s && s.isLive === true);
+            if (validStreams.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fa-solid fa-signal-slash"></i>
+                        <p>لا يوجد بث مباشر نشط حالياً.. تابعنا لاحقاً!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = "";
+            validStreams.forEach(stream => {
+                const thumbHtml = stream.thumbnailUrl ? `<img src="${stream.thumbnailUrl}" alt="${escapeHtml(stream.title || 'بث مباشر')}">` : `<i class="fa-solid fa-video thumb-bg-icon"></i>`;
+                html += `
+                    <div class="stream-card" onclick="joinLiveStream('${stream.id}', '${stream.channelName || 'editor_live_channel'}', '${escapeHtml(stream.title || 'بث مباشر')}', '${escapeHtml(stream.broadcasterName || 'رئيس التحرير')}')">
+                        <div class="thumbnail-container">
+                            <div class="live-badge"><span class="pulse-dot"></span> لايف الآن</div>
+                            ${thumbHtml}
+                        </div>
+                        <div class="card-content">
+                            <h3 class="stream-title">${stream.title || 'بث مباشر حي'}</h3>
+                            <div class="streamer-info">
+                                <span class="streamer-name"><i class="fa-solid fa-user-tie"></i> ${stream.broadcasterName || 'الأستاذ / محمد الجزار'}</span>
+                                <span><i class="fa-solid fa-eye" style="color:var(--danger);"></i> مشاهدة</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            grid.innerHTML = html;
+        }
+
+        // 2. عرض بثوث الذكاء الاصطناعي (HeyGen Streams)
+        function renderAILiveStreams(aiStreams) {
+            const grid = document.getElementById("ai-grid");
+            if (!grid) return;
+
+            if (aiStreams.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fa-solid fa-robot"></i>
+                        <p>لا توجد بثوث ذكية نشطة حالياً</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = "";
+            aiStreams.forEach(stream => {
+                const thumbHtml = stream.thumbnailUrl ? `<img src="${stream.thumbnailUrl}" alt="${escapeHtml(stream.title)}">` : `<i class="fa-solid fa-robot thumb-bg-icon" style="color:var(--purple);"></i>`;
+                
+                html += `
+                    <div class="stream-card ai-card" onclick="watchAILiveStream('${stream.id}', '${escapeHtml(stream.title)}', '${stream.videoUrl || ''}')">
+                        <div class="thumbnail-container">
+                            <div class="ai-live-badge"><i class="fa-solid fa-wand-magic-sparkles"></i> مذيع ذكي</div>
+                            ${thumbHtml}
+                        </div>
+                        <div class="card-content">
+                            <h3 class="stream-title">${stream.title}</h3>
+                            <div class="streamer-info">
+                                <span class="streamer-name" style="color:var(--purple);"><i class="fa-solid fa-robot"></i> مذيع الذكاء الاصطناعي</span>
+                                <span><i class="fa-solid fa-play" style="color:var(--purple);"></i> مشاهدة البث</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            grid.innerHTML = html;
+        }
+
+        // الاستماع للبثوث البشرية
+        onSnapshot(collection(db, "activeLiveStreams"), (snapshot) => {
+            const activeOnly = [];
+            snapshot.forEach(docSnap => {
+                const data = docSnap.data();
+                if (data && data.isLive === true) activeOnly.push({ id: docSnap.id, ...data });
+            });
+            renderActiveStreams(activeOnly);
+        });
+
+        // الاستماع لبثوث الذكاء الاصطناعي (HeyGen)
+        onSnapshot(collection(db, "aiLiveStreams"), (snapshot) => {
+            const aiList = [];
+            snapshot.forEach(docSnap => {
+                aiList.push({ id: docSnap.id, ...docSnap.data() });
+            });
+            renderAILiveStreams(aiList);
+        });
+
+        // دالة مشاهدة بث الذكاء الاصطناعي
+        window.watchAILiveStream = function(streamId, title, videoUrl) {
+            currentWatchStreamId = streamId;
+            document.getElementById("activeWatchTitle").innerHTML = `<i class="fa-solid fa-robot" style="color:var(--purple);"></i> ${title} - <span style="font-size:0.9rem; color:var(--purple);">مذيع الذكاء الاصطناعي</span>`;
+            document.getElementById("liveWatchModal").classList.add("active");
+            document.getElementById("videoPlaceholder").style.display = "none";
+
+            const videoEl = document.getElementById("remoteStreamVideo");
+            videoEl.style.display = "block";
+            if (videoUrl && videoUrl !== '') {
+                videoEl.src = videoUrl;
+                videoEl.play().catch(()=>{});
+            } else {
+                // عرض المذيع الافتراضي عند عدم وجود رابط فيديو مباشر
+                videoEl.poster = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=800&q=80";
+            }
+            listenToChat(streamId);
+        };
+
+        window.joinLiveStream = async function(streamId, channelName, title, broadcaster) {
+            currentWatchStreamId = streamId;
+            document.getElementById("activeWatchTitle").innerHTML = `<i class="fa-solid fa-tower-broadcast" style="color:var(--danger); animation:pulse-dot 1.2s infinite;"></i> ${title} - <span style="font-size:0.9rem; color:var(--accent);">${broadcaster}</span>`;
+
+            // عنصر فيديو الذكاء الاصطناعي مش ليه لازمة هنا، لازم يتخفي عشان ميظهرش فاضي فوق بث Agora
+            const aiVideoEl = document.getElementById("remoteStreamVideo");
+            if (aiVideoEl) { aiVideoEl.style.display = "none"; aiVideoEl.pause(); aiVideoEl.src = ""; }
+
+            const placeholderEl = document.getElementById("videoPlaceholder");
+            const errorOverlay = document.getElementById("videoErrorOverlay");
+            const errorText = document.getElementById("videoErrorText");
+            placeholderEl.style.display = "flex";
+            if (errorOverlay) errorOverlay.style.display = "none";
+            document.getElementById("liveWatchModal").classList.add("active");
+
+            // لو مفيش أي فيديو وصل خلال 15 ثانية، بلّغ المشاهد بدل ما يفضل شايف "جاري الاستقبال" للأبد
+            let receivedMedia = false;
+            const connectTimeout = setTimeout(() => {
+                if (!receivedMedia) {
+                    placeholderEl.style.display = "none";
+                    if (errorOverlay) {
+                        errorText.textContent = "تعذر الاتصال بالبث المباشر، يبدو أن المذيع لم يبدأ البث بعد أو حدثت مشكلة في الاتصال.";
+                        errorOverlay.style.display = "flex";
+                    }
+                }
+            }, 15000);
+
+            try {
+                if (typeof AgoraRTC !== 'undefined') {
+                    agoraClient = AgoraRTC.createClient({ mode: "live", codec: "vp8" });
+                    await agoraClient.setClientRole("audience");
+
+                    agoraClient.on("user-published", async (user, mediaType) => {
+                        try {
+                            await agoraClient.subscribe(user, mediaType);
+                            receivedMedia = true;
+                            clearTimeout(connectTimeout);
+                            placeholderEl.style.display = "none";
+                            if (errorOverlay) errorOverlay.style.display = "none";
+                            if (mediaType === "video") user.videoTrack.play("remoteVideoPlayer");
+                            if (mediaType === "audio") user.audioTrack.play();
+                        } catch (subErr) {
+                            console.warn("Agora subscribe:", subErr);
+                        }
+                    });
+
+                    agoraClient.on("user-unpublished", () => {
+                        receivedMedia = false;
+                    });
+
+                    const uid = Math.floor(Math.random() * 10000);
+                    await agoraClient.join(AGORA_APP_ID, channelName || "editor_live_channel", null, uid);
+                } else {
+                    throw new Error("Agora SDK غير محمّل");
+                }
+            } catch (err) {
+                console.warn("Agora:", err);
+                clearTimeout(connectTimeout);
+                placeholderEl.style.display = "none";
+                if (errorOverlay) {
+                    errorText.textContent = "تعذر الاتصال بخدمة البث (Agora)، تأكد من اتصال الإنترنت وحاول مرة أخرى.";
+                    errorOverlay.style.display = "flex";
+                }
+            }
+
+            listenToChat(streamId);
+        };
+
+        function handleStreamEnded() {
+            const modal = document.getElementById("liveWatchModal");
+            if (!modal || !modal.classList.contains("active")) return;
+            const overlay = document.getElementById("streamEndedOverlay");
+            if (overlay) overlay.style.display = "flex";
+            setTimeout(() => { window.leaveLiveStream(); }, 1800);
+        }
+
+        window.leaveLiveStream = async function() {
+            if (agoraClient) { await agoraClient.leave(); agoraClient = null; }
+            if (chatUnsubscribe) { chatUnsubscribe(); chatUnsubscribe = null; }
+            const videoEl = document.getElementById("remoteStreamVideo");
+            if (videoEl) { videoEl.src = ""; videoEl.srcObject = null; videoEl.style.display = "none"; }
+            // شيل أي عنصر فيديو/كانفاس ضافه Agora جوه الحاوية
+            const playerContainer = document.getElementById("remoteVideoPlayer");
+            if (playerContainer) {
+                playerContainer.querySelectorAll("video.agora_video_player, div.agora_video_player").forEach(el => el.remove());
+            }
+            const endedOverlay = document.getElementById("streamEndedOverlay");
+            if (endedOverlay) endedOverlay.style.display = "none";
+            const errorOverlay = document.getElementById("videoErrorOverlay");
+            if (errorOverlay) errorOverlay.style.display = "none";
+            document.getElementById("liveWatchModal").classList.remove("active");
+            currentWatchStreamId = null;
+        };
+
+        function listenToChat(streamId) {
+            const container = document.getElementById("viewerChatMessages");
+            if (chatUnsubscribe) chatUnsubscribe();
+            chatUnsubscribe = onSnapshot(collection(db, `activeLiveStreams/${streamId}/chat`), (snapshot) => {
+                let msgs = [];
+                snapshot.forEach(docSnap => msgs.push(docSnap.data()));
+                msgs.sort((a, b) => new Date(a.time) - new Date(b.time));
+                renderViewerChat(msgs);
+            });
+        }
+
+        function renderViewerChat(messages) {
+            const container = document.getElementById("viewerChatMessages");
+            if (!container) return;
+            if (messages.length === 0) {
+                container.innerHTML = `<div style="color: var(--text-muted); text-align: center; font-size: 0.82rem; margin-top: 20px;">مرحباً بك في البث المباشر لمجلة جمارك.</div>`;
+                return;
+            }
+            let html = '';
+            messages.forEach(msg => {
+                const isEditor = msg.senderRole === 'editor';
+                const displayName = msg.senderName || 'مستخدم';
+                const avatarLetter = isEditor ? 'م.ج' : (displayName.charAt(0) || 'م');
+                html += `
+                    <div class="chat-msg ${isEditor ? 'is-editor' : ''}">
+                        <div class="chat-avatar">${avatarLetter}</div>
+                        <div class="chat-bubble">
+                            <span class="chat-user">${displayName}</span>
+                            <p class="chat-text">${msg.text}</p>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+            container.scrollTop = container.scrollHeight;
+        }
+
+        window.sendViewerMessage = async function(e) {
+            e.preventDefault();
+            const input = document.getElementById("viewerChatInput");
+            const text = input.value.trim();
+            if (!text || !currentWatchStreamId) return;
+
+            const userName = getRegisteredUserName() || "زائر";
+            input.value = '';
+
+            try {
+                await addDoc(collection(db, `activeLiveStreams/${currentWatchStreamId}/chat`), {
+                    text: text,
+                    senderName: userName,
+                    senderRole: "viewer",
+                    time: new Date().toISOString(),
+                    createdAt: serverTimestamp()
+                });
+            } catch (err) {}
+        };
+
+        function escapeHtml(str) { return String(str || '').replace(/'/g, "\\'"); }
+    </script>
+
+    <script>
+        function switchTab(target) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.stream-section').forEach(sec => sec.classList.remove('active'));
+
+            if (target === 'human') {
+                document.querySelector('[data-target="human"]').classList.add('active');
+                document.getElementById('human-section').classList.add('active');
+            } else if (target === 'ai') {
+                document.querySelector('[data-target="ai"]').classList.add('active');
+                document.getElementById('ai-section').classList.add('active');
+            }
+        }
+    </script>
+</body>
+</html>

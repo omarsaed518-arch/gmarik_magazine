@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>استمارة طلب انضمام (رئيس قسم صحفي) - مجلة جمارك مجازين</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: #060913;
+            color: #f1f5f9;
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            padding: 1.5rem 1rem;
+        }
+        .bg-glow {
+            position: absolute;
+            width: 550px;
+            height: 550px;
+            background: radial-gradient(circle, rgba(245, 158, 11, 0.12) 0%, rgba(99, 102, 241, 0.08) 50%, rgba(0,0,0,0) 70%);
+            border-radius: 50%;
+            z-index: -1;
+        }
+        .glass-card {
+            background: rgba(15, 23, 42, 0.88);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.09);
+            box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.7);
+        }
+        .input-glow {
+            background: rgba(30, 41, 59, 0.65);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            transition: all 0.3s ease;
+            text-align: right;
+        }
+        .input-glow:focus {
+            border-color: #f59e0b;
+            box-shadow: 0 0 20px rgba(245, 158, 11, 0.3);
+            background: rgba(30, 41, 59, 0.95);
+            outline: none;
+        }
+        .step-progress {
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .error-shake {
+            animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+        }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+
+        /* نافذة كود التتبع المنبثقة */
+        .success-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(3, 7, 18, 0.94);
+            backdrop-filter: blur(16px);
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+        }
+        .success-modal-overlay.active {
+            display: flex;
+            animation: fadeIn 0.35s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+    </style>
+</head>
+<body class="relative">
+
+    <div class="bg-glow top-[-10%] right-[-10%] animate-pulse"></div>
+    <div class="bg-glow bottom-[-10%] left-[-10%] animate-pulse" style="animation-delay: 2s;"></div>
+
+    <div class="w-full max-w-3xl mx-auto my-auto">
+        
+        <!-- الهيدر الرسمي -->
+        <div class="text-center mb-6 animate__animated animate__fadeInDown">
+            <a href="index.html" class="inline-flex items-center justify-center text-xs font-semibold text-amber-400 bg-amber-500/10 px-4 py-2 rounded-full border border-amber-500/20 hover:bg-amber-500/20 transition mb-3">
+                ← العودة للصفحة الرئيسية للمجلة
+            </a>
+            <span class="block text-xs font-bold tracking-widest text-amber-400 uppercase mb-1">
+                صادر عن الأمانة العامة لهيئة تحرير مجلة جمارك مجازين (الولايات المتحدة الأمريكية) 🇺🇸
+            </span>
+            <h1 class="text-2xl md:text-3xl font-black bg-gradient-to-r from-amber-300 via-yellow-200 to-indigo-300 bg-clip-text text-transparent">
+                استمارة طلب انضمام (رئيس قسم صحفي)
+            </h1>
+            <p class="text-slate-400 text-xs mt-1">الموقع الإلكتروني الرسمي: <a href="https://gmarikcmagazine.com" target="_blank" class="text-amber-400 underline">gmarikcmagazine.com</a></p>
+        </div>
+
+        <!-- شريط الخطوات -->
+        <div class="glass-card rounded-2xl p-3 mb-6 border-t-2 border-amber-500/50">
+            <div class="flex justify-between text-xs font-bold text-slate-300 px-2 mb-2">
+                <span id="stepIndicatorTitle" class="text-center w-full">الخطوة 1: البيانات الشخصية والمهنية الأساسية</span>
+            </div>
+            <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                <div id="progressBar" class="step-progress bg-gradient-to-r from-amber-500 via-orange-500 to-indigo-500 h-full w-1/3 rounded-full"></div>
+            </div>
+        </div>
+
+        <!-- نموذج التقديم -->
+        <div class="glass-card rounded-3xl p-5 md:p-8 border border-slate-700/50">
+            <form id="deptHeadForm" class="space-y-5" novalidate>
+
+                <!-- ==================== الخطوة 1: البيانات الشخصية ==================== -->
+                <div class="form-step animate__animated animate__fadeIn" id="step-1">
+                    <h2 class="text-lg font-bold text-white mb-5 text-center flex items-center justify-center gap-2 border-b border-slate-700/60 pb-3">
+                        <span>👤</span> أولاً: البيانات الشخصية والمهنية
+                    </h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-semibold text-slate-300 mb-1 text-right">الاسم الكامل (رباعي كما هو في جواز السفر) <span class="text-red-400">*</span></label>
+                            <input type="text" name="fullName" required placeholder="الاسم الرباعي كاملاً..." class="input-glow w-full px-4 py-3 rounded-xl text-white placeholder-slate-500 text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1 text-right">تاريخ الميلاد <span class="text-red-400">*</span></label>
+                            <input type="date" name="birthDate" required class="input-glow w-full px-4 py-3 rounded-xl text-white placeholder-slate-500 text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1 text-right">الجنسية <span class="text-red-400">*</span></label>
+                            <input type="text" name="nationality" required placeholder="مثال: مصري / سعودي / إماراتي..." class="input-glow w-full px-4 py-3 rounded-xl text-white placeholder-slate-500 text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1 text-right">بلد الإقامة الحالي <span class="text-red-400">*</span></label>
+                            <input type="text" name="currentCountry" required placeholder="الدولة..." class="input-glow w-full px-4 py-3 rounded-xl text-white placeholder-slate-500 text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1 text-right">المدينة / المحافظة <span class="text-red-400">*</span></label>
+                            <input type="text" name="city" required placeholder="المدينة..." class="input-glow w-full px-4 py-3 rounded-xl text-white placeholder-slate-500 text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1 text-right">رقم الواتساب والتواصل السريع (مع مفتاح الدولة) <span class="text-red-400">*</span></label>
+                            <input type="tel" name="phone" required placeholder="+20 010xxxxxxxx" class="input-glow w-full px-4 py-3 rounded-xl text-white placeholder-slate-500 text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1 text-right">البريد الإلكتروني المهني <span class="text-red-400">*</span></label>
+                            <input type="email" name="email" required placeholder="name@domain.com" class="input-glow w-full px-4 py-3 rounded-xl text-white placeholder-slate-500 text-sm">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ==================== الخطوة 2: الخبرات الإدارية وتحديد القسم ==================== -->
+                <div class="form-step hidden animate__animated animate__fadeIn" id="step-2">
+                    <h2 class="text-lg font-bold text-white mb-5 text-center flex items-center justify-center gap-2 border-b border-slate-700/60 pb-3">
+                        <span>💼</span> ثانياً: الخبرات الإدارية والتحريرية الصحفية
+                    </h2>
+
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1 text-right">المؤهل الدراسي والتخصص الجغرافي <span class="text-red-400">*</span></label>
+                            <input type="text" name="qualification" required placeholder="مثال: ماجستير صحافة وإعلام - القاهرة" class="input-glow w-full px-4 py-3 rounded-xl text-white placeholder-slate-500 text-sm">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-amber-300 mb-2 text-right">ما هو القسم الصحفي الذي تتقدم لرئاسته وإدارته؟ <span class="text-red-400">*</span></label>
+                            <div class="grid grid-cols-1 gap-2.5 bg-slate-900/90 p-4 rounded-2xl border border-slate-700 max-h-60 overflow-y-auto">
+                                <label class="flex items-center gap-3 text-xs text-slate-200 cursor-pointer p-2 rounded-lg hover:bg-slate-800 transition">
+                                    <input type="radio" name="targetDepartment" value="قسم أخبار الجمارك والمنافذ الدولية" required class="accent-amber-500 w-4 h-4">
+                                    <span>قسم أخبار الجمارك والمنافذ الدولية</span>
+                                </label>
+                                <label class="flex items-center gap-3 text-xs text-slate-200 cursor-pointer p-2 rounded-lg hover:bg-slate-800 transition">
+                                    <input type="radio" name="targetDepartment" value="قسم التقارير الاقتصادية والتحليلات المالية" class="accent-amber-500 w-4 h-4">
+                                    <span>قسم التقارير الاقتصادية والتحليلات المالية</span>
+                                </label>
+                                <label class="flex items-center gap-3 text-xs text-slate-200 cursor-pointer p-2 rounded-lg hover:bg-slate-800 transition">
+                                    <input type="radio" name="targetDepartment" value="قسم التجارة الخارجية واللوجستيات" class="accent-amber-500 w-4 h-4">
+                                    <span>قسم التجارة الخارجية واللوجستيات</span>
+                                </label>
+                                <label class="flex items-center gap-3 text-xs text-slate-200 cursor-pointer p-2 rounded-lg hover:bg-slate-800 transition">
+                                    <input type="radio" name="targetDepartment" value="قسم التحقيقات الصحفية ومقالات الرأي" class="accent-amber-500 w-4 h-4">
+                                    <span>قسم التحقيقات الصحفية ومقالات الرأي</span>
+                                </label>
+                                <label class="flex items-center gap-3 text-xs text-slate-200 cursor-pointer p-2 rounded-lg hover:bg-slate-800 transition">
+                                    <input type="radio" name="targetDepartment" value="قسم الوسائط المتعددة والتقارير المصورة (المونتاج والتصوير)" class="accent-amber-500 w-4 h-4">
+                                    <span>قسم الوسائط المتعددة والتقارير المصورة (المونتاج والتصوير)</span>
+                                </label>
+                                <label class="flex items-center gap-3 text-xs text-slate-200 cursor-pointer p-2 rounded-lg hover:bg-slate-800 transition">
+                                    <input type="radio" name="targetDepartment" value="قسم السياسات والتشريعات الجمركية" class="accent-amber-500 w-4 h-4">
+                                    <span>قسم السياسات والتشريعات الجمركية</span>
+                                </label>
+                                <label class="flex items-center gap-3 text-xs text-slate-200 cursor-pointer p-2 rounded-lg hover:bg-slate-800 transition">
+                                    <input type="radio" name="targetDepartment" value="قسم التحقيقات والاستقصاء الجمركي" class="accent-amber-500 w-4 h-4">
+                                    <span>قسم التحقيقات والاستقصاء الجمركي</span>
+                                </label>
+                                <label class="flex items-center gap-3 text-xs text-slate-200 cursor-pointer p-2 rounded-lg hover:bg-slate-800 transition">
+                                    <input type="radio" name="targetDepartment" value="قسم التجارة وسلاسل الملاحه الدولية" class="accent-amber-500 w-4 h-4">
+                                    <span>قسم التجارة وسلاسل الملاحه الدولية</span>
+                                </label>
+                                <label class="flex items-center gap-3 text-xs text-slate-200 cursor-pointer p-2 rounded-lg hover:bg-slate-800 transition">
+                                    <input type="radio" name="targetDepartment" value="قسم صحافة البيانات والذكاء الاصطناعي الجمركي" class="accent-amber-500 w-4 h-4">
+                                    <span>قسم صحافة البيانات والذكاء الاصطناعي الجمركي</span>
+                                </label>
+                                <label class="flex items-center gap-3 text-xs text-slate-200 cursor-pointer p-2 rounded-lg hover:bg-slate-800 transition">
+                                    <input type="radio" name="targetDepartment" value="قسم شؤون المستهلك والتعريفة الجمركية" class="accent-amber-500 w-4 h-4">
+                                    <span>قسم شؤون المستهلك والتعريفة الجمركية</span>
+                                </label>
+                                <label class="flex items-center gap-3 text-xs text-slate-200 cursor-pointer p-2 rounded-lg hover:bg-slate-800 transition">
+                                    <input type="radio" name="targetDepartment" value="قسم التكنولوجيا والتحول الرقمي والنافذة الموحدة" class="accent-amber-500 w-4 h-4">
+                                    <span>قسم التكنولوجيا والتحول الرقمي وأنظمة الفحص الحديثة، بلوكشين (Blockchain) في التجارة، والنافذة الموحدة لتخليص البضائع.</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-300 mb-1 text-right">عدد سنوات الخبرة الإجمالية في الصحافة <span class="text-red-400">*</span></label>
+                                <input type="text" name="totalExpYears" required placeholder="مثال: 8 سنوات" class="input-glow w-full px-4 py-3 rounded-xl text-white placeholder-slate-500 text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-300 mb-1 text-right">عدد سنوات الخبرة في منصب إداري أو قيادي صحفي <span class="text-red-400">*</span></label>
+                                <input type="text" name="leadExpYears" required placeholder="مثال: 4 سنوات" class="input-glow w-full px-4 py-3 rounded-xl text-white placeholder-slate-500 text-sm">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1 text-right">أبرز المؤسسات الصحفية والمجلات التي توليت فيها منصباً قيادياً سابقاً <span class="text-red-400">*</span></label>
+                            <textarea name="previousOrgs" required rows="2" placeholder="المؤسسات والمناصب القيادية السابقة..." class="input-glow w-full px-4 py-3 rounded-xl text-white placeholder-slate-500 text-sm"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ==================== الخطوة 3: الرؤية التحريرية، المرفقات والميثاق ==================== -->
+                <div class="form-step hidden animate__animated animate__fadeIn" id="step-3">
+                    <h2 class="text-lg font-bold text-white mb-5 text-center flex items-center justify-center gap-2 border-b border-slate-700/60 pb-3">
+                        <span>📈</span> ثالثاً: الرؤية التحريرية والمرفقات والميثاق
+                    </h2>
+
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1 text-right">اكتب نبذة مختصرة عن خطتك لتطوير القسم الذي ترغب في رئاسته بمجلة جمارك مجازين <span class="text-red-400">*</span></label>
+                            <textarea name="visionPlan" required rows="4" placeholder="اكتب الرؤية والخطة الاستراتيجية لإدارة القسم وتوجيه فريق العمل..." class="input-glow w-full px-4 py-3 rounded-xl text-white placeholder-slate-500 text-sm"></textarea>
+                        </div>
+
+                        <div class="space-y-3 pt-2">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-300 mb-1 text-right">تحميل ملف السيرة الذاتية القيادية المحدثة (PDF) <span class="text-red-400">*</span></label>
+                                <input type="file" id="headCvFile" name="cvFile" required accept=".pdf" class="w-full text-xs text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-amber-500/20 file:text-amber-300 hover:file:bg-amber-500/30">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-300 mb-1 text-right">تحميل صورة واضحة من بطاقة الهوية الوطنية أو جواز السفر <span class="text-red-400">*</span></label>
+                                <input type="file" id="headIdFile" name="idFile" required accept="image/*" class="w-full text-xs text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-amber-500/20 file:text-amber-300 hover:file:bg-amber-500/30">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-300 mb-1 text-right">تحميل صورة شخصية رسمية حديثة بخلفية بيضاء <span class="text-red-400">*</span></label>
+                                <input type="file" id="headPhotoFile" name="photoFile" required accept="image/*" class="w-full text-xs text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-amber-500/20 file:text-amber-300 hover:file:bg-amber-500/30">
+                            </div>
+                        </div>
+
+                        <!-- إقرار وميثاق الشرف القيادي -->
+                        <div class="p-4 bg-slate-900/90 border border-amber-500/30 rounded-2xl text-slate-300 text-xs leading-relaxed text-center mt-4">
+                            <strong class="text-amber-400 block mb-1 text-sm">📜 إقرار وميثاق الشرف القيادي</strong>
+                            أقر أنا مقدم الطلب بصحة البيانات المذكورة، وأتعهد في حال قبولي رئيساً للقسم الصحفي بمجلة جمارك مجازين بالالتزام التام بالسياسة التحريرية، وتوجيه فريق العمل بما يخدم مصلحة المجلة، والحفاظ على أسرار العمل التحريري، وذلك تحت الإشراف المباشر للأستاذ / محمد الجزار.
+                        </div>
+
+                        <label class="flex items-center justify-center gap-3 cursor-pointer p-3 bg-amber-500/10 border border-amber-500/30 rounded-xl hover:bg-amber-500/15 transition text-center">
+                            <input type="checkbox" id="headHonorCheck" required class="w-4 h-4 rounded accent-amber-500">
+                            <span class="text-xs font-bold text-white">أوافق على كافة الشروط والأحكام وميثاق الشرف القيادي أعلاه <span class="text-red-400">*</span></span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- أزرار التنقل -->
+                <div class="flex items-center justify-between pt-5 border-t border-slate-700/60 gap-3">
+                    <button type="button" id="prevBtn" onclick="changeStep(-1)" class="hidden px-5 py-2.5 rounded-xl font-bold text-xs text-slate-300 bg-slate-800 hover:bg-slate-700 transition">
+                        ← السابق
+                    </button>
+                    <div class="mx-auto" id="spacerBtn"></div>
+                    <button type="button" id="nextBtn" onclick="changeStep(1)" class="w-full md:w-auto px-6 py-2.5 rounded-xl font-bold text-xs text-white bg-gradient-to-r from-amber-600 via-orange-600 to-indigo-600 shadow-lg shadow-amber-600/20 transition text-center">
+                        التالي
+                    </button>
+                    <button type="submit" id="submitBtn" class="hidden w-full md:w-auto px-8 py-2.5 rounded-xl font-bold text-xs text-white bg-gradient-to-r from-emerald-600 to-teal-600 shadow-lg shadow-emerald-600/30 transition text-center">
+                        <span id="submitBtnText">🚀 إرسال طلب الترشح لرئاسة القسم</span>
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <!-- نافذة كود التتبع المنبثقة -->
+    <div class="success-modal-overlay" id="successTrackingModal">
+        <div class="glass-card max-w-xl w-full p-6 md:p-8 rounded-3xl border-2 border-amber-500/50 text-center relative shadow-2xl">
+            <div class="w-16 h-16 rounded-2xl bg-amber-500/20 border border-amber-500/40 text-amber-400 flex items-center justify-center text-3xl mx-auto mb-4 animate__animated animate__bounceIn">
+                <i class="fa-solid fa-check-double"></i>
+            </div>
+            
+            <h2 class="text-xl md:text-2xl font-black text-white mb-2">تم استلام طلب ترشحك بنجاح!</h2>
+            <p class="text-slate-300 text-xs md:text-sm leading-relaxed mb-6">
+                تم إرسال كافة بياناتك ومرفقاتك القيادية إلى الأستاذ / محمد الجزار (رئيس التحرير) لدراستها. يُرجى <strong class="text-amber-400">الاحتفاظ بكود التتبع هذا جيداً</strong> لمتابعة حالة قبول الطلب.
+            </p>
+
+            <div class="bg-slate-950/90 border-2 border-dashed border-amber-500/50 rounded-2xl p-4 md:p-6 mb-6">
+                <span class="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-widest">كود التتبع المعتمد لطلبك:</span>
+                <div class="flex items-center justify-center gap-3">
+                    <span id="displayTrackingCode" class="text-2xl md:text-3xl font-black text-amber-400 tracking-wider font-mono">HEAD-000000</span>
+                    <button type="button" onclick="copyTrackingCode()" class="px-3 py-2 bg-amber-500/15 border border-amber-500/30 text-amber-300 hover:bg-amber-500 hover:text-slate-950 font-bold rounded-xl text-xs transition flex items-center gap-1.5" title="نسخ الكود">
+                        <i class="fa-regular fa-copy"></i>
+                        <span id="copyBtnLabel">نسخ</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-3 justify-center items-center">
+                <a id="btnTrackStatus" href="reporter-status.html" class="w-full sm:w-auto px-7 py-3 rounded-xl font-bold text-sm text-white bg-gradient-to-r from-amber-600 via-orange-600 to-indigo-600 hover:opacity-95 shadow-lg shadow-amber-500/25 transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <span>تتبع حالة طلبك الآن</span>
+                </a>
+                <a href="index.html" class="w-full sm:w-auto px-6 py-3 rounded-xl font-semibold text-xs text-slate-300 bg-slate-800/80 hover:bg-slate-700 transition">
+                    العودة للرئيسية
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- نظام فايربيس للإرسال -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyD_pyEgRtBzObOTf-msTwC0nbhsyCmJ92s",
+            authDomain: "gamarek.firebaseapp.com",
+            databaseURL: "https://gamarek-default-rtdb.firebaseio.com",
+            projectId: "gamarek",
+            storageBucket: "gamarek.firebasestorage.app",
+            messagingSenderId: "139734553489",
+            appId: "1:139734553489:web:1339f96b98cebd32610030",
+            measurementId: "G-H1FRFXK1FG"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        window.gmarikDb = db;
+
+        function compressImageFile(file, maxWidth = 800, quality = 0.7) {
+            return new Promise((resolve) => {
+                if (!file || !file.type.startsWith('image/')) return resolve('');
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        let width = img.width;
+                        let height = img.height;
+                        if (width > maxWidth) {
+                            height = Math.round((height * maxWidth) / width);
+                            width = maxWidth;
+                        }
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        resolve(canvas.toDataURL('image/jpeg', quality));
+                    };
+                    img.onerror = () => resolve(e.target.result);
+                    img.src = e.target.result;
+                };
+                reader.onerror = () => resolve('');
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function readPdfFile(file) {
+            return new Promise((resolve) => {
+                if (!file) return resolve('');
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = () => resolve('');
+                reader.readAsDataURL(file);
+            });
+        }
+
+        window.submitDepartmentHeadApplication = async function(formData) {
+            const trackingCode = 'HEAD-' + Math.floor(100000 + Math.random() * 900000);
+            
+            const cvFileEl = document.getElementById('headCvFile');
+            const idFileEl = document.getElementById('headIdFile');
+            const photoFileEl = document.getElementById('headPhotoFile');
+
+            const [cvBase64, idBase64, photoBase64] = await Promise.all([
+                cvFileEl && cvFileEl.files[0] ? readPdfFile(cvFileEl.files[0]) : Promise.resolve(''),
+                idFileEl && idFileEl.files[0] ? compressImageFile(idFileEl.files[0]) : Promise.resolve(''),
+                photoFileEl && photoFileEl.files[0] ? compressImageFile(photoFileEl.files[0]) : Promise.resolve('')
+            ]);
+
+            const payload = {
+                trackingCode: trackingCode,
+                role: 'رئيس قسم صحفي',
+                jobTitle: 'رئيس قسم صحفي',
+                
+                // البيانات الشخصية
+                fullName: formData.get('fullName') || '',
+                birthDate: formData.get('birthDate') || '',
+                nationality: formData.get('nationality') || '',
+                country: formData.get('currentCountry') || '',
+                city: formData.get('city') || '',
+                phone: formData.get('phone') || '',
+                email: formData.get('email') || '',
+                
+                // الخبرات والقسم
+                qualification: formData.get('qualification') || '',
+                targetDepartment: formData.get('targetDepartment') || '',
+                totalExpYears: formData.get('totalExpYears') || '',
+                leadExpYears: formData.get('leadExpYears') || '',
+                previousOrgs: formData.get('previousOrgs') || '',
+                
+                // الرؤية والمرفقات
+                visionPlan: formData.get('visionPlan') || '',
+                cvFile: cvBase64,
+                cvFileName: cvFileEl && cvFileEl.files[0] ? cvFileEl.files[0].name : '',
+                idFile: idBase64,
+                idFileName: idFileEl && idFileEl.files[0] ? idFileEl.files[0].name : '',
+                personalPhoto: photoBase64,
+                personalPhotoName: photoFileEl && photoFileEl.files[0] ? photoFileEl.files[0].name : '',
+
+                status: 'pending',
+                date: new Date().toISOString(),
+                createdAt: serverTimestamp()
+            };
+
+            // 1. الإرسال إلى فايربيس في مجموعة رؤساء الأقسام
+            try {
+                await addDoc(collection(db, "departmentHeadApplications"), payload);
+            } catch (err) {
+                console.warn("Firestore size fallback, attempting light payload:", err);
+                try {
+                    const safePayload = { ...payload, cvFile: '' };
+                    await addDoc(collection(db, "departmentHeadApplications"), safePayload);
+                } catch(finalErr) {
+                    console.error("Firestore final error:", finalErr);
+                }
+            }
+
+            // 2. الحفظ الاحتياطي في الذاكرة المحلية
+            try {
+                let localApps = JSON.parse(localStorage.getItem('gmarik_dept_head_applications')) || [];
+                localApps.unshift(payload);
+                if (localApps.length > 20) localApps = localApps.slice(0, 20);
+                localStorage.setItem('gmarik_dept_head_applications', JSON.stringify(localApps));
+            } catch (e) {}
+
+            return trackingCode;
+        };
+    </script>
+
+    <!-- نظام التنقل والتحقق وعرض كود التتبع -->
+    <script>
+        let currentStep = 1;
+        const totalSteps = 3;
+        let generatedTrackingCode = '';
+
+        const stepTitles = [
+            "الخطوة 1: البيانات الشخصية والمهنية الأساسية",
+            "الخطوة 2: الخبرات الإدارية وتحديد القسم الصحفي",
+            "الخطوة 3: الرؤية التحريرية، المرفقات والميثاق القيادي"
+        ];
+
+        function showToast(message, type = 'success') {
+            const existingToast = document.getElementById('custom-toast');
+            if (existingToast) existingToast.remove();
+
+            const toast = document.createElement('div');
+            toast.id = 'custom-toast';
+            
+            const borderColor = type === 'success' ? 'border-amber-500/50' : 'border-rose-500/50';
+            const iconColor = type === 'success' ? 'text-amber-400 bg-amber-500/10' : 'text-rose-400 bg-rose-500/10';
+            const icon = type === 'success' ? '✓' : '✕';
+
+            toast.className = `fixed bottom-5 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 px-4 py-3 rounded-2xl border ${borderColor} shadow-2xl backdrop-blur-xl bg-slate-900/95 text-white transition-all duration-300 transform translate-y-10 opacity-0 w-11/12 max-w-md`;
+            
+            toast.innerHTML = `
+                <div class="flex items-center justify-center w-7 h-7 rounded-xl ${iconColor} font-bold text-xs shrink-0">
+                    ${icon}
+                </div>
+                <div class="text-right">
+                    <p class="text-xs font-semibold text-slate-200">إشعار النظام</p>
+                    <p class="text-[11px] text-slate-400 mt-0.5">${message}</p>
+                </div>
+            `;
+
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-10', 'opacity-0');
+            }, 10);
+
+            setTimeout(() => {
+                toast.classList.add('translate-y-10', 'opacity-0');
+                setTimeout(() => toast.remove(), 300);
+            }, 4500);
+        }
+
+        function validateCurrentStep() {
+            const currentFormStep = document.getElementById(`step-${currentStep}`);
+            const inputs = currentFormStep.querySelectorAll('input[required], textarea[required]');
+            let valid = true;
+
+            // التحقق من الراديو في الخطوة 2
+            if (currentStep === 2) {
+                const selectedDept = currentFormStep.querySelector('input[name="targetDepartment"]:checked');
+                if (!selectedDept) {
+                    valid = false;
+                    const deptBox = currentFormStep.querySelector('.overflow-y-auto');
+                    if (deptBox) {
+                        deptBox.classList.add('error-shake', 'border-red-500');
+                        setTimeout(() => deptBox.classList.remove('error-shake'), 500);
+                    }
+                }
+            }
+
+            inputs.forEach(input => {
+                if (input.type === 'radio') return; // تم التحقق منه أعلاه
+
+                if (input.type === 'checkbox') {
+                    if (!input.checked) {
+                        valid = false;
+                        input.parentElement.classList.add('error-shake', 'border-red-500');
+                        setTimeout(() => input.parentElement.classList.remove('error-shake'), 500);
+                    }
+                } else if (input.type === 'file') {
+                    if (!input.files || input.files.length === 0) {
+                        valid = false;
+                        input.classList.add('error-shake', 'border-red-500');
+                        setTimeout(() => input.classList.remove('error-shake'), 500);
+                    } else {
+                        input.classList.remove('border-red-500');
+                    }
+                } else if (!input.value.trim()) {
+                    valid = false;
+                    input.classList.add('error-shake', 'border-red-500');
+                    input.style.borderColor = '#ef4444';
+                    setTimeout(() => input.classList.remove('error-shake'), 500);
+                } else {
+                    input.style.borderColor = 'rgba(255,255,255,0.12)';
+                    input.classList.remove('border-red-500');
+                }
+            });
+
+            return valid;
+        }
+
+        function changeStep(direction) {
+            if (direction === 1) {
+                if (!validateCurrentStep()) {
+                    showToast('⚠️ يرجى استكمال كافة الحقول الإلزامية والمرفقات (*).', 'error');
+                    return;
+                }
+            }
+
+            document.getElementById(`step-${currentStep}`).classList.add('hidden');
+            currentStep += direction;
+            document.getElementById(`step-${currentStep}`).classList.remove('hidden');
+
+            document.getElementById('progressBar').style.width = `${(currentStep / totalSteps) * 100}%`;
+            document.getElementById('stepIndicatorTitle').innerText = stepTitles[currentStep - 1];
+
+            const prevBtn = document.getElementById('prevBtn');
+            const spacerBtn = document.getElementById('spacerBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const submitBtn = document.getElementById('submitBtn');
+
+            if (currentStep === 1) {
+                prevBtn.classList.add('hidden');
+                spacerBtn.classList.remove('hidden');
+            } else {
+                prevBtn.classList.remove('hidden');
+                spacerBtn.classList.add('hidden');
+            }
+
+            if (currentStep === totalSteps) {
+                nextBtn.classList.add('hidden');
+                submitBtn.classList.remove('hidden');
+            } else {
+                nextBtn.classList.remove('hidden');
+                submitBtn.classList.add('hidden');
+            }
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function showSuccessModal(code) {
+            generatedTrackingCode = code;
+            document.getElementById('displayTrackingCode').innerText = code;
+            
+            const trackBtn = document.getElementById('btnTrackStatus');
+            if (trackBtn) {
+                trackBtn.href = `reporter-status.html?code=${encodeURIComponent(code)}`;
+            }
+
+            const modal = document.getElementById('successTrackingModal');
+            if (modal) modal.classList.add('active');
+        }
+
+        function copyTrackingCode() {
+            if (!generatedTrackingCode) return;
+            navigator.clipboard.writeText(generatedTrackingCode).then(() => {
+                const label = document.getElementById('copyBtnLabel');
+                if (label) label.innerText = 'تم النسخ! ✓';
+                showToast('✅ تم نسخ كود التتبع إلى الحافظة بنجاح!', 'success');
+                setTimeout(() => {
+                    if (label) label.innerText = 'نسخ';
+                }, 2000);
+            }).catch(() => {
+                showToast(`كود التتبع: ${generatedTrackingCode}`, 'success');
+            });
+        }
+
+        document.getElementById('deptHeadForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!validateCurrentStep()) {
+                showToast('⚠️ يرجى التأكد من رفع كافة المرفقات والموافقة على ميثاق الشرف القيادي.', 'error');
+                return;
+            }
+
+            const submitBtn = document.getElementById('submitBtn');
+            const submitBtnText = document.getElementById('submitBtnText');
+            submitBtn.disabled = true;
+            submitBtnText.innerText = '⏳ جاري إرسال طلب الترشح القيادي...';
+
+            try {
+                const formData = new FormData(e.target);
+                const code = await window.submitDepartmentHeadApplication(formData);
+                showSuccessModal(code);
+            } catch (err) {
+                console.error(err);
+                submitBtn.disabled = false;
+                submitBtnText.innerText = '🚀 إرسال طلب الترشح لرئاسة القسم';
+                showToast('⚠️ حدث خطأ أثناء إرسال الطلب، يرجى المحاولة مرة أخرى.', 'error');
+            }
+        });
+    </script>
+</body>
+</html>

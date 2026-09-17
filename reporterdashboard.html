@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" id="html-root">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="meta-title">لوحة تحكم المحرر والمراسل - مجلة جمارك</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/images/favicon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-deep: #07090e;
+            --card-bg: rgba(19, 27, 46, 0.85);
+            --primary-glow: #3b82f6;
+            --accent-gold: #f59e0b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-glass: rgba(255, 255, 255, 0.08);
+            --success: #10b981;
+            --warning: #f59e0b;
+            --purple: #a855f7;
+            --cyan: #06b6d4;
+            --danger: #ef4444;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: radial-gradient(circle at top right, #1e1b4b 0%, var(--bg-deep) 60%);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-inline-end: 1px solid var(--border-glass);
+            display: flex;
+            flex-direction: column;
+            padding: 25px;
+            box-sizing: border-box;
+            position: fixed;
+            inset-inline-start: 0;
+            top: 0;
+            height: 100vh;
+            z-index: 100;
+        }
+
+        .sidebar-brand {
+            font-size: 1.3rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #fff 30%, var(--accent-gold) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+            margin-bottom: 35px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-glass);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            flex: 1;
+        }
+
+        .sidebar-menu li { margin-bottom: 12px; }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 18px;
+            color: var(--text-muted);
+            text-decoration: none;
+            border-radius: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .sidebar-menu a:hover, .sidebar-menu a.active {
+            background: rgba(59, 130, 246, 0.15);
+            color: #fff;
+            transform: translateX(-4px);
+            border-inline-start: 4px solid var(--primary-glow);
+        }
+
+        .btn-logout {
+            background: rgba(239, 68, 68, 0.12);
+            color: var(--danger);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            width: 100%;
+            padding: 14px;
+            border-radius: 14px;
+            font-family: 'Cairo';
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-logout:hover {
+            background: var(--danger);
+            color: #fff;
+            box-shadow: 0 5px 20px rgba(239, 68, 68, 0.4);
+        }
+
+        .main-content {
+            flex: 1;
+            margin-inline-start: 280px;
+            padding: 40px;
+            box-sizing: border-box;
+            overflow-y: auto;
+        }
+
+        .header-welcome {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-glass);
+            border-top: 4px solid var(--accent-gold);
+            padding: 30px;
+            border-radius: 20px;
+            margin-bottom: 35px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+
+        .header-user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .header-avatar {
+            width: 75px;
+            height: 75px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--accent-gold);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            background: rgba(255,255,255,0.05);
+        }
+
+        .header-welcome h1 { margin: 0; font-size: 1.6rem; color: #fff; font-weight: 900; }
+        .header-welcome p { margin: 5px 0 0 0; color: var(--text-muted); font-size: 0.9rem; }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 18px;
+            margin-bottom: 35px;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--border-glass);
+            padding: 22px;
+            border-radius: 18px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(59, 130, 246, 0.4);
+        }
+
+        .stat-card i { font-size: 2rem; margin-bottom: 10px; }
+        .stat-card h3 { margin: 0; font-size: 1.7rem; color: #fff; font-weight: 900; }
+        .stat-card p { margin: 6px 0 0 0; color: var(--text-muted); font-size: 0.85rem; font-weight: 700; }
+
+        .dashboard-section { display: none; animation: fadeIn 0.4s ease; }
+        .dashboard-section.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.98); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .content-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-glass);
+            padding: 35px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            margin-bottom: 30px;
+        }
+
+        .content-card h3 {
+            margin-top: 0;
+            color: #fff;
+            font-size: 1.3rem;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid var(--border-glass);
+            padding-bottom: 18px;
+        }
+        .content-card h3 i { color: var(--primary-glow); }
+
+        .form-group { margin-bottom: 22px; }
+        .form-group label { display: block; font-size: 0.9rem; color: var(--text-muted); margin-bottom: 8px; font-weight: 700; text-align: start; }
+        
+        .form-control {
+            width: 100%;
+            padding: 15px 18px;
+            border: 1px solid var(--border-glass);
+            border-radius: 14px;
+            font-family: 'Cairo', sans-serif;
+            background: rgba(11, 15, 25, 0.8);
+            color: #fff;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+            text-align: start;
+        }
+
+        select.form-control option { background: #0b0f19; color: #fff; }
+        input[type="file"].form-control { padding: 11px; cursor: pointer; }
+
+        .form-control:focus {
+            border-color: var(--primary-glow);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.25);
+        }
+
+        textarea.form-control { resize: vertical; min-height: 140px; }
+
+        .btn-submit {
+            background: linear-gradient(135deg, var(--accent-gold) 0%, #d97706 100%);
+            color: #0b0f19;
+            border: none;
+            padding: 15px 35px;
+            border-radius: 14px;
+            font-family: 'Cairo';
+            font-weight: 900;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 8px 25px rgba(245, 158, 11, 0.3);
+        }
+
+        .btn-submit:hover { transform: translateY(-2px); opacity: 0.95; }
+
+        .table-responsive { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; text-align: start; }
+        th, td { padding: 16px; border-bottom: 1px solid var(--border-glass); font-size: 0.92rem; text-align: start; }
+        th { color: var(--text-muted); background: rgba(11, 15, 25, 0.6); font-weight: 700; }
+        td { color: #fff; vertical-align: middle; }
+
+        .badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; white-space: nowrap; }
+        
+        .badge-stage-1 { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid #3b82f6; }
+        .badge-stage-2 { background: rgba(6, 182, 212, 0.15); color: #22d3ee; border: 1px solid #06b6d4; }
+        .badge-stage-3 { background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid #a855f7; }
+        .badge-stage-4 { background: rgba(245, 158, 11, 0.15); color: var(--warning); border: 1px solid var(--warning); }
+        .badge-stage-5 { background: rgba(16, 185, 129, 0.15); color: var(--success); border: 1px solid var(--success); }
+        .badge-rejected { background: rgba(239, 68, 68, 0.15); color: var(--danger); border: 1px solid var(--danger); }
+
+        .workflow-step-box {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+            gap: 12px;
+            margin-bottom: 25px;
+            padding: 15px;
+            background: rgba(11, 15, 25, 0.6);
+            border-radius: 14px;
+            border: 1px solid var(--border-glass);
+        }
+        .workflow-step {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            font-weight: 700;
+        }
+        .workflow-step span.num {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--card-bg);
+            border: 1px solid var(--border-glass);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            color: var(--accent-gold);
+        }
+
+        .custom-popup-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(7, 9, 14, 0.85); backdrop-filter: blur(8px);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 9999; opacity: 0; visibility: hidden; transition: 0.3s;
+        }
+        .custom-popup-overlay.active { opacity: 1; visibility: visible; }
+        .custom-popup-box {
+            background: var(--card-bg); border: 2px solid var(--accent-gold);
+            padding: 35px; border-radius: 22px; width: 90%; max-width: 420px;
+            text-align: center; box-shadow: 0 25px 50px rgba(0,0,0,0.7);
+            transform: scale(0.8); transition: 0.3s;
+        }
+        .custom-popup-overlay.active .custom-popup-box { transform: scale(1); }
+        .custom-popup-box i { font-size: 3.5rem; color: var(--success); margin-bottom: 15px; }
+        .custom-popup-box h3 { color: #fff; margin: 0 0 10px 0; font-size: 1.4rem; }
+        .custom-popup-box p { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 25px; line-height: 1.6; }
+        .custom-popup-btn {
+            background: var(--primary-glow); color: #fff; border: none;
+            padding: 12px 30px; border-radius: 12px; font-family: 'Cairo';
+            font-weight: 700; cursor: pointer; font-size: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            body { flex-direction: column; }
+            .sidebar { width: 100%; height: auto; position: relative; border-inline-end: none; border-bottom: 1px solid var(--border-glass); }
+            .main-content { margin-inline-start: 0; padding: 20px; }
+        }
+    </style>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="sidebar-brand">
+            <i class="fa-solid fa-newspaper"></i> <span>مجلة جمارك</span>
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="#" class="nav-link active" onclick="switchTab('homeTab', this)"><i class="fa-solid fa-house"></i> <span>الرئيسية والإحصائيات</span></a></li>
+            <li><a href="#" class="nav-link" onclick="switchTab('publishTab', this)"><i class="fa-solid fa-feather"></i> <span>صياغة مقال (إرسال للتدقيق)</span></a></li>
+            <li><a href="#" class="nav-link" onclick="switchTab('myArticlesTab', this)"><i class="fa-solid fa-folder-open"></i> <span>متابعة مسار المقالات</span></a></li>
+            <li><a href="#" class="nav-link" onclick="switchTab('profileTab', this)"><i class="fa-solid fa-user-gear"></i> <span>إعدادات الحساب</span></a></li>
+        </ul>
+        <button class="btn-logout" onclick="logoutReporter()"><i class="fa-solid fa-right-from-bracket"></i> <span>تسجيل الخروج</span></button>
+    </div>
+
+    <div class="main-content">
+        <div class="header-welcome">
+            <div class="header-user-info">
+                <img id="headerUserAvatar" src="" alt="Avatar" class="header-avatar" style="display:none;">
+                <div id="defaultAvatarIcon" style="width: 75px; height: 75px; border-radius: 50%; background: rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: center; border: 2px solid var(--accent-gold); color: var(--accent-gold); font-size: 1.8rem;">
+                    <i class="fa-solid fa-user-pen"></i>
+                </div>
+                <div>
+                    <h1 id="reporterWelcomeName"><span>أهلاً بك</span></h1>
+                    <p id="reporterUsernameDisplay">@username</p>
+                </div>
+            </div>
+            <div style="font-size: 2rem; color: var(--accent-gold);">
+                <i class="fa-solid fa-shield-check"></i>
+            </div>
+        </div>
+
+        <!-- مراحل دورة النشر الست -->
+        <div class="workflow-step-box">
+            <div class="workflow-step"><span class="num">1</span> <span>1. المحرر والمدقق</span></div>
+            <div class="workflow-step"><span class="num">2</span> <span>2. سكرتارية التحرير</span></div>
+            <div class="workflow-step"><span class="num">3</span> <span>3. المترجم</span></div>
+            <div class="workflow-step"><span class="num">4</span> <span>4. رئيس القسم</span></div>
+            <div class="workflow-step"><span class="num">5</span> <span>5. رئيس التحرير</span></div>
+            <div class="workflow-step"><span class="num">6</span> <span>6. نشر على الصفحة الرئيسية</span></div>
+        </div>
+
+        <div id="homeTab" class="dashboard-section active">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <i class="fa-solid fa-file-lines" style="color:var(--primary-glow);"></i>
+                    <h3 id="statTotalArticles">0</h3>
+                    <p>إجمالي المقالات</p>
+                </div>
+                <div class="stat-card">
+                    <i class="fa-solid fa-pen-nib" style="color: #22d3ee;"></i>
+                    <h3 id="statEditorStage">0</h3>
+                    <p>1. لدى المحرر</p>
+                </div>
+                <div class="stat-card">
+                    <i class="fa-solid fa-sliders" style="color: #60a5fa;"></i>
+                    <h3 id="statSecretaryStage">0</h3>
+                    <p>2. لدى سكرتير التحرير</p>
+                </div>
+                <div class="stat-card">
+                    <i class="fa-solid fa-language" style="color: var(--accent-gold);"></i>
+                    <h3 id="statTranslatorStage">0</h3>
+                    <p>3. لدى المترجم</p>
+                </div>
+                <div class="stat-card">
+                    <i class="fa-solid fa-user-shield" style="color: #c084fc;"></i>
+                    <h3 id="statReadyReview">0</h3>
+                    <p>4. لدى رئيس القسم</p>
+                </div>
+                <div class="stat-card">
+                    <i class="fa-solid fa-stamp" style="color: #f43f5e;"></i>
+                    <h3 id="statPendingFinal">0</h3>
+                    <p>5. لدى رئيس التحرير</p>
+                </div>
+                <div class="stat-card">
+                    <i class="fa-solid fa-circle-check" style="color: var(--success);"></i>
+                    <h3 id="statPublishedArticles">0</h3>
+                    <p>6. منشور رسمياً بالمجلة</p>
+                </div>
+            </div>
+
+            <div class="content-card">
+                <h3><i class="fa-solid fa-circle-info"></i> <span>دورة النشر والاعتماد التحريري المتكاملة</span></h3>
+                <p style="color: var(--text-muted); line-height: 1.9; margin: 0;">
+                    تتبع مجلة جمارك نظام النشر التحريري المتكامل: يقوم المراسل/الناشر بصياغة المادة وإرسالها إلى <strong>المحرر</strong> للتدقيق والمطابقة، ثم إلى <strong>سكرتير التحرير</strong> للتنسيق، ثم إلى <strong>المترجم</strong> للمراجعة المتعددة اللغات، ثم إلى <strong>رئيس القسم</strong> للمراجعة والاعتماد، وصولاً إلى <strong>رئيس التحرير (حصرياً)</strong> للاعتماد والنشر المباشر على الصفحة الرئيسية للمجلة.
+                </p>
+            </div>
+        </div>
+
+        <div id="publishTab" class="dashboard-section">
+            <div class="content-card">
+                <h3><i class="fa-solid fa-feather"></i> <span>صياغة المادة وإرسالها لرئيس القسم (المرحلة 1)</span></h3>
+                <div class="form-group">
+                    <label>عنوان المنشور / المقال</label>
+                    <input type="text" id="articleTitle" class="form-control" placeholder="اكتب عنواناً جذاباً ودقيقاً...">
+                </div>
+                <div class="form-group">
+                    <label>وصف المنشور (Description / الملخص)</label>
+                    <textarea id="articleDescription" class="form-control" style="min-height: 80px;" placeholder="اكتب نبذة أو وصفاً مختصراً يظهر تحت العنوان..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>القسم الصحفي</label>
+                    <select id="articleCategory" class="form-control">
+                        <option value="أخبار الجمارك والمالية">أخبار الجمارك والمالية</option>
+                        <option value="تحقيقات صحفية">تحقيقات صحفية</option>
+                        <option value="اقتصاد وتجارة">اقتصاد وتجارة</option>
+                        <option value="مقالات رأي">مقالات رأي</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>صورة المنشور (رفع من الجهاز)</label>
+                    <input type="file" id="articleImageFile" class="form-control" accept="image/*">
+                </div>
+                <div class="form-group">
+                    <label>محتوى المنشور الكامل</label>
+                    <textarea id="articleContent" class="form-control" placeholder="اكتب نص المقال الكامل للصياغة..."></textarea>
+                </div>
+                <button class="btn-submit" onclick="submitNewArticle()"><i class="fa-solid fa-paper-plane"></i> <span>إرسال للتدقيق اللغوي</span></button>
+            </div>
+        </div>
+
+        <div id="myArticlesTab" class="dashboard-section">
+            <div class="content-card">
+                <h3><i class="fa-solid fa-list-check"></i> <span>متابعة مسار المقالات والمراحل الخمس</span></h3>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>عنوان المنشور</th>
+                                <th>القسم</th>
+                                <th>تاريخ الإرسال</th>
+                                <th>المرحلة الحالية</th>
+                            </tr>
+                        </thead>
+                        <tbody id="articlesTableBody">
+                            <tr><td colspan="4" style="text-align: center; color: var(--text-muted);">جاري التحميل...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="profileTab" class="dashboard-section">
+            <div class="content-card">
+                <h3><i class="fa-solid fa-user-pen"></i> <span>إعدادات الملف الشخصي</span></h3>
+                <div class="form-group">
+                    <label>الاسم الكامل</label>
+                    <input type="text" id="profileName" class="form-control" placeholder="اكتب اسمك الكامل...">
+                </div>
+                <div class="form-group">
+                    <label>اسم المستخدم الفريد (Username)</label>
+                    <input type="text" id="profileUsername" class="form-control" placeholder="e.g. omar_editor">
+                </div>
+                <div class="form-group">
+                    <label>الصورة الشخصية</label>
+                    <input type="file" id="profileAvatarFile" class="form-control" accept="image/*">
+                </div>
+                <div class="form-group">
+                    <label>النبذة التعريفية (Bio)</label>
+                    <textarea id="profileBio" class="form-control" placeholder="اكتب نبذة مختصرة عن خبرتك..."></textarea>
+                </div>
+                <button class="btn-submit" onclick="updateProfileSettings()"><i class="fa-solid fa-floppy-disk"></i> <span>حفظ التعديلات</span></button>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="custom-popup-overlay" id="dashboardPopup">
+        <div class="custom-popup-box">
+            <i class="fa-solid fa-circle-check" id="popupIcon"></i>
+            <h3 id="popupTitle">تم بنجاح</h3>
+            <p id="popupText">تمت العملية بنجاح.</p>
+            <button class="custom-popup-btn" onclick="closePopup()">حسناً</button>
+        </div>
+    </div>
+
+    <!-- برمجة الداشبورد و Firebase مع الضغط التلقائي للصور -->
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyD_pyEgRtBzObOTf-msTwC0nbhsyCmJ92s",
+            authDomain: "gamarek.firebaseapp.com",
+            projectId: "gamarek",
+            storageBucket: "gamarek.firebasestorage.app",
+            messagingSenderId: "139734553489",
+            appId: "1:139734553489:web:1339f96b98cebd32610030"
+        };
+
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const db = firebase.firestore();
+
+        let currentReporter = null;
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            let savedData = localStorage.getItem('gmarik_logged_reporter');
+            let userEmail = "";
+
+            if (savedData) {
+                try {
+                    const parsed = JSON.parse(savedData);
+                    userEmail = parsed.email || (typeof savedData === 'string' && savedData.includes('@') ? savedData : '');
+                } catch(e) {
+                    if (savedData.includes('@')) userEmail = savedData;
+                }
+            }
+
+            if (!userEmail) {
+                userEmail = localStorage.getItem('gmarik_reporter_email') || localStorage.getItem('gmarik_current_email');
+            }
+
+            if (!userEmail) {
+                window.location.href = 'reporter-login.html';
+                return;
+            }
+
+            try {
+                const querySnapshot = await db.collection('reporters')
+                    .where('email', '==', userEmail)
+                    .get();
+
+                if (!querySnapshot.empty) {
+                    const docSnap = querySnapshot.docs[0];
+                    currentReporter = { id: docSnap.id, ...docSnap.data() };
+                    localStorage.setItem('gmarik_logged_reporter', JSON.stringify(currentReporter));
+                    applyUserDataToUI();
+                } else {
+                    currentReporter = {
+                        email: userEmail,
+                        fullName: 'محرر ومراسل المجلة',
+                        username: 'editor',
+                        bio: '',
+                        avatar: ''
+                    };
+                    const newDocRef = await db.collection('reporters').add(currentReporter);
+                    currentReporter.id = newDocRef.id;
+                    localStorage.setItem('gmarik_logged_reporter', JSON.stringify(currentReporter));
+                    applyUserDataToUI();
+                }
+            } catch (error) {
+                console.error(error);
+            }
+
+            loadReporterArticles();
+        });
+
+        function applyUserDataToUI() {
+            if (!currentReporter) return;
+            document.getElementById('reporterWelcomeName').innerText = `أهلاً بك، ${currentReporter.fullName || 'محرر المجلة'}`;
+            document.getElementById('reporterUsernameDisplay').innerText = currentReporter.username ? `@${currentReporter.username}` : '@editor';
+            
+            const avatarImg = document.getElementById('headerUserAvatar');
+            const defaultIcon = document.getElementById('defaultAvatarIcon');
+
+            if (currentReporter.avatar && currentReporter.avatar.trim() !== '') {
+                avatarImg.src = currentReporter.avatar;
+                avatarImg.style.display = 'block';
+                defaultIcon.style.display = 'none';
+            }
+
+            document.getElementById('profileName').value = currentReporter.fullName || '';
+            document.getElementById('profileUsername').value = currentReporter.username || '';
+            document.getElementById('profileBio').value = currentReporter.bio || '';
+        }
+
+        function switchTab(tabId, element) {
+            document.querySelectorAll('.dashboard-section').forEach(sec => sec.classList.remove('active'));
+            document.querySelectorAll('.sidebar-menu a').forEach(a => a.classList.remove('active'));
+
+            document.getElementById(tabId).classList.add('active');
+            element.classList.add('active');
+        }
+
+        // ===== دالة ضغط الصور الذكية لتفادي حد الـ 1MB في فايربيس =====
+        function compressArticleImage(file, maxDimension = 900, quality = 0.75) {
+            return new Promise((resolve, reject) => {
+                if (!file) { resolve(''); return; }
+                const img = new Image();
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = (e) => { img.src = e.target.result; };
+                reader.onerror = (err) => reject(err);
+
+                img.onload = () => {
+                    let { width, height } = img;
+                    if (width > height && width > maxDimension) {
+                        height = Math.round(height * (maxDimension / width));
+                        width = maxDimension;
+                    } else if (height > maxDimension) {
+                        width = Math.round(width * (maxDimension / height));
+                        height = maxDimension;
+                    }
+
+                    const canvas = document.createElement('canvas');
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    resolve(canvas.toDataURL('image/jpeg', quality));
+                };
+            });
+        }
+
+        // ===== 1. إرسال المقال الحقيقي بعد الضغط التلقائي =====
+        async function submitNewArticle() {
+            const title = document.getElementById('articleTitle').value.trim();
+            const description = document.getElementById('articleDescription').value.trim();
+            const category = document.getElementById('articleCategory').value;
+            const imageFile = document.getElementById('articleImageFile').files[0];
+            const content = document.getElementById('articleContent').value.trim();
+
+            if (!title || !content) {
+                showPopup('تنبيه هام', '⚠️ برجاء إدخال عنوان المنشور والمحتوى الأساسي على الأقل!', true);
+                return;
+            }
+
+            const submitBtn = document.querySelector('#publishTab .btn-submit');
+            const originalBtnHTML = submitBtn ? submitBtn.innerHTML : '';
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> جاري ضغط الصور والإرسال...`;
+            }
+
+            try {
+                let imageBase64 = '';
+                if (imageFile) {
+                    imageBase64 = await compressArticleImage(imageFile);
+                }
+
+                // حفظ المقال الحقيقي بحالة المحرر (المرحلة 1)
+                const newArticle = {
+                    reporterEmail: currentReporter ? currentReporter.email : (localStorage.getItem('gmarik_reporter_email') || 'reporter@gamarek.com'),
+                    reporterName: currentReporter ? (currentReporter.fullName || currentReporter.username) : 'محرر ومراسل المجلة',
+                    reporterUsername: currentReporter ? currentReporter.username : 'reporter',
+                    title: title,
+                    description: description || '',
+                    category: category,
+                    image: imageBase64,
+                    content: content,
+                    date: new Date().toLocaleDateString('ar-EG'),
+                    status: 'pending_editor', 
+                    workflowStage: 1,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                };
+
+                await db.collection('articles').add(newArticle);
+
+                document.getElementById('articleTitle').value = '';
+                document.getElementById('articleDescription').value = '';
+                document.getElementById('articleImageFile').value = '';
+                document.getElementById('articleContent').value = '';
+
+                loadReporterArticles();
+                showPopup('تم الإرسال بنجاح', '📝 تم إرسال المقال بنجاح وهو الآن بانتظار مراجعة وتدقيق المحرر (المرحلة 1).', false);
+            } catch (error) {
+                console.error("Error submitting article:", error);
+                showPopup('خطأ', 'حدث خطأ: ' + (error.message || 'تعذر الإرسال'), true);
+            } finally {
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalBtnHTML;
+                }
+            }
+        }
+
+        // ===== جلب وتتبع المقالات ومراحلها الست =====
+        async function loadReporterArticles() {
+            try {
+                const snapshot = await db.collection('articles')
+                    .where('reporterEmail', '==', currentReporter.email)
+                    .get();
+
+                const tbody = document.getElementById('articlesTableBody');
+                tbody.innerHTML = '';
+
+                if (snapshot.empty) {
+                    tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--text-muted);">لم تقم بإرسال أي منشورات حتى الآن.</td></tr>`;
+                    document.getElementById('statTotalArticles').innerText = 0;
+                    document.getElementById('statEditorStage').innerText = 0;
+                    document.getElementById('statSecretaryStage').innerText = 0;
+                    document.getElementById('statTranslatorStage').innerText = 0;
+                    document.getElementById('statReadyReview').innerText = 0;
+                    document.getElementById('statPendingFinal').innerText = 0;
+                    document.getElementById('statPublishedArticles').innerText = 0;
+                    return;
+                }
+
+                let total = 0, stage1Count = 0, stage2Count = 0, stage3Count = 0, stage4Count = 0, stage5Count = 0, stage6Count = 0;
+
+                snapshot.docs.forEach(doc => {
+                    const art = doc.data();
+                    total++;
+                    const st = art.status || 'pending_editor';
+
+                    let badgeHTML = '';
+
+                    if (st === 'pending_editor' || st === 'checked_status' || st === 'pending') {
+                        stage1Count++;
+                        badgeHTML = `<span class="badge" style="background: rgba(6, 182, 212, 0.2); color: #22d3ee; border: 1px solid #06b6d4;"><i class="fa-solid fa-pen-nib"></i> 1. لدى المحرر</span>`;
+                    } else if (st === 'pending_secretary' || st === 'approved_by_head') {
+                        stage2Count++;
+                        badgeHTML = `<span class="badge" style="background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid #3b82f6;"><i class="fa-solid fa-sliders"></i> 2. لدى سكرتير التحرير</span>`;
+                    } else if (st === 'pending_translator') {
+                        stage3Count++;
+                        badgeHTML = `<span class="badge" style="background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid #f59e0b;"><i class="fa-solid fa-language"></i> 3. لدى المترجم</span>`;
+                    } else if (st === 'pending_head' || st === 'ready_for_review') {
+                        stage4Count++;
+                        badgeHTML = `<span class="badge" style="background: rgba(168, 85, 247, 0.2); color: #c084fc; border: 1px solid #a855f7;"><i class="fa-solid fa-user-shield"></i> 4. لدى رئيس القسم</span>`;
+                    } else if (st === 'pending_chief_editor' || st === 'pending_final_approval') {
+                        stage5Count++;
+                        badgeHTML = `<span class="badge" style="background: rgba(244, 63, 94, 0.2); color: #fb7185; border: 1px solid #f43f5e;"><i class="fa-solid fa-stamp"></i> 5. لدى رئيس التحرير</span>`;
+                    } else if (st === 'published' || st === 'publish') {
+                        stage6Count++;
+                        badgeHTML = `<span class="badge" style="background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid #10b981;"><i class="fa-solid fa-circle-check"></i> 6. منشور بالمجلة (index)</span>`;
+                    } else if (st === 'rejected') {
+                        badgeHTML = `<span class="badge badge-rejected"><i class="fa-solid fa-xmark"></i> يحتاج إعادة صياغة وتعديل</span>`;
+                    } else {
+                        badgeHTML = `<span class="badge badge-stage-1">${st}</span>`;
+                    }
+
+                    tbody.innerHTML += `
+                        <tr>
+                            <td><strong>${art.title}</strong></td>
+                            <td><span style="color:var(--accent-gold);">${art.category || 'عام'}</span></td>
+                            <td>${art.date || 'حديث'}</td>
+                            <td>${badgeHTML}</td>
+                        </tr>
+                    `;
+                });
+
+                document.getElementById('statTotalArticles').innerText = total;
+                document.getElementById('statReadyReview').innerText = stage1Count;
+                if(document.getElementById('statEditorStage')) document.getElementById('statEditorStage').innerText = stage2Count;
+                if(document.getElementById('statSecretaryStage')) document.getElementById('statSecretaryStage').innerText = stage3Count;
+                if(document.getElementById('statTranslatorStage')) document.getElementById('statTranslatorStage').innerText = stage4Count;
+                document.getElementById('statPendingFinal').innerText = stage5Count;
+                document.getElementById('statPublishedArticles').innerText = stage6Count;
+
+            } catch (error) {
+                console.error("Error loading articles: ", error);
+            }
+        }
+
+        async function updateProfileSettings() {
+            const newName = document.getElementById('profileName').value.trim();
+            const newUsername = document.getElementById('profileUsername').value.trim().toLowerCase().replace(/\s+/g, '_');
+            const avatarFile = document.getElementById('profileAvatarFile').files[0];
+            const newBio = document.getElementById('profileBio').value.trim();
+
+            if (!newName || !newUsername) {
+                showPopup('تنبيه', '⚠️ اسم المستخدم والاسم الكامل إجباريان!', true);
+                return;
+            }
+
+            try {
+                let avatarBase64 = currentReporter.avatar || '';
+                if (avatarFile) avatarBase64 = await compressArticleImage(avatarFile, 400, 0.7);
+
+                await db.collection('reporters').doc(currentReporter.id).update({
+                    fullName: newName,
+                    username: newUsername,
+                    avatar: avatarBase64,
+                    bio: newBio
+                });
+
+                currentReporter.fullName = newName;
+                currentReporter.username = newUsername;
+                currentReporter.avatar = avatarBase64;
+                currentReporter.bio = newBio;
+
+                localStorage.setItem('gmarik_logged_reporter', JSON.stringify(currentReporter));
+                applyUserDataToUI();
+                showPopup('تم الحفظ', '✨ تم تحديث بيانات الملف الشخصي بنجاح.', false);
+            } catch (error) {
+                showPopup('خطأ', 'حدث خطأ أثناء حفظ التعديلات.', true);
+            }
+        }
+
+        function showPopup(title, text, isError) {
+            document.getElementById('popupTitle').innerText = title;
+            document.getElementById('popupText').innerText = text;
+            const icon = document.getElementById('popupIcon');
+            icon.className = isError ? 'fa-solid fa-circle-exclamation' : 'fa-solid fa-circle-check';
+            icon.style.color = isError ? 'var(--danger)' : 'var(--success)';
+            document.getElementById('dashboardPopup').classList.add('active');
+        }
+
+        function closePopup() {
+            document.getElementById('dashboardPopup').classList.remove('active');
+        }
+
+        function logoutReporter() {
+            localStorage.removeItem('gmarik_logged_reporter');
+            localStorage.removeItem('gmarik_reporter_email');
+            window.location.href = 'reporter-login.html';
+        }
+    </script>
+</body>
+</html>

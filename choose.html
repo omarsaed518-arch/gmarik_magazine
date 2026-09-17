@@ -1,0 +1,178 @@
+﻿<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بوابة التوظيف القيادية - مجلة جمارك مجازين</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: #0f172a;
+            color: #f8fafc;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        .hero-glow {
+            background: radial-gradient(circle, rgba(59,130,246,0.15) 0%, rgba(15,23,42,0) 70%);
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glass-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            border-color: rgba(59, 130, 246, 0.5);
+            box-shadow: 0 20px 40px -15px rgba(59, 130, 246, 0.3);
+        }
+        .custom-radio:checked + div {
+            border-color: #3b82f6;
+            background: rgba(59, 130, 246, 0.15);
+            box-shadow: 0 0 25px rgba(59, 130, 246, 0.4);
+        }
+    </style>
+</head>
+<body class="relative flex items-center justify-center p-6">
+
+    <!-- خلفية مضيئة متوهجة -->
+    <div class="absolute inset-0 hero-glow pointer-events-none"></div>
+
+    <div class="relative w-full max-w-4xl mx-auto py-12 px-6">
+        
+        <!-- عنوان البوابة -->
+        <div class="text-center mb-12 animate__animated animate__fadeInDown">
+            <span class="px-4 py-1.5 rounded-full text-xs font-bold bg-blue-500/10 text-blue-400 border border-blue-500/20 mb-4 inline-block">
+                مجلة جمارك مجازين (الولايات المتحدة الأمريكية) 🇺🇸
+            </span>
+            <h1 class="text-4xl md:text-5xl font-black tracking-tight mb-4 bg-gradient-to-r from-blue-400 via-indigo-300 to-purple-400 bg-clip-text text-transparent">
+                بوابة التوظيف والاعتماد القيادي
+            </h1>
+            <p class="text-slate-400 text-base md:text-lg max-w-xl mx-auto">
+                اختر مسارك المهني بدقة للانتقال المباشر إلى استمارة التقديم والتقييم الخاصة بوظيفتك المستهدفة.
+            </p>
+        </div>
+
+        <!-- نموذج اختيار الوظيفة -->
+        <form id="jobSelectionForm" class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                
+                <!-- سكرتير تحرير -->
+                <label class="cursor-pointer block animate__animated animate__fadeInLeft">
+                    <input type="radio" name="job_role" value="Editorial Manager Job Application Form.html" class="peer sr-only custom-radio">
+                    <div class="glass-card rounded-2xl p-6 h-full flex flex-col justify-between border border-slate-700/60">
+                        <div>
+                            <div class="w-12 h-12 rounded-xl bg-blue-500/20 flex items-center justify-center text-blue-400 mb-4 text-2xl">📋</div>
+                            <h3 class="font-bold text-xl text-white mb-2">سكرتير تحرير</h3>
+                            <p class="text-slate-400 text-sm leading-relaxed">إدارة تدفق المواد، المتابعة الرقمية، والالتزام بالمواعيد النهائية بدقة.</p>
+                        </div>
+                        <div class="mt-6 flex items-center text-blue-400 text-sm font-semibold">
+                            <span>اختر المسار</span>
+                            <span class="mr-2">←</span>
+                        </div>
+                    </div>
+                </label>
+
+                <!-- محرر -->
+                <label class="cursor-pointer block animate__animated animate__fadeInUp">
+                    <input type="radio" name="job_role" value="Editor Job Application Form.html" class="peer sr-only custom-radio">
+                    <div class="glass-card rounded-2xl p-6 h-full flex flex-col justify-between border border-slate-700/60">
+                        <div>
+                            <div class="w-12 h-12 rounded-xl bg-indigo-500/20 flex items-center justify-center text-indigo-400 mb-4 text-2xl">✍️</div>
+                            <h3 class="font-bold text-xl text-white mb-2">محرر صحفي</h3>
+                            <p class="text-slate-400 text-sm leading-relaxed">صياغة وتطوير التقارير الإخبارية والمقالات التحليلية المتخصصة.</p>
+                        </div>
+                        <div class="mt-6 flex items-center text-indigo-400 text-sm font-semibold">
+                            <span>اختر المسار</span>
+                            <span class="mr-2">←</span>
+                        </div>
+                    </div>
+                </label>
+
+                <!-- رئيس قسم -->
+                <label class="cursor-pointer block animate__animated animate__fadeInRight">
+                    <input type="radio" name="job_role" value="Editorial Manager Job Application Form.html" class="peer sr-only custom-radio">
+                    <div class="glass-card rounded-2xl p-6 h-full flex flex-col justify-between border border-slate-700/60">
+                        <div>
+                            <div class="w-12 h-12 rounded-xl bg-purple-500/20 flex items-center justify-center text-purple-400 mb-4 text-2xl">👑</div>
+                            <h3 class="font-bold text-xl text-white mb-2">رئيس قسم التحرير</h3>
+                            <p class="text-slate-400 text-sm leading-relaxed">قيادة الفرق التحريرية، إدارة الميزانيات، والتخطيط الاستراتيجي.</p>
+                        </div>
+                        <div class="mt-6 flex items-center text-purple-400 text-sm font-semibold">
+                            <span>اختر المسار</span>
+                            <span class="mr-2">←</span>
+                        </div>
+                    </div>
+                </label>
+
+                <!-- مدقق ومصحح لغوي -->
+                <label class="cursor-pointer block animate__animated animate__fadeInLeft">
+                    <input type="radio" name="job_role" value="Proofreader Job Application Form.html" class="peer sr-only custom-radio">
+                    <div class="glass-card rounded-2xl p-6 h-full flex flex-col justify-between border border-slate-700/60">
+                        <div>
+                            <div class="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-400 mb-4 text-2xl">🔍</div>
+                            <h3 class="font-bold text-xl text-white mb-2">مدقق ومصحح لغوي</h3>
+                            <p class="text-slate-400 text-sm leading-relaxed">مراجعة النصوص بدقة لغوياً ونحوياً وضمان خلوها من الأخطاء.</p>
+                        </div>
+                        <div class="mt-6 flex items-center text-emerald-400 text-sm font-semibold">
+                            <span>اختر المسار</span>
+                            <span class="mr-2">←</span>
+                        </div>
+                    </div>
+                </label>
+
+                <!-- مترجم -->
+                <label class="cursor-pointer block md:col-span-2 lg:col-span-1 animate__animated animate__fadeInRight">
+                    <input type="radio" name="job_role" value="Translator Job Application Form.html" class="peer sr-only custom-radio">
+                    <div class="glass-card rounded-2xl p-6 h-full flex flex-col justify-between border border-slate-700/60">
+                        <div>
+                            <div class="w-12 h-12 rounded-xl bg-amber-500/20 flex items-center justify-center text-amber-400 mb-4 text-2xl">🌐</div>
+                            <h3 class="font-bold text-xl text-white mb-2">مترجم متخصص</h3>
+                            <p class="text-slate-400 text-sm leading-relaxed">ترجمة المواد الاقتصادية والجمركية الدولية بدقة واحترافية.</p>
+                        </div>
+                        <div class="mt-6 flex items-center text-amber-400 text-sm font-semibold">
+                            <span>اختر المسار</span>
+                            <span class="mr-2">←</span>
+                        </div>
+                    </div>
+                </label>
+
+            </div>
+
+            <!-- زر الانتقال -->
+            <div class="pt-8 text-center">
+                <button type="submit" id="submitBtn" disabled 
+                    class="w-full md:w-auto px-10 py-4 rounded-2xl font-black text-lg text-white bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 opacity-50 cursor-not-allowed hover:scale-105 active:scale-95 shadow-xl transition-all duration-300">
+                    🚀 الانتقال إلى الاستمارة المخصصة
+                </button>
+            </div>
+        </form>
+
+    </div>
+
+    <script>
+        const radios = document.querySelectorAll('input[name="job_role"]');
+        const submitBtn = document.getElementById('submitBtn');
+        const form = document.getElementById('jobSelectionForm');
+
+        radios.forEach(radio => {
+            radio.addEventListener('change', () => {
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            });
+        });
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const selected = document.querySelector('input[name="job_role"]:checked');
+            if (selected) {
+                window.location.href = selected.value;
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة تحكم المراجع الشاملة - جمارك نيوز</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/images/favicon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #f8fafc;
+            margin: 0;
+            padding: 30px;
+        }
+        .container {
+            max-width: 950px;
+            margin: 0 auto;
+        }
+        .header {
+            background: #0a2540;
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header h2 {
+            margin: 0;
+            color: #d4af37;
+            font-size: 1.4rem;
+        }
+        .tabs-nav {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 12px;
+            background: #ffffff;
+            border: 2px solid #cbd5e1;
+            border-radius: 10px;
+            font-family: 'Cairo', sans-serif;
+            font-size: 1rem;
+            font-weight: bold;
+            color: #475569;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+        .tab-btn.active {
+            background: #0a2540;
+            color: #d4af37;
+            border-color: #0a2540;
+            box-shadow: 0 4px 12px rgba(10, 37, 64, 0.15);
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .stat-box {
+            background: #ffffff;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+            text-align: center;
+            border-right: 4px solid #0a2540;
+        }
+        .stat-box h4 {
+            margin: 0;
+            color: #64748b;
+            font-size: 0.85rem;
+        }
+        .stat-box p {
+            margin: 5px 0 0 0;
+            color: #0a2540;
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+        .card {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 25px;
+        }
+        .card h3 {
+            margin-top: 0;
+            color: #0a2540;
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 10px;
+        }
+        .sender-card {
+            border: 1px solid #cbd5e1;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            background: #fff;
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+        .sender-img-box {
+            text-align: center;
+            width: 120px;
+            flex-shrink: 0;
+        }
+        .sender-img-box img {
+            width: 90px;
+            height: 90px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 3px solid #0a2540;
+            cursor: pointer;
+        }
+        .sender-img-box span {
+            font-size: 0.7rem;
+            color: #64748b;
+            display: block;
+            margin-top: 5px;
+        }
+        .sender-details {
+            flex: 1;
+        }
+        .sender-details h4 {
+            margin: 0 0 5px 0;
+            color: #1e293b;
+            font-size: 1.1rem;
+        }
+        .sender-meta {
+            font-size: 0.85rem;
+            color: #0284c7;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        .sender-bio {
+            background: #f8fafc;
+            padding: 12px;
+            border-radius: 8px;
+            border-right: 3px solid #d4af37;
+            color: #334155;
+            font-size: 0.95rem;
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+        .cv-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f1f5f9;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+        .cv-section span {
+            color: #334155;
+            font-weight: bold;
+        }
+        .news-item {
+            border: 1px solid #cbd5e1;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #fff;
+            gap: 15px;
+        }
+        .news-info {
+            flex: 1;
+        }
+        .news-info h4 {
+            margin: 0 0 5px 0;
+            color: #1e293b;
+        }
+        .news-info p {
+            margin: 0;
+            color: #64748b;
+            font-size: 0.85rem;
+        }
+        .actions {
+            display: flex;
+            gap: 8px;
+        }
+        .btn {
+            padding: 8px 14px;
+            border: none;
+            border-radius: 6px;
+            font-family: 'Cairo', sans-serif;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+        .btn-cv {
+            background: #0284c7;
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-cv:hover {
+            background: #0369a1;
+        }
+        .btn-approve {
+            background: #10b981;
+            color: white;
+        }
+        .btn-approve:hover {
+            background: #059669;
+        }
+        .btn-reject {
+            background: #ef4444;
+            color: white;
+        }
+        .btn-reject:hover {
+            background: #dc2626;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #475569;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .back-link:hover {
+            color: #0a2540;
+        }
+        .no-data {
+            text-align: center;
+            color: #64748b;
+            padding: 30px;
+            font-size: 1rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <h2>لوحة مراجعة واعتماد المحتوى والمرسلين</h2>
+            <span id="welcome-user" style="font-size: 0.9rem;">مرحباً بك</span>
+        </div>
+
+        <div class="tabs-nav">
+            <button class="tab-btn active" onclick="switchTab('senders', this)">📥 طلبات انضمام المرسلين (CV)</button>
+            <button class="tab-btn" onclick="switchTab('posts', this)">📝 مراجعة البوستات والمقالات</button>
+        </div>
+
+        <!-- قسم طلبات المرسلين (يتم تحميلها ديناميكياً) -->
+        <div id="senders-tab" class="tab-content active">
+            <div class="stats-row">
+                <div class="stat-box">
+                    <h4>مرسلين معلقين</h4>
+                    <p id="pending-count">0</p>
+                </div>
+                <div class="stat-box">
+                    <h4>مقبولين اليوم</h4>
+                    <p>7</p>
+                </div>
+                <div class="stat-box">
+                    <h4>إجمالي المرسلين</h4>
+                    <p>42</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>قائمة طلبات انضمام المرسلين الجدد</h3>
+                <div id="dynamic-senders-list">
+                    <!-- سيتم حقن الطلبات هنا تلقائياً -->
+                </div>
+            </div>
+        </div>
+
+        <!-- قسم مراجعة البوستات -->
+        <div id="posts-tab" class="tab-content">
+            <div class="stats-row">
+                <div class="stat-box">
+                    <h4>بوستات معلقة</h4>
+                    <p>2</p>
+                </div>
+                <div class="stat-box">
+                    <h4>تمت مراجعتها اليوم</h4>
+                    <p>12</p>
+                </div>
+                <div class="stat-box">
+                    <h4>مرفوضة</h4>
+                    <p>1</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>قائمة البوستات والمقالات الواردة</h3>
+                <div class="news-item">
+                    <div class="news-info">
+                        <h4>تحديثات جديدة بشأن ضوابط الاستيراد بالموانئ</h4>
+                        <p>المرسل: محمود خالد | القسم: التجارة والجمارك</p>
+                    </div>
+                    <div class="actions">
+                        <button class="btn btn-cv" onclick="alert('معاينة محتوى البوست بالكامل...')">معاينة</button>
+                        <button class="btn btn-approve" onclick="alert('تم قبول البوست!')">قبول</button>
+                        <button class="btn btn-reject" onclick="alert('تم رفض البوست.')">رفض</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <a href="login.html" class="back-link">← تسجيـل الخروج / العودة لتسجيل الدخول</a>
+    </div>
+
+    <script>
+        function switchTab(tabName, btnElement) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(tabName + '-tab').classList.add('active');
+            btnElement.classList.add('active');
+        }
+
+        // تحميل الطلبات المقدمة وعرضها في لوحة المراجع
+        function loadPendingSenders() {
+            const container = document.getElementById('dynamic-senders-list');
+            const countBox = document.getElementById('pending-count');
+            
+            let requests = JSON.parse(localStorage.getItem('gmarik_pending_senders')) || [];
+            
+            countBox.textContent = requests.length;
+
+            if (requests.length === 0) {
+                container.innerHTML = `<div class="no-data">لا توجد طلبات انضمام معلقة حتى الآن.</div>`;
+                return;
+            }
+
+            container.innerHTML = '';
+            requests.forEach((req, index) => {
+                let cardHtml = `
+                    <div class="sender-card">
+                        <div class="sender-img-box">
+                            <img src="${req.photo}" alt="صورة المراسل" onclick="window.open('${req.photo}')">
+                            <span>صورة المراسل</span>
+                        </div>
+                        <div class="sender-details">
+                            <h4>${req.name}</h4>
+                            <div class="sender-meta">الهاتف: ${req.phone} | البريد: ${req.email}</div>
+                            
+                            <div class="sender-bio">
+                                <strong>النبذة التعرفية:</strong><br>
+                                ${req.bio}
+                            </div>
+
+                            <div class="cv-section">
+                                <span>📄 الـ CV: ${req.cvName}</span>
+                                <a href="${req.cv}" target="_blank" class="btn btn-cv">استعراض الـ CV</a>
+                            </div>
+
+                            <div class="actions" style="justify-content: flex-end;">
+                                <button class="btn btn-approve" onclick="handleSender(${index}, true)">قبول واعتماد</button>
+                                <button class="btn btn-reject" onclick="handleSender(${index}, false)">رفض الطلب</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += cardHtml;
+            });
+        }
+
+        // دالة قبول أو رفض الطلب وحذفه من القائمة المعلقة
+        window.handleSender = function(index, isApproved) {
+            let requests = JSON.parse(localStorage.getItem('gmarik_pending_senders')) || [];
+            if (isApproved) {
+                alert('تم قبول المراسل بنجاح!');
+            } else {
+                alert('تم رفض الطلب.');
+            }
+            requests.splice(index, 1);
+            localStorage.setItem('gmarik_pending_senders', JSON.stringify(requests));
+            loadPendingSenders();
+        }
+
+        // تشغيل الدالة عند فتح الصفحة
+        window.onload = function() {
+            loadPendingSenders();
+            const loggedUser = localStorage.getItem('gmarik_logged_user');
+            if (loggedUser) {
+                document.getElementById('welcome-user').innerText = "مرحباً، " + loggedUser;
+            }
+        };
+    </script>
+
+</body>
+</html>
+

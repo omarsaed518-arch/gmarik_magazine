@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" id="html-root">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مرحباً بك | Gmarik Magazine</title>
+    <style>
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background: #000000;
+            overflow: hidden;
+            font-family: 'Cairo', Tahoma, sans-serif;
+        }
+
+        .video-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 5;
+            transition: opacity 0.8s ease;
+        }
+
+        video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100vw;
+            height: 100vh;
+            object-fit: cover;
+            image-rendering: optimizeQuality;
+        }
+
+        .controls-bar {
+            position: absolute;
+            top: 25px;
+            right: 25px;
+            left: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .skip-btn, .sound-btn {
+            background: rgba(7, 13, 27, 0.85);
+            color: #e2b714;
+            border: 2px solid #e2b714;
+            padding: 8px 22px;
+            border-radius: 30px;
+            font-size: 0.95rem;
+            font-weight: bold;
+            cursor: pointer;
+            backdrop-filter: blur(12px);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sound-btn {
+            color: #ffffff;
+            border-color: rgba(226, 183, 20, 0.4);
+        }
+
+        .skip-btn:hover, .sound-btn:hover {
+            background: #e2b714;
+            color: #070d1b;
+            box-shadow: 0 0 25px rgba(226, 183, 20, 0.7);
+            transform: scale(1.05);
+        }
+
+        .welcome-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: radial-gradient(circle at center, #0f172a 0%, #070d1b 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 2;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 1s ease, transform 1s ease;
+            transform: scale(1.05);
+        }
+
+        .welcome-screen.active {
+            opacity: 1;
+            visibility: visible;
+            transform: scale(1);
+        }
+
+        .welcome-content {
+            text-align: center;
+            padding: 20px;
+            max-width: 800px;
+            animation: floatUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .welcome-title {
+            color: #ffffff;
+            font-size: 3rem;
+            font-weight: 900;
+            margin-bottom: 15px;
+            text-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            letter-spacing: -1px;
+        }
+
+        .welcome-title span {
+            color: #e2b714;
+            text-shadow: 0 0 25px rgba(226, 183, 20, 0.5);
+        }
+
+        .welcome-subtitle {
+            color: #94a3b8;
+            font-size: 1.2rem;
+            margin-bottom: 40px;
+            font-weight: 600;
+        }
+
+        .start-btn {
+            background: linear-gradient(135deg, #e2b714 0%, #b8930b 100%);
+            color: #070d1b;
+            border: none;
+            padding: 16px 50px;
+            font-size: 1.3rem;
+            font-weight: 900;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 0 30px rgba(226, 183, 20, 0.4);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .start-btn:hover {
+            transform: translateY(-5px) scale(1.08);
+            box-shadow: 0 0 50px rgba(226, 183, 20, 0.8);
+            background: linear-gradient(135deg, #fff275 0%, #e2b714 100%);
+        }
+
+        body.fade-out {
+            opacity: 0;
+            transition: opacity 0.8s ease;
+        }
+
+        @keyframes floatUp {
+            0% { opacity: 0; transform: translateY(30px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 768px) {
+            .welcome-title { font-size: 2rem; }
+            .welcome-subtitle { font-size: 1rem; }
+            .start-btn { padding: 12px 35px; font-size: 1.1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="video-container" class="video-container">
+        <div class="controls-bar">
+            <button id="sound-toggle" class="sound-btn" onclick="toggleSound()">🔊 تشغيل الصوت</button>
+            <button id="skip-btn" class="skip-btn" onclick="showWelcomeScreen()">تخطي ⟵</button>
+        </div>
+
+        <video id="intro-video" playsinline webkit-playsinline poster="assets/images/thumbnail.jpg">
+            متصفحك لا يدعم تشغيل الفيديو.
+        </video>
+    </div>
+
+    <div id="welcome-screen" class="welcome-screen">
+        <div class="welcome-content">
+            <h1 id="welcome-title" class="welcome-title"></h1>
+            <p id="welcome-subtitle" class="welcome-subtitle"></p>
+            <button id="start-btn" class="start-btn" onclick="goToIndex()"></button>
+        </div>
+    </div>
+
+    <script>
+        const WELCOME_TEXTS = {
+            ar: { title: 'أهلاً بك في <span>مجلة جمارك مجازين</span>', subtitle: 'ببوابة التجارة الدولية، التخليص الجمركي، والتحليلات الحصرية', start: 'أبدأ الآن 🚀', skip: 'تخطي الفيديو ⟵', sound_on: '🔊 تشغيل الصوت', sound_off: '🔇 كتم الصوت' },
+            en: { title: 'Welcome to <span>Gmarik  Magazine</span>', subtitle: 'Your gateway to international trade, customs clearance, and exclusive analysis', start: 'Get Started 🚀', skip: 'Skip Video ⟵', sound_on: '🔊 Unmute', sound_off: '🔇 Mute' },
+            zh: { title: '欢迎来到<span>Gmarik Magazine</span>', subtitle: '您通往国际贸易、清关和独家分析的门户', start: '开始使用 🚀', skip: '跳过视频 ⟵', sound_on: '🔊 开启声音', sound_off: '🔇 静音' },
+            es: { title: 'Bienvenido a <span>Gmarik  Magazine</span>', subtitle: 'Tu puerta al comercio internacional, despacho aduanero y análisis exclusivos', start: 'Comenzar 🚀', skip: 'Saltar Video ⟵', sound_on: '🔊 Activar sonido', sound_off: '🔇 Silenciar' },
+            de: { title: 'Willkommen bei <span>Gmarik Magazine</span>', subtitle: 'Ihr Tor zum internationalen Handel, zur Zollabfertigung und zu exklusiven Analysen', start: 'Jetzt starten 🚀', skip: 'Video überspringen ⟵', sound_on: '🔊 Ton ein', sound_off: '🔇 Stumm' },
+            fr: { title: 'Bienvenue sur <span>Gmarik  Magazine</span>', subtitle: 'Votre portail vers le commerce international, le dédouanement et des analyses exclusives', start: 'Commencer 🚀', skip: 'Passer la vidéo ⟵', sound_on: '🔊 Activer le son', sound_off: '🔇 Muet' },
+            tr: { title: '<span>Gmarik Magazine</span>\'ne hoş geldiniz', subtitle: 'Uluslararası ticaret, gümrükleme ve özel analizlere açılan kapınız', start: 'Başla 🚀', skip: 'Videoyu geç ⟵', sound_on: '🔊 Sesi aç', sound_off: '🔇 Sessiz' },
+            ja: { title: '<span>Gmarik Magazine</span>へようこそ', subtitle: '国際貿易、通関、独自分析への入り口', start: '始める 🚀', skip: '動画をスキップ ⟵', sound_on: '🔊 音声オン', sound_off: '🔇 ミュート' },
+            ko: { title: '<span>Gmarik Magazine</span>에 오신 것을 환영합니다', subtitle: '국제 무역, 통관, 독점 분석으로 가는 관문', start: '시작하기 🚀', skip: '동영상 건너뛰기 ⟵', sound_on: '🔊 소리 켜기', sound_off: '🔇 음소거' },
+            el: { title: 'Καλώς ήρθατε στο <span>Gmarik  Magazine</span>', subtitle: 'Η πύλη σας προς το διεθνές εμπόριο, τον εκτελωνισμό και αποκλειστικές αναλύσεις', start: 'Ξεκινήστε 🚀', skip: 'Παράλειψη βίντεο ⟵', sound_on: '🔊 Ενεργοποίηση ήχου', sound_off: '🔇 Σίγαση' },
+            it: { title: 'Benvenuto su <span>Gmarik  Magazine</span>', subtitle: 'Il tuo portale per il commercio internazionale, lo sdoganamento e analisi esclusive', start: 'Inizia ora 🚀', skip: 'Salta video ⟵', sound_on: '🔊 Attiva audio', sound_off: '🔇 Muto' },
+            ru: { title: 'Добро пожаловать в <span>Gmarik  Magazine</span>', subtitle: 'Ваш портал в мир международной торговли, таможенного оформления и эксклюзивной аналитики', start: 'Начать 🚀', skip: 'Пропустить видео ⟵', sound_on: '🔊 Включить звук', sound_off: '🔇 Без звука' }
+        };
+
+        const RTL_LANGS = new Set(["ar"]);
+        const currentLang = localStorage.getItem('gmarik_lang') || 'en';
+        const t = WELCOME_TEXTS[currentLang] || WELCOME_TEXTS.en;
+
+        const htmlRoot = document.getElementById('html-root');
+        htmlRoot.lang = currentLang;
+        htmlRoot.dir = RTL_LANGS.has(currentLang) ? 'rtl' : 'ltr';
+
+        document.getElementById('welcome-title').innerHTML = t.title;
+        document.getElementById('welcome-subtitle').textContent = t.subtitle;
+        document.getElementById('start-btn').textContent = t.start;
+        document.getElementById('skip-btn').textContent = t.skip;
+
+        // خريطة لربط كود اللغة بالاسم الكامل لملف الفيديو
+        const LANGUAGE_VIDEO_NAMES = {
+            ar: 'arabic',
+            en: 'english',
+            zh: 'chinese',
+            es: 'spanish',
+            de: 'german',
+            fr: 'french',
+            tr: 'turkish',
+            ja: 'japanese',
+            ko: 'korean',
+            el: 'greek',
+            it: 'italian',
+            ru: 'russian'
+        };
+
+        const videoName = LANGUAGE_VIDEO_NAMES[currentLang] || 'english';
+
+        // تحميل وتشغيل الفيديو من مسار assets/videos/ بالاسم الكامل للغة
+        const video = document.getElementById('intro-video');
+        const source = document.createElement('source');
+        source.src = `assets/videos/${videoName}.mp4`;
+        source.type = 'video/mp4';
+        video.appendChild(source);
+        video.load();
+
+        const videoContainer = document.getElementById('video-container');
+        const welcomeScreen = document.getElementById('welcome-screen');
+        const soundBtn = document.getElementById('sound-toggle');
+
+        // الفيديو يبدأ صامتاً لتجنب قيود المتصفحات، ونعكس ذلك على الزرار
+        video.muted = true;
+        soundBtn.textContent = t.sound_on;
+
+        video.onerror = function() {
+            console.warn("⚠️ ملف الفيديو غير موجود في assets/videos/، سيتم الانتقال لشاشة الترحيب مباشرة.");
+            showWelcomeScreen();
+        };
+
+        video.play().catch(err => {
+            console.log("⚠️ Autoplay prevented, skipping to welcome screen");
+            showWelcomeScreen();
+        });
+
+        // دالة التحكم في الصوت مضبوطة بدقة منعكسة مع حالة الفيديو
+        function toggleSound() {
+            if (video.muted) {
+                video.muted = false;
+                soundBtn.textContent = t.sound_off; // يظهر زرار كتم الصوت لأن الصوت شغال الآن
+            } else {
+                video.muted = true;
+                soundBtn.textContent = t.sound_on; // يظهر زرار تشغيل الصوت لأن الصوت مكتوم الآن
+            }
+        }
+
+        function showWelcomeScreen() {
+            try {
+                video.pause();
+            } catch(e) {}
+            videoContainer.style.opacity = '0';
+            setTimeout(() => {
+                videoContainer.style.display = 'none';
+                welcomeScreen.classList.add('active');
+            }, 800);
+        }
+
+        video.addEventListener('ended', () => {
+            showWelcomeScreen();
+        });
+
+        function goToIndex() {
+            document.body.classList.add('fade-out');
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 800);
+        }
+    </script>
+</body>
+</html>

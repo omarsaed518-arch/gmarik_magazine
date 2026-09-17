@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" id="html-root">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="page-title">مركز البث المباشر | Gmarik Magazine</title>
+<link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon.png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=JetBrains+Mono:wght@500;700&display=swap');
+
+    :root {
+        --void: #05070d;
+        --deep: #0a1120;
+        --panel: rgba(13, 20, 38, 0.6);
+        --panel-border: rgba(226, 183, 20, 0.18);
+        --gold: #e2b714;
+        --gold-soft: rgba(226, 183, 20, 0.35);
+        --cyan: #2dd4ee;
+        --cyan-soft: rgba(45, 212, 238, 0.35);
+        --emerald: #34d399;
+        --emerald-soft: rgba(52, 211, 153, 0.35);
+        --text-main: #f4f6fb;
+        --text-dim: #8996ad;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        background: var(--void);
+        color: var(--text-main);
+        font-family: 'Cairo', Tahoma, sans-serif;
+        overflow-x: hidden;
+    }
+
+    /* ============ Backdrop ============ */
+    .backdrop {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        background:
+            radial-gradient(ellipse 900px 600px at 50% -10%, rgba(226,183,20,0.14), transparent 60%),
+            radial-gradient(ellipse 700px 500px at 85% 100%, rgba(45,212,238,0.10), transparent 60%),
+            radial-gradient(ellipse 700px 500px at 10% 90%, rgba(52,211,153,0.08), transparent 60%),
+            linear-gradient(160deg, #05070d 0%, #0a1120 45%, #0c1526 100%);
+    }
+
+    .scanlines {
+        position: fixed;
+        inset: 0;
+        z-index: 1;
+        pointer-events: none;
+        background-image: repeating-linear-gradient(
+            to bottom,
+            rgba(255,255,255,0.012) 0px,
+            rgba(255,255,255,0.012) 1px,
+            transparent 1px,
+            transparent 3px
+        );
+        opacity: 0.5;
+    }
+
+    .grain-drift {
+        position: fixed;
+        inset: -10%;
+        z-index: 1;
+        pointer-events: none;
+        background-image:
+            radial-gradient(1.5px 1.5px at 20% 30%, rgba(226,183,20,0.5), transparent),
+            radial-gradient(1.5px 1.5px at 75% 15%, rgba(45,212,238,0.4), transparent),
+            radial-gradient(1px 1px at 40% 70%, rgba(226,183,20,0.4), transparent),
+            radial-gradient(1.5px 1.5px at 90% 60%, rgba(52,211,153,0.35), transparent),
+            radial-gradient(1px 1px at 60% 85%, rgba(226,183,20,0.3), transparent),
+            radial-gradient(1.5px 1.5px at 12% 88%, rgba(45,212,238,0.3), transparent);
+        animation: driftParticles 22s linear infinite;
+    }
+
+    @keyframes driftParticles {
+        0%   { transform: translateY(0) translateX(0); }
+        50%  { transform: translateY(-18px) translateX(6px); }
+        100% { transform: translateY(0) translateX(0); }
+    }
+
+    /* ============ Back to home ============ */
+    .back-home {
+        position: fixed;
+        top: 22px;
+        inset-inline-start: 22px;
+        z-index: 50;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        height: 46px;
+        padding: 0 16px;
+        border-radius: 30px;
+        background: rgba(10, 17, 32, 0.7);
+        border: 1px solid rgba(226, 183, 20, 0.25);
+        color: var(--gold);
+        text-decoration: none;
+        backdrop-filter: blur(10px);
+        overflow: hidden;
+        transition: box-shadow 0.35s ease, border-color 0.35s ease, background 0.35s ease;
+    }
+
+    .back-home i {
+        font-size: 1.1rem;
+        transition: transform 0.35s ease;
+        transform: rotate(180deg); /* RTL: point toward reading-start (right) */
+    }
+
+    .back-home span {
+        max-width: 0;
+        opacity: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        font-size: 0.9rem;
+        font-weight: 700;
+        transition: max-width 0.35s ease, opacity 0.35s ease, margin 0.35s ease;
+    }
+
+    .back-home:hover {
+        border-color: var(--gold);
+        background: rgba(226, 183, 20, 0.12);
+        box-shadow: 0 0 22px rgba(226, 183, 20, 0.35);
+    }
+
+    .back-home:hover span {
+        max-width: 220px;
+        opacity: 1;
+    }
+
+    .back-home:hover i {
+        transform: rotate(180deg) translateX(3px);
+    }
+
+    html[dir="ltr"] .back-home i {
+        transform: rotate(0deg);
+    }
+
+    html[dir="ltr"] .back-home:hover i {
+        transform: translateX(-3px);
+    }
+
+    /* ============ Hero ============ */
+    .hero {
+        position: relative;
+        z-index: 5;
+        padding: 130px 20px 40px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .signal-tower {
+        position: relative;
+        width: 220px;
+        height: 220px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 18px;
+    }
+
+    .ring {
+        position: absolute;
+        border-radius: 50%;
+        border: 1.5px solid var(--gold-soft);
+        opacity: 0;
+        animation: ringPulse 3.6s cubic-bezier(0.2, 0.6, 0.3, 1) infinite;
+    }
+    .ring:nth-child(1) { width: 70px; height: 70px; animation-delay: 0s; }
+    .ring:nth-child(2) { width: 70px; height: 70px; animation-delay: 0.9s; }
+    .ring:nth-child(3) { width: 70px; height: 70px; animation-delay: 1.8s; }
+    .ring:nth-child(4) { width: 70px; height: 70px; animation-delay: 2.7s; }
+
+    @keyframes ringPulse {
+        0%   { width: 70px; height: 70px; opacity: 0.9; border-color: var(--gold); }
+        70%  { opacity: 0.15; }
+        100% { width: 220px; height: 220px; opacity: 0; border-color: var(--cyan-soft); }
+    }
+
+    .tower-core {
+        position: relative;
+        z-index: 2;
+        width: 68px;
+        height: 68px;
+        border-radius: 50%;
+        background: radial-gradient(circle at 35% 30%, #fff6d8, var(--gold) 55%, #a97e0a 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 0 30px rgba(226, 183, 20, 0.65), 0 0 70px rgba(226, 183, 20, 0.25);
+        animation: coreBreathe 3.6s ease-in-out infinite;
+    }
+
+    @keyframes coreBreathe {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.06); }
+    }
+
+    .tower-core i {
+        font-size: 1.6rem;
+        color: var(--void);
+    }
+
+    .eyebrow {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.78rem;
+        letter-spacing: 3px;
+        color: var(--cyan);
+        text-transform: uppercase;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 14px;
+        opacity: 0;
+        animation: fadeUp 0.8s ease forwards 0.15s;
+    }
+
+    .eyebrow .dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #ff3b57;
+        box-shadow: 0 0 10px #ff3b57;
+        animation: dotBlink 1.6s ease-in-out infinite;
+    }
+
+    @keyframes dotBlink {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.25; }
+    }
+
+    .hero h1 {
+        font-size: clamp(2.1rem, 5vw, 3.4rem);
+        font-weight: 900;
+        margin: 0 0 14px;
+        line-height: 1.25;
+        background: linear-gradient(90deg, #fff 10%, var(--gold) 55%, #fff6d8 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        opacity: 0;
+        animation: fadeUp 0.8s ease forwards 0.3s;
+    }
+
+    .hero p.sub {
+        max-width: 560px;
+        color: var(--text-dim);
+        font-size: 1.05rem;
+        line-height: 1.9;
+        margin: 0 auto;
+        opacity: 0;
+        animation: fadeUp 0.8s ease forwards 0.45s;
+    }
+
+    @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(16px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ============ Cards ============ */
+    .cards {
+        position: relative;
+        z-index: 5;
+        max-width: 1080px;
+        margin: 50px auto 90px;
+        padding: 0 24px;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 26px;
+    }
+
+    @media (max-width: 880px) {
+        .cards { grid-template-columns: 1fr; max-width: 460px; }
+    }
+
+    .card {
+        position: relative;
+        background: var(--panel);
+        border: 1px solid var(--panel-border);
+        border-radius: 22px;
+        padding: 34px 26px;
+        text-decoration: none;
+        color: var(--text-main);
+        backdrop-filter: blur(14px);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 14px;
+        opacity: 0;
+        transform: translateY(24px);
+        animation: cardIn 0.7s ease forwards;
+        transition: transform 0.4s cubic-bezier(0.2,0.8,0.3,1), box-shadow 0.4s ease, border-color 0.4s ease;
+    }
+
+    .card:nth-child(1) { animation-delay: 0.55s; }
+    .card:nth-child(2) { animation-delay: 0.7s; }
+    .card:nth-child(3) { animation-delay: 0.85s; }
+
+    @keyframes cardIn {
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .card::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(400px 200px at 30% -10%, var(--glow, rgba(226,183,20,0.16)), transparent 60%);
+        opacity: 0;
+        transition: opacity 0.4s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-8px);
+        border-color: var(--accent, var(--gold));
+        box-shadow: 0 18px 40px rgba(0,0,0,0.45), 0 0 30px var(--accent-glow, rgba(226,183,20,0.25));
+    }
+
+    .card:hover::before { opacity: 1; }
+
+    .card-watch   { --accent: var(--cyan);    --accent-glow: var(--cyan-soft);    --glow: rgba(45,212,238,0.16); }
+    .card-request { --accent: var(--gold);    --accent-glow: var(--gold-soft);    --glow: rgba(226,183,20,0.18); }
+    .card-approved{ --accent: var(--emerald); --accent-glow: var(--emerald-soft); --glow: rgba(52,211,153,0.16); }
+
+    .card-icon {
+        width: 58px;
+        height: 58px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        color: var(--accent);
+        background: color-mix(in srgb, var(--accent) 14%, transparent);
+        border: 1px solid var(--accent-glow);
+        position: relative;
+        z-index: 1;
+    }
+
+    .card-request .card-icon i { animation: micPulse 2.2s ease-in-out infinite; }
+    @keyframes micPulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.12); } }
+
+    .card-watch .card-icon i { animation: eyeBlink 3.4s ease-in-out infinite; }
+    @keyframes eyeBlink { 0%,92%,100% { opacity: 1; } 96% { opacity: 0.3; } }
+
+    .card-approved .card-icon i { animation: checkPop 2.6s ease-in-out infinite; }
+    @keyframes checkPop { 0%,100% { transform: scale(1) rotate(0); } 50% { transform: scale(1.08) rotate(-4deg); } }
+
+    .card-title {
+        font-size: 1.3rem;
+        font-weight: 800;
+        position: relative;
+        z-index: 1;
+    }
+
+    .card-desc {
+        color: var(--text-dim);
+        font-size: 0.92rem;
+        line-height: 1.8;
+        position: relative;
+        z-index: 1;
+    }
+
+    .card-cta {
+        margin-top: auto;
+        padding-top: 10px;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.78rem;
+        letter-spacing: 1.5px;
+        color: var(--accent);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .card-cta i {
+        transition: transform 0.35s ease;
+        transform: rotate(180deg);
+    }
+
+    .card:hover .card-cta i {
+        transform: rotate(180deg) translateX(-5px);
+    }
+
+    html[dir="ltr"] .card-cta i {
+        transform: rotate(0deg);
+    }
+
+    html[dir="ltr"] .card:hover .card-cta i {
+        transform: translateX(5px);
+    }
+
+    /* ============ Bottom ticker ============ */
+    .live-strip {
+        position: relative;
+        z-index: 5;
+        border-top: 1px solid rgba(226, 183, 20, 0.15);
+        background: rgba(5, 7, 13, 0.6);
+        backdrop-filter: blur(8px);
+        padding: 16px 0;
+        overflow: hidden;
+        white-space: nowrap;
+    }
+
+    .live-strip .track {
+        display: inline-block;
+        padding-left: 100%;
+        animation: scrollTrack 26s linear infinite;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.82rem;
+        color: var(--text-dim);
+        letter-spacing: 0.5px;
+    }
+
+    .live-strip .track span {
+        color: var(--gold);
+        margin: 0 10px;
+    }
+
+    @keyframes scrollTrack {
+        0%   { transform: translateX(0%); }
+        100% { transform: translateX(-100%); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+            animation-duration: 0.001ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.001ms !important;
+        }
+    }
+</style>
+</head>
+<body>
+
+<div class="backdrop"></div>
+<div class="scanlines"></div>
+<div class="grain-drift"></div>
+
+<a href="index.html" class="back-home" aria-label="الرجوع للصفحة الرئيسية">
+    <i class="fa-solid fa-arrow-right"></i>
+    <span data-i18n-live>الرجوع للصفحة الرئيسية</span>
+</a>
+
+<section class="hero">
+    <div class="signal-tower">
+        <div class="ring"></div>
+        <div class="ring"></div>
+        <div class="ring"></div>
+        <div class="ring"></div>
+        <div class="tower-core"><i class="fa-solid fa-tower-broadcast"></i></div>
+    </div>
+
+    <div class="eyebrow"><span class="dot"></span> <span data-i18n-live>شبكة جمارك مجازين المباشرة</span></div>
+    <h1 data-i18n-live>مركز البث المباشر</h1>
+    <p class="sub" data-i18n-live>تابع البثوث الجمركية الحية، قدّم طلب بثّك الخاص، أو تحقق من حالة اعتماد بثّك — كل ذلك من مكان واحد.</p>
+</section>
+
+<div class="cards">
+    <a href="watching-lives.html" class="card card-watch">
+        <div class="card-icon"><i class="fa-solid fa-eye"></i></div>
+        <div class="card-title" data-i18n-live>مشاهدة البثوث</div>
+        <div class="card-desc" data-i18n-live>شاهد البثوث الجمركية الحية والمسجّلة أولاً بأول من داخل مجلة جمارك مجازين.</div>
+        <div class="card-cta"><span data-i18n-live>ابدأ المشاهدة</span> <i class="fa-solid fa-arrow-left"></i></div>
+    </a>
+
+    <a href="live-regester.html" class="card card-request">
+        <div class="card-icon"><i class="fa-solid fa-satellite-dish"></i></div>
+        <div class="card-title" data-i18n-live>تقديم طلب بث</div>
+        <div class="card-desc" data-i18n-live>قدّم طلبك لبدء بثّ خاص بك عبر منصة جمارك مجازين واعرض محتواك لجمهورنا.</div>
+        <div class="card-cta"><span data-i18n-live>قدّم طلبك</span> <i class="fa-solid fa-arrow-left"></i></div>
+    </a>
+
+    <a href="live-authencation.html" class="card card-approved">
+        <div class="card-icon"><i class="fa-solid fa-circle-check"></i></div>
+        <div class="card-title" data-i18n-live>بث مقبول</div>
+        <div class="card-desc" data-i18n-live>تحقق من حالة اعتماد طلب بثّك وابدأ البث فور الموافقة عليه.</div>
+        <div class="card-cta"><span data-i18n-live>تحقق من الحالة</span> <i class="fa-solid fa-arrow-left"></i></div>
+    </a>
+</div>
+
+<div class="live-strip">
+    <div class="track">
+        <span>●</span> <span data-i18n-live>البث المباشر متاح على مدار الساعة</span>
+        <span>●</span> <span data-i18n-live>تابع آخر مستجدات الجمارك لحظة بلحظة</span>
+        <span>●</span> <span data-i18n-live>شبكة جمارك مجازين المباشرة</span>
+        <span>●</span> <span data-i18n-live>البث المباشر متاح على مدار الساعة</span>
+        <span>●</span> <span data-i18n-live>تابع آخر مستجدات الجمارك لحظة بلحظة</span>
+        <span>●</span> <span data-i18n-live>شبكة جمارك مجازين المباشرة</span>
+    </div>
+</div>
+
+
+<!-- ====== نظام ترجمة الصفحة، بنفس آلية ترجمة شريط الأخبار في الصفحة الرئيسية ====== -->
+<script>
+(function () {
+    const htmlRoot = document.getElementById('html-root');
+    const liveTranslationCache = {};
+
+    function toGoogleLangCode(lang) {
+        const map = { zh: 'zh-CN' };
+        return map[lang] || lang;
+    }
+
+    async function translateLiveText(text, targetLang) {
+        if (!text) return text;
+        const cacheKey = targetLang + '::' + text;
+        if (liveTranslationCache[cacheKey]) return liveTranslationCache[cacheKey];
+
+        try {
+            const googleLang = toGoogleLangCode(targetLang);
+            const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${googleLang}&dt=t&q=${encodeURIComponent(text)}`;
+            const res = await fetch(url);
+            if (!res.ok) throw new Error('Translation API error');
+            const data = await res.json();
+            const translated = data[0].map(part => part[0]).join('');
+            liveTranslationCache[cacheKey] = translated;
+            return translated;
+        } catch (err) {
+            console.error('تعذرت ترجمة صفحة البثوث:', err);
+            return text;
+        }
+    }
+
+    async function applyLiveHubLanguage() {
+        const lang = localStorage.getItem('gmarik_lang') || 'ar';
+        const dir = lang === 'ar' ? 'rtl' : 'ltr';
+
+        htmlRoot.setAttribute('lang', lang);
+        htmlRoot.setAttribute('dir', dir);
+
+        const nodes = document.querySelectorAll('[data-i18n-live]');
+        for (const el of nodes) {
+            if (!el.hasAttribute('data-original')) {
+                el.setAttribute('data-original', el.textContent.trim());
+            }
+            const original = el.getAttribute('data-original');
+            el.textContent = (lang === 'ar') ? original : await translateLiveText(original, lang);
+        }
+
+        const titleEl = document.getElementById('page-title');
+        if (titleEl) {
+            if (!titleEl.hasAttribute('data-original')) {
+                titleEl.setAttribute('data-original', titleEl.textContent.trim());
+            }
+            const originalTitle = titleEl.getAttribute('data-original');
+            document.title = (lang === 'ar') ? originalTitle : await translateLiveText(originalTitle, lang);
+        }
+    }
+
+    window.addEventListener('DOMContentLoaded', applyLiveHubLanguage);
+})();
+</script>
+</body>
+</html>

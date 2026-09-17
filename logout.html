@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" id="html-root">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="page-title">تسجيل الخروج - جمارك نيوز</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/images/favicon.png">
+    
+    <style>
+        @keyframes auroraMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes cardEntrance {
+            0% { opacity: 0; transform: translateY(40px) scale(0.9); filter: blur(10px); }
+            100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+            100% { transform: translateY(0px); }
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(-45deg, #050b14, #0a192f, #020c1b, #0f172a);
+            background-size: 400% 400%;
+            animation: auroraMove 15s ease infinite;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            padding: 15px;
+            box-sizing: border-box;
+            overflow: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(212,175,55,0.12) 0%, rgba(0,0,0,0) 70%);
+            top: -50px; right: -50px; border-radius: 50%; z-index: 0;
+            animation: float 8s ease-in-out infinite alternate;
+        }
+
+        body::after {
+            content: '';
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(217,83,79,0.08) 0%, rgba(0,0,0,0) 70%);
+            bottom: -50px; left: -50px; border-radius: 50%; z-index: 0;
+            animation: float 10s ease-in-out infinite alternate-reverse;
+        }
+
+        .logout-card {
+            position: relative;
+            z-index: 1;
+            background: rgba(10, 25, 47, 0.65);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            padding: 35px 30px;
+            border-radius: 24px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            animation: cardEntrance 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards, float 6s ease-in-out infinite;
+            box-sizing: border-box;
+        }
+
+        h3 {
+            color: #ffffff;
+            margin-bottom: 25px;
+            font-size: 1.25rem;
+            font-weight: 800;
+            text-shadow: 0 4px 15px rgba(212, 175, 55, 0.2);
+            letter-spacing: -0.5px;
+        }
+
+        h3::after {
+            content: '';
+            display: block;
+            width: 45px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #d4af37, transparent);
+            margin: 8px auto 0;
+            border-radius: 5px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 12px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 800;
+            cursor: pointer;
+            font-family: 'Cairo', sans-serif;
+            font-size: 0.95rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-sizing: border-box;
+            position: relative;
+            overflow: hidden;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(1px);
+        }
+
+        .btn-yes {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: #ffffff;
+            box-shadow: 0 8px 20px rgba(239, 68, 68, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-yes:hover {
+            box-shadow: 0 12px 25px rgba(239, 68, 68, 0.45);
+            background: linear-gradient(135deg, #f87171, #ef4444);
+        }
+
+        .btn-no {
+            background: rgba(255, 255, 255, 0.05);
+            color: #e2e8f0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-no:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(212, 175, 55, 0.4);
+            color: #ffd700;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="logout-card">
+        <h3 id="logout-msg">هل أنت متأكد من رغبتك في تسجيل الخروج؟</h3>
+        <div class="btn-group">
+            <button id="yes-btn" class="btn-yes">نعم</button>
+            <button id="no-btn" class="btn-no">لا</button>
+        </div>
+    </div>
+
+    <script>
+        // قاموس الترجمات بـ 12 لغة
+        const translations = {
+            ar: {
+                dir: "rtl",
+                title: "تسجيل الخروج - جمارك نيوز",
+                message: "هل أنت متأكد من رغبتك في تسجيل الخروج؟",
+                yes: "نعم",
+                no: "لا"
+            },
+            en: {
+                dir: "ltr",
+                title: "Logout - Gmarik News",
+                message: "Are you sure you want to log out?",
+                yes: "Yes",
+                no: "No"
+            },
+            fr: {
+                dir: "ltr",
+                title: "Déconnexion - Gmarik News",
+                message: "Êtes-vous sûr de vouloir vous déconnecter?",
+                yes: "Oui",
+                no: "Non"
+            },
+            de: {
+                dir: "ltr",
+                title: "Abmelden - Gmarik News",
+                message: "Möchten Sie sich wirklich abmelden?",
+                yes: "Ja",
+                no: "Nein"
+            },
+            es: {
+                dir: "ltr",
+                title: "Cerrar sesión - Gmarik News",
+                message: "¿Estás seguro de que deseas cerrar sesión?",
+                yes: "Sí",
+                no: "No"
+            },
+            it: {
+                dir: "ltr",
+                title: "Disconnetti - Gmarik News",
+                message: "Sei sicuro di voler effettuare il logout?",
+                yes: "Sì",
+                no: "No"
+            },
+            tr: {
+                dir: "ltr",
+                title: "Çıkış Yap - Gmarik News",
+                message: "Çıkış yapmak istediğinizden emin misiniz?",
+                yes: "Evet",
+                no: "Hayır"
+            },
+            ru: {
+                dir: "ltr",
+                title: "Выход - Gmarik News",
+                message: "Вы уверены, что хотите выйти?",
+                yes: "Да",
+                no: "Нет"
+            },
+            zh: {
+                dir: "ltr",
+                title: "登出 - Gmarik News",
+                message: "您确定要登出吗？",
+                yes: "是",
+                no: "否"
+            },
+            ja: {
+                dir: "ltr",
+                title: "ログアウト - Gmarik News",
+                message: "ログアウトしてもよろしいですか？",
+                yes: "はい",
+                no: "いいえ"
+            },
+            hi: {
+                dir: "ltr",
+                title: "लॉगआउट - Gmarik News",
+                message: "क्या आप वाकई लॉगout करना चाहते हैं?",
+                yes: "हाँ",
+                no: "नहीं"
+            },
+            pt: {
+                dir: "ltr",
+                title: "Sair - Gmarik News",
+                message: "Tem certeza de que deseja sair?",
+                yes: "Sim",
+                no: "Não"
+            }
+        };
+
+        // جلب اللغة المختار تخزينها في الـ localStorage (افتراضياً العربية 'ar' إذا لم توجد)
+        const currentLang = localStorage.getItem('gmarik_lang') || 'ar';
+        const t = translations[currentLang] || translations['ar'];
+
+        // تطبيق اتجاه الصفحة واللغة
+        const htmlRoot = document.getElementById('html-root');
+        htmlRoot.setAttribute('lang', currentLang);
+        htmlRoot.setAttribute('dir', t.dir);
+
+        // تحديث النصوص والعنوان بناءً على اللغة
+        document.getElementById('page-title').innerText = t.title;
+        document.getElementById('logout-msg').innerText = t.message;
+        document.getElementById('yes-btn').innerText = t.yes;
+        document.getElementById('no-btn').innerText = t.no;
+
+        // لو دوست "نعم": امسح البيانات وارجع للصفحة الرئيسية كزائر
+        document.getElementById('yes-btn').onclick = function() {
+            localStorage.removeItem('gmarik_logged_user');
+            localStorage.removeItem('gmarik_user');
+            window.location.href = 'index.html';
+        };
+
+        // لو دوست "لا": ارجع خطوة للوراء كأنك مخرجتش من مكانك
+        document.getElementById('no-btn').onclick = function() {
+            window.history.back();
+        };
+    </script>
+
+</body>
+</html>

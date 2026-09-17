@@ -1,0 +1,2715 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة تحكم رئيس التحرير - مجلة جمارك</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- مكتبة Agora للبث السحابي -->
+    <script src="https://download.agora.io/sdk/release/AgoraRTC_N-4.20.0.js"></script>
+    <style>
+        :root { --primary: #0f172a; --secondary: #3b82f6; --accent: #d4af37; --bg-color: #0b1120; --card-bg: #1e293b; --text-main: #f8fafc; --text-muted: #94a3b8; --border: #334155; --success: #10b981; --danger: #ef4444; --purple: #a855f7; }
+        
+        body { font-family: 'Cairo', sans-serif; background-color: var(--bg-color); color: var(--text-main); margin: 0; padding: 30px; user-select: none; -webkit-user-select: none; }
+        
+        /* ===== شاشة الترحيب برئيس التحرير الأستاذ محمد الجزار ===== */
+        #editorInChiefSplash {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: radial-gradient(circle at center, #1e293b 0%, #0b1120 100%);
+            z-index: 99999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            overflow: hidden;
+            animation: splashFadeOut 0.8s ease 4.2s forwards;
+        }
+
+        .splash-crown {
+            font-size: 5rem;
+            color: var(--accent);
+            animation: crownBounce 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) infinite alternate, glowPulse 2s infinite;
+            margin-bottom: 20px;
+        }
+
+        .splash-title {
+            font-size: 2.8rem;
+            font-weight: 900;
+            color: #fff;
+            margin: 0 0 10px 0;
+            text-shadow: 0 10px 30px rgba(212, 175, 55, 0.4);
+            animation: titleSlideUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
+        }
+
+        .splash-subtitle {
+            font-size: 1.5rem;
+            color: var(--accent);
+            font-weight: 700;
+            margin: 0;
+            animation: titleSlideUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.6s both;
+        }
+
+        .splash-particles {
+            position: absolute;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.15) 10%, transparent 70%);
+            animation: pulseBg 3s infinite;
+        }
+
+        @keyframes crownBounce {
+            from { transform: translateY(0) scale(1); }
+            to { transform: translateY(-15px) scale(1.1); }
+        }
+
+        @keyframes titleSlideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes glowPulse {
+            0%, 100% { filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.6)); }
+            50% { filter: drop-shadow(0 0 35px rgba(212, 175, 55, 1)); }
+        }
+
+        @keyframes pulseBg {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 0.8; }
+        }
+
+        @keyframes splashFadeOut {
+            0% { opacity: 1; visibility: visible; transform: scale(1); }
+            99% { opacity: 0; visibility: visible; transform: scale(1.05); }
+            100% { opacity: 0; visibility: hidden; transform: scale(1.05); display: none; }
+        }
+
+        .container { max-width: 1250px; margin: 0 auto; }
+        
+        .top-navbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; gap: 15px; }
+        .top-nav-btn { background: rgba(239, 68, 68, 0.15); color: var(--danger); border: 1px solid var(--danger); padding: 10px 20px; border-radius: 12px; font-family: 'Cairo'; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-size: 0.95rem; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .top-nav-btn:hover { background: var(--danger); color: #fff; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4); }
+        
+        .mail-nav-btn { background: var(--secondary); color: #fff; border: 1px solid var(--secondary); padding: 10px 20px; border-radius: 12px; font-family: 'Cairo'; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 10px; font-size: 0.95rem; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .mail-nav-btn:hover { opacity: 0.9; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5); }
+        .mail-badge { background: #ef4444; color: #fff; padding: 2px 8px; border-radius: 20px; font-size: 0.8rem; font-weight: 900; }
+
+        .header { display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); padding: 20px 30px; border-radius: 16px; border: 1px solid var(--border); border-top: 4px solid var(--accent); margin-bottom: 25px; flex-wrap: wrap; gap: 15px; }
+        .header h2 { margin: 0; font-size: 1.4rem; color: #fff; display: flex; align-items: center; gap: 10px; }
+        .header h2 i { color: var(--accent); }
+        
+        .btn-clear-all { background: var(--danger); color: #fff; border: none; padding: 10px 18px; border-radius: 10px; cursor: pointer; font-family: 'Cairo'; font-weight: 700; display: inline-flex; align-items: center; gap: 8px; transition: all 0.3s ease; }
+        .btn-clear-all:hover { opacity: 0.85; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(239, 68, 68, 0.4); }
+
+        .tabs-nav { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); align-items: stretch; gap: 12px; margin-bottom: 25px; }
+        .tab-btn { background: var(--card-bg); color: var(--text-muted); border: 1px solid var(--border); padding: 12px 18px; border-radius: 12px; font-family: 'Cairo'; font-weight: 700; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); font-size: 1rem; display: flex; align-items: center; justify-content: center; gap: 8px; text-align: center; line-height: 1.4; }
+        .tab-btn:hover { border-color: var(--secondary); color: #fff; transform: translateY(-2px); }
+        .tab-btn.active { background: var(--secondary); color: #fff; border-color: var(--secondary); box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4); }
+
+        .tab-content { display: none; opacity: 0; transform: translateY(15px); transition: opacity 0.4s ease, transform 0.4s ease; }
+        .tab-content.active { display: block; opacity: 1; transform: translateY(0); animation: fadeInSection 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+        @keyframes fadeInSection {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card { background: var(--card-bg); padding: 25px; border-radius: 16px; border: 1px solid var(--border); margin-bottom: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .card h3 { margin-top: 0; color: var(--accent); font-size: 1.2rem; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+        table { width: 100%; border-collapse: collapse; text-align: right; }
+        th, td { padding: 14px 16px; border-bottom: 1px solid var(--border); font-size: 0.92rem; vertical-align: middle; }
+        th { color: var(--accent); font-weight: 700; background: #0f172a; white-space: nowrap; }
+        tr { transition: background 0.2s ease; }
+        tr:hover { background: rgba(59, 130, 246, 0.05); }
+        
+        .badge { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; white-space: nowrap; }
+        .badge-pending { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid #f59e0b; }
+        .badge-approved { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid #10b981; }
+        .badge-rejected { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid #ef4444; }
+        .badge-role-editor { background: rgba(212, 175, 55, 0.15); color: var(--accent); border: 1px solid var(--accent); }
+
+        .article-actions-row {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 8px;
+            flex-wrap: nowrap;
+            white-space: nowrap;
+        }
+
+        .btn-publish-direct {
+            background: linear-gradient(135deg, #059669, #10b981);
+            color: #ffffff;
+            border: 1px solid #10b981;
+            padding: 8px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-family: 'Cairo', sans-serif;
+            font-size: 0.88rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+        .btn-publish-direct:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(16, 185, 129, 0.5);
+            background: linear-gradient(135deg, #047857, #059669);
+        }
+
+        .sub-tabs-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 15px; }
+        .sub-tab-btn { background: #0f172a; color: var(--text-muted); border: 1px solid var(--border); padding: 8px 14px; border-radius: 10px; font-family: 'Cairo'; font-weight: 700; cursor: pointer; transition: all 0.3s ease; font-size: 0.9rem; text-align: center; line-height: 1.4; }
+        .sub-tab-btn:hover { color: #fff; border-color: var(--accent); }
+        .sub-tab-btn.active { background: var(--accent); color: #0f172a; border-color: var(--accent); box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3); }
+        
+        .sub-tab-content { display: none; opacity: 0; transition: opacity 0.3s ease; }
+        .sub-tab-content.active { display: block; opacity: 1; animation: fadeInSection 0.4s ease forwards; }
+
+        .live-mode-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
+        .live-mode-card { background: #0f172a; border: 2px solid var(--border); padding: 18px 15px; border-radius: 14px; text-align: center; cursor: pointer; transition: all 0.3s ease; }
+        .live-mode-card:hover { border-color: var(--secondary); transform: translateY(-2px); }
+        .live-mode-card.active-human { border-color: var(--danger); background: rgba(239, 68, 68, 0.1); box-shadow: 0 4px 20px rgba(239, 68, 68, 0.25); }
+        .live-mode-card.active-ai { border-color: var(--purple); background: rgba(168, 85, 247, 0.12); box-shadow: 0 4px 20px rgba(168, 85, 247, 0.25); }
+        .live-mode-card i { font-size: 2rem; margin-bottom: 8px; display: block; }
+        .live-mode-card h4 { margin: 0; font-size: 1.05rem; font-weight: 800; color: #fff; }
+        .live-mode-card p { margin: 5px 0 0 0; font-size: 0.78rem; color: var(--text-muted); }
+
+        .btn-action-restore { background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(5, 150, 105, 0.3)); color: #34d399; border: 1.5px solid rgba(16, 185, 129, 0.5); padding: 9px 16px; border-radius: 10px; cursor: pointer; font-family: 'Cairo', sans-serif; font-weight: 700; font-size: 0.88rem; display: inline-flex; align-items: center; gap: 6px; transition: all 0.3s ease; }
+        .btn-action-restore:hover { background: linear-gradient(135deg, #059669, #047857); color: #ffffff; transform: translateY(-2px); }
+
+        .btn-action-view { background: linear-gradient(135deg, rgba(14, 165, 233, 0.2), rgba(2, 132, 199, 0.3)); color: #38bdf8; border: 1.5px solid rgba(14, 165, 233, 0.5); padding: 9px 16px; border-radius: 10px; cursor: pointer; font-family: 'Cairo', sans-serif; font-weight: 700; font-size: 0.88rem; display: inline-flex; align-items: center; gap: 6px; transition: all 0.3s ease; }
+        .btn-action-view:hover { background: linear-gradient(135deg, #0284c7, #0369a1); color: #ffffff; transform: translateY(-2px); }
+
+        .btn-action-delete { background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(220, 38, 38, 0.3)); color: #f87171; border: 1.5px solid rgba(239, 68, 68, 0.5); padding: 9px 16px; border-radius: 10px; cursor: pointer; font-family: 'Cairo', sans-serif; font-weight: 700; font-size: 0.88rem; display: inline-flex; align-items: center; gap: 6px; transition: all 0.3s ease; }
+        .btn-action-delete:hover { background: linear-gradient(135deg, #dc2626, #b91c1c); color: #ffffff; transform: translateY(-2px); }
+
+        .floating-live-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(135deg, #ef4444, #b91c1c);
+            color: #ffffff;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            padding: 14px 24px;
+            border-radius: 50px;
+            font-family: 'Cairo', sans-serif;
+            font-weight: 800;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(239, 68, 68, 0.5);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 999;
+            transition: all 0.3s ease;
+        }
+        .floating-live-btn:hover {
+            transform: translateY(-4px) scale(1.03);
+            box-shadow: 0 15px 35px rgba(239, 68, 68, 0.7);
+            background: linear-gradient(135deg, #dc2626, #991b1b);
+        }
+        .floating-live-btn i { font-size: 1.25rem; animation: pulse-live 1.5s infinite; }
+        @keyframes pulse-live { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.25); opacity: 0.8; } 100% { transform: scale(1); opacity: 1; } }
+
+        .live-broadcast-room {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(11, 17, 32, 0.95);
+            z-index: 4000;
+            display: none;
+            flex-direction: column;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .live-broadcast-room.active { display: flex; animation: fadeInSection 0.3s ease forwards; }
+        .live-room-header { display: flex; justify-content: space-between; align-items: center; background: #162032; padding: 15px 25px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 20px; }
+        .live-room-header h3 { color: var(--danger); margin: 0; display: flex; align-items: center; gap: 10px; font-size: 1.2rem; }
+        .live-room-body { display: flex; flex: 1; gap: 20px; overflow: hidden; flex-wrap: wrap; }
+        .video-container { flex: 2; background: #000; border-radius: 14px; overflow: hidden; position: relative; display: flex; justify-content: center; align-items: center; min-height: 350px; border: 2px solid var(--border); }
+        .video-container video { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
+        .live-controls-bar { position: absolute; bottom: 20px; display: flex; gap: 15px; background: rgba(15, 23, 42, 0.8); padding: 10px 20px; border-radius: 30px; backdrop-filter: blur(5px); z-index: 10; }
+        .control-btn { background: var(--card-bg); color: #fff; border: 1px solid var(--border); padding: 10px 16px; border-radius: 50%; cursor: pointer; font-size: 1rem; transition: 0.2s; display: flex; align-items: center; justify-content: center; width: 45px; height: 45px; }
+        .control-btn.active-off { background: var(--danger); border-color: var(--danger); }
+        .control-btn:hover { opacity: 0.85; transform: scale(1.1); }
+        .mic-meter { width: 10px; height: 45px; background: rgba(255,255,255,0.12); border-radius: 5px; overflow: hidden; display: flex; align-items: flex-end; border: 1px solid rgba(255,255,255,0.15); }
+        .mic-meter-fill { width: 100%; height: 0%; background: linear-gradient(0deg, var(--success), #6ee7b7); transition: height 0.07s linear; }
+        
+        .chat-container-live { flex: 1; background: #162032; border-radius: 14px; border: 1px solid var(--border); display: flex; flex-direction: column; max-width: 350px; min-width: 280px; overflow: hidden; }
+        .chat-box-header { padding: 15px; background: #0f172a; border-bottom: 1px solid var(--border); font-weight: 700; font-size: 0.95rem; color: var(--accent); display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+        .chat-controls-mini { display: flex; gap: 8px; }
+        .control-btn-mini { background: var(--card-bg); color: #fff; border: 1px solid var(--border); cursor: pointer; font-size: 0.85rem; transition: 0.2s; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; }
+        .control-btn-mini.active-off { background: var(--danger); border-color: var(--danger); }
+        .control-btn-mini:hover { opacity: 0.85; transform: scale(1.1); }
+        .chat-messages { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; font-size: 0.88rem; }
+        .chat-msg-item { display: flex; gap: 10px; align-items: flex-start; animation: fadeInSection 0.3s ease forwards; }
+        .chat-msg-avatar { flex-shrink: 0; width: 30px; height: 30px; border-radius: 50%; background: var(--secondary); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 0.8rem; }
+        .chat-msg-item.is-owner .chat-msg-avatar { background: var(--accent); color: var(--primary); }
+        .chat-msg-body { flex: 1; background: #1e293b; border: 1px solid var(--border); border-radius: 10px; padding: 8px 12px; }
+        .chat-msg-username { display: block; color: var(--accent); font-weight: 700; font-size: 0.8rem; margin-bottom: 3px; }
+        .chat-msg-item.is-owner .chat-msg-username { color: #38bdf8; }
+        .chat-msg-text { margin: 0; color: var(--text-main); line-height: 1.5; word-break: break-word; }
+        .chat-input-area { padding: 12px; background: #0f172a; border-top: 1px solid var(--border); display: flex; gap: 8px; }
+        .chat-input-area.comments-closed input,
+        .chat-input-area.comments-closed button { opacity: 0.5; cursor: not-allowed; pointer-events: none; }
+        .chat-input-area input { flex: 1; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border); background: #1e293b; color: #fff; font-family: 'Cairo'; }
+        .chat-input-area button { background: var(--secondary); color: #fff; border: none; padding: 8px 14px; border-radius: 8px; cursor: pointer; font-family: 'Cairo'; font-weight: 700; }
+
+        .trash-layout { display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap; }
+        .trash-sidebar { width: 260px; background: #0f172a; border: 1px solid var(--border); border-radius: 14px; padding: 15px; box-sizing: border-box; display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
+        .trash-side-btn { background: transparent; color: var(--text-muted); border: 1px solid transparent; padding: 12px 16px; border-radius: 10px; font-family: 'Cairo'; font-weight: 700; cursor: pointer; text-align: right; display: flex; align-items: center; justify-content: space-between; transition: all 0.2s; font-size: 0.9rem; width: 100%; }
+        .trash-side-btn:hover { background: rgba(59, 130, 246, 0.1); color: #fff; transform: translateX(-3px); }
+        .trash-side-btn.active { background: rgba(239, 68, 68, 0.15); color: var(--danger); border-color: var(--danger); }
+        .trash-side-btn span.badge-count { background: #1e293b; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; color: #fff; border: 1px solid var(--border); }
+        .trash-side-btn.active span.badge-count { background: var(--danger); border-color: var(--danger); }
+        .trash-main-content { flex: 1; min-width: 300px; }
+
+        .notification-center-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; background: rgba(15, 23, 42, 0.6); padding: 12px 18px; border-radius: 12px; border: 1px solid var(--border); }
+        .notification-center-header p { margin: 0; color: var(--text-muted); font-size: 0.85rem; display: flex; align-items: center; gap: 6px; }
+
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 17, 32, 0.85); backdrop-filter: blur(8px); display: flex; justify-content: flex-end; align-items: center; z-index: 1000; opacity: 0; visibility: hidden; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+        
+        .custom-popup-box { background: #131c31; border-left: 2px solid var(--secondary); box-shadow: -20px 0 60px rgba(0,0,0,0.8); width: 100%; max-width: 600px; height: 100%; border-radius: 0; padding: 30px; position: relative; overflow-y: auto; box-sizing: border-box; display: flex; flex-direction: column; transform: translateX(100%); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        .modal-overlay.active .custom-popup-box { transform: translateX(0); }
+
+        .custom-popup-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #23324a; padding-bottom: 18px; margin-bottom: 20px; }
+        .custom-popup-title { color: #facc15; font-size: 1.25rem; font-weight: 900; display: flex; align-items: center; gap: 12px; margin: 0; }
+        
+        .close-popup-btn { background: rgba(239, 68, 68, 0.15); border: 1px solid #ef4444; color: #ef4444; width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s ease; font-size: 1.1rem; }
+        .close-popup-btn:hover { background: #ef4444; color: #fff; transform: rotate(90deg) scale(1.1); }
+
+        #inboxCardsContainer { position: relative; overflow-x: hidden; }
+
+        .standard-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 17, 32, 0.85); backdrop-filter: blur(6px); display: flex; justify-content: center; align-items: center; z-index: 1000; opacity: 0; visibility: hidden; transition: all 0.3s ease; padding: 20px; box-sizing: border-box; }
+        .standard-modal-overlay.active { opacity: 1; visibility: visible; }
+        
+        .custom-popup-box-center { background: #162032; border: 1px solid #334155; box-shadow: 0 20px 50px rgba(0,0,0,0.7); width: 100%; max-width: 720px; border-radius: 16px; padding: 25px 30px; position: relative; max-height: 90vh; overflow-y: auto; transform: scale(0.95); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+        .standard-modal-overlay.active .custom-popup-box-center { transform: scale(1); }
+
+        .detail-section-title { color: var(--accent); font-size: 1.05rem; font-weight: 800; margin: 20px 0 10px 0; border-bottom: 1px dashed var(--border); padding-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+        .detail-group { margin-bottom: 15px; }
+        .detail-group label { display: block; color: var(--text-muted); font-size: 0.82rem; font-weight: 700; margin-bottom: 5px; }
+        .detail-content { background: #0f172a; padding: 12px 16px; border-radius: 8px; border: 1px solid var(--border); font-size: 0.9rem; color: #fff; word-break: normal; overflow-wrap: break-word; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+        
+        .attachment-preview-btn { background: rgba(59, 130, 246, 0.15); color: var(--secondary); border: 1px solid var(--secondary); padding: 6px 14px; border-radius: 6px; font-family: 'Cairo'; font-weight: 700; font-size: 0.82rem; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s; cursor: pointer; }
+        .attachment-preview-btn:hover { background: var(--secondary); color: #fff; transform: translateY(-2px); }
+
+        .custom-confirm-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 17, 32, 0.85); backdrop-filter: blur(5px); display: flex; justify-content: center; align-items: center; z-index: 3000; opacity: 0; visibility: hidden; transition: all 0.3s ease; }
+        .custom-confirm-overlay.active { opacity: 1; visibility: visible; }
+        .custom-confirm-box { background: var(--card-bg); border: 2px solid var(--accent); padding: 30px; border-radius: 16px; width: 90%; max-width: 400px; text-align: center; box-shadow: 0 15px 35px rgba(0,0,0,0.6); transform: scale(0.9); transition: transform 0.3s ease; }
+        .custom-confirm-overlay.active .custom-confirm-box { transform: scale(1); }
+        .custom-confirm-box i { font-size: 2.8rem; color: var(--accent); margin-bottom: 15px; }
+        .custom-confirm-box h3 { color: #fff; margin: 0 0 10px 0; font-size: 1.25rem; }
+        .custom-confirm-box p { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 25px; line-height: 1.6; }
+        .custom-confirm-actions { display: flex; gap: 10px; justify-content: center; }
+        .custom-confirm-actions button { padding: 10px 20px; border-radius: 8px; font-family: 'Cairo'; font-weight: 700; cursor: pointer; border: none; font-size: 0.9rem; flex: 1; transition: transform 0.2s; }
+        .custom-confirm-actions button:hover { transform: translateY(-2px); }
+        .btn-yes { background: var(--success); color: #fff; }
+        .btn-yes:hover { opacity: 0.9; }
+        .btn-no { background: var(--border); color: #fff; }
+        .btn-no:hover { opacity: 0.9; }
+
+        #customBanner { display: none; position: fixed; top: 25px; left: 50%; transform: translateX(-50%); background: var(--card-bg); border: 2px solid var(--accent); padding: 15px 30px; border-radius: 12px; z-index: 5000; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center; font-weight: 700; font-size: 1.1rem; color: #fff; animation: fadeInDown 0.3s ease; }
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translate(-50%, -20px); }
+            to { opacity: 1; transform: translate(-50%, 0); }
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            background: radial-gradient(circle at 15% 0%, rgba(59, 130, 246, 0.10), transparent 40%),
+                        radial-gradient(circle at 85% 10%, rgba(212, 175, 55, 0.08), transparent 35%),
+                        radial-gradient(circle at 50% 100%, rgba(16, 185, 129, 0.06), transparent 40%),
+                        var(--bg-color);
+            background-attachment: fixed;
+            animation: pageFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes pageFadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        ::-webkit-scrollbar { width: 9px; height: 9px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, var(--secondary), var(--accent)); border-radius: 20px; }
+
+        /* ===== ثبات التصميم على كل الأجهزة (تابلت / موبايل) ===== */
+        @media (max-width: 992px) {
+            .tabs-nav { grid-template-columns: repeat(3, 1fr); }
+            .sub-tabs-container { grid-template-columns: repeat(3, 1fr); }
+        }
+
+        @media (max-width: 700px) {
+            body { padding: 14px; }
+            .container { max-width: 100%; }
+            .top-navbar { flex-direction: column; align-items: stretch; }
+            .top-nav-btn, .mail-nav-btn { justify-content: center; width: 100%; box-sizing: border-box; }
+            .header { flex-direction: column; align-items: stretch; padding: 16px; }
+            .header h2 { font-size: 1.15rem; }
+            .btn-clear-all { width: 100%; justify-content: center; }
+            .tabs-nav { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+            .tab-btn { padding: 10px 10px; font-size: 0.85rem; }
+            .sub-tabs-container { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+            .sub-tab-btn { padding: 8px 8px; font-size: 0.8rem; }
+            .card { padding: 16px; }
+            .card h3 { font-size: 1.05rem; }
+            th, td { padding: 10px; font-size: 0.82rem; }
+            .live-mode-selector { grid-template-columns: 1fr; }
+            .trash-layout { flex-direction: column; }
+            .trash-sidebar { width: 100%; flex-direction: row; flex-wrap: wrap; }
+            .custom-popup-box { max-width: 100%; padding: 18px; }
+            .custom-popup-box-center { padding: 18px; }
+        }
+
+        @media (max-width: 420px) {
+            .tabs-nav { grid-template-columns: repeat(2, 1fr); }
+            .sub-tabs-container { grid-template-columns: 1fr 1fr; }
+            .header h2 { font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="editorInChiefSplash">
+        <div class="splash-particles"></div>
+        <div class="splash-crown"><i class="fa-solid fa-crown"></i></div>
+        <h1 class="splash-title">أهلاً وسهلاً بسيادة رئيس التحرير</h1>
+        <p class="splash-subtitle">الأستاذ / محمد الجزار 🌟</p>
+    </div>
+
+    <div id="customBanner"></div>
+
+    <button class="floating-live-btn" onclick="openCreateLiveModal()">
+        <i class="fa-solid fa-tower-broadcast"></i> بدء بث مباشر
+    </button>
+
+    <!-- غرفة البث المباشر -->
+    <div class="live-broadcast-room" id="liveBroadcastRoom">
+        <div class="live-room-header">
+            <h3 id="activeRoomTitle"><i class="fa-solid fa-tower-broadcast"></i> جاري البث المباشر...</h3>
+            <button class="btn btn-reject" onclick="stopActiveLiveStream()" style="background:var(--danger); color:#fff; border:none; padding:10px 18px; border-radius:8px; cursor:pointer; font-family:'Cairo'; font-weight:bold; display:flex; align-items:center; gap:8px;">
+                <i class="fa-solid fa-stop"></i> إنهاء ومغادرة البث
+            </button>
+        </div>
+        <div class="live-room-body">
+            <div class="video-container">
+                <video id="liveVideoElement" autoplay playsinline muted></video>
+                <div class="live-controls-bar">
+                    <button class="control-btn" id="toggleCamBtn" onclick="toggleCamera()" title="كتم/تشغيل الكاميرا"><i class="fa-solid fa-video"></i></button>
+                    <button class="control-btn" id="toggleMicBtn" onclick="toggleMic()" title="كتم/تشغيل الميكروفون"><i class="fa-solid fa-microphone"></i></button>
+                    <div class="mic-meter" title="مستوى صوت الميكروفون الحي">
+                        <div class="mic-meter-fill" id="micMeterFill"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="chat-container-live">
+                <div class="chat-box-header">
+                    <span><i class="fa-solid fa-comments"></i> الدردشة الحية للبث</span>
+                    <div class="chat-controls-mini">
+                        <button class="control-btn-mini" id="toggleCommentsBtn" onclick="toggleComments()" title="فتح/قفل التعليقات"><i class="fa-solid fa-comment-dots"></i></button>
+                        <button class="control-btn-mini" id="toggleCamBtnChat" onclick="toggleCamera()" title="كتم/تشغيل الكاميرا"><i class="fa-solid fa-video"></i></button>
+                        <button class="control-btn-mini" id="toggleMicBtnChat" onclick="toggleMic()" title="كتم/تشغيل الميكروفون"><i class="fa-solid fa-microphone"></i></button>
+                    </div>
+                </div>
+                <div class="chat-messages" id="liveChatMessages">
+                    <div style="color: var(--text-muted); text-align: center; font-size: 0.8rem; margin-top: 20px;">تم بدء البث وبثه لجميع مستخدمي المنصة بنجاح.</div>
+                </div>
+                <div class="chat-input-area" id="liveChatInputArea">
+                    <input type="text" id="liveChatInput" placeholder="اكتب تعليقاً للبث..." onkeypress="handleLiveChatKey(event)">
+                    <button id="liveChatSendBtn" onclick="sendLiveChatMessage()"><i class="fa-solid fa-paper-plane"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="custom-confirm-overlay" id="customConfirmModal">
+        <div class="custom-confirm-box">
+            <i class="fa-solid fa-circle-question" id="confirmIcon"></i>
+            <h3 id="confirmTitle">تأكيد الإجراء</h3>
+            <p id="confirmText">هل أنت متأكد؟</p>
+            <div class="custom-confirm-actions">
+                <button class="custom-confirm-actions button btn-yes" id="confirmYesBtn" onclick="executeConfirmAction()">نعم</button>
+                <button class="btn-no" onclick="closeConfirmModal()">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="top-navbar">
+            <button class="mail-nav-btn" onclick="openPopup('inboxPopup')">
+                <i class="fa-solid fa-inbox"></i> البريد الوارد والأنشطة <span class="mail-badge" id="mailCountBadge">0</span>
+            </button>
+            <button class="top-nav-btn" onclick="openPopup('trashPopup')">
+                <i class="fa-solid fa-trash-can"></i> سلة المحذوفات (تحذف خلال شهر تلقائياً)
+            </button>
+        </div>
+
+        <div class="header">
+            <h2><i class="fa-solid fa-user-tie"></i> لوحة تحكم رئيس التحرير - أ. محمد الجزار</h2>
+            <button class="btn-clear-all" onclick="confirmClearAll()"><i class="fa-solid fa-trash"></i> تصفير الطلبات (نقل للسلة)</button>
+        </div>
+
+        <div class="tabs-nav">
+            <button class="tab-btn" id="applicationsTabBtn" onclick="switchTab('applicationsTab', this)"><i class="fa-solid fa-id-card-clip"></i> طلبات التقديم (فايربيز)</button>
+            <button class="tab-btn active" id="articlesTabBtn" onclick="switchTab('articlesTab', this)"><i class="fa-solid fa-newspaper"></i> طلبات النشر</button>
+            <button class="tab-btn" id="companiesTabBtn" onclick="switchTab('companiesTab', this)"><i class="fa-solid fa-building"></i> الشركات</button>
+            <button class="tab-btn" id="honorsTabBtn" onclick="switchTab('honorsTab', this)"><i class="fa-solid fa-award"></i> استمارة التكريم</button>
+            <button class="tab-btn" id="tickerTabBtn" onclick="switchTab('tickerTab', this)"><i class="fa-solid fa-bullhorn"></i> اضافة شريط اخباري</button>
+            <button class="tab-btn" id="liveStreamsTabBtn" onclick="switchTab('liveStreamsTab', this); switchTabContentToLiveStreams();"><i class="fa-solid fa-video"></i> إدارة البثوث المباشرة</button>
+        </div>
+
+        <div id="applicationsTab" class="tab-content">
+            <div class="card">
+                <h3><span><i class="fa-solid fa-id-card-clip"></i> طلبات التقديم والتوظيف (تحديث تلقائي)</span></h3>
+                
+                <div class="sub-tabs-container">
+                    <button class="sub-tab-btn active" onclick="switchAppSubTab('reportersSubTab', this)"><i class="fa-solid fa-camera"></i> المراسلين (فايربيز)</button>
+                    <button class="sub-tab-btn" onclick="switchAppSubTab('editorsSubTab', this)"><i class="fa-solid fa-pen-nib"></i> المحررين</button>
+                    <button class="sub-tab-btn" onclick="switchAppSubTab('translatorsSubTab', this)"><i class="fa-solid fa-language"></i> المترجمين</button>
+                    <button class="sub-tab-btn" onclick="switchAppSubTab('proofreadersSubTab', this)"><i class="fa-solid fa-clipboard-check"></i> المدققين / المراجعين اللغويين</button>
+                
+                    <button class="sub-tab-btn" onclick="switchAppSubTab('managingEditorsSubTab', this)"><i class="fa-solid fa-user-tie"></i> سكرتير التحرير</button>
+                </div>
+
+                <div id="reportersSubTab" class="sub-tab-content active">
+                    <div style="overflow-x: auto;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>الاسم الرباعي</th>
+                                    <th>الوضع المهني / القسم</th>
+                                    <th>تاريخ التقديم</th>
+                                    <th>كود التتبع</th>
+                                    <th>الحالة في فايربيز</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="applicationsTableBody">
+                                <tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 25px;">جاري تحميل طلبات المراسلين من فايربيز...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="editorsSubTab" class="sub-tab-content">
+                    <div style="overflow-x: auto;">
+                        <table>
+                            <thead><tr><th>اسم المحرر</th><th>القسم / التخصص</th><th>تاريخ التقديم</th><th>الحالة</th><th>الإجراءات</th></tr></thead>
+                            <tbody id="editorsTableBody"><tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 25px;">لا توجد طلبات محررين جديدة حالياً.</td></tr></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="translatorsSubTab" class="sub-tab-content">
+                    <div style="overflow-x: auto;">
+                        <table>
+                            <thead><tr><th>اسم المترجم</th><th>اللغات المتقنة</th><th>تاريخ التقديم</th><th>الحالة</th><th>الإجراءات</th></tr></thead>
+                            <tbody id="translatorsTableBody"><tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 25px;">لا توجد طلبات مترجمين جديدة حالياً.</td></tr></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="proofreadersSubTab" class="sub-tab-content">
+                    <div style="overflow-x: auto;">
+                        <table>
+                            <thead><tr><th>اسم المدقق</th><th>القسم التدقيقي</th><th>تاريخ التقديم</th><th>الحالة</th><th>الإجراءات</th></tr></thead>
+                            <tbody id="proofreadersTableBody"><tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 25px;">لا توجد طلبات تدقيق صحفي جديدة حالياً.</td></tr></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="managingEditorsSubTab" class="sub-tab-content">
+                    <div style="overflow-x: auto;">
+                        <table>
+                            <thead><tr><th>اسم المتقدم</th><th>الخبرات الإدارية</th><th>تاريخ التقديم</th><th>الحالة</th><th>الإجراءات</th></tr></thead>
+                            <tbody id="managingEditorsTableBody"><tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 25px;">لا توجد طلبات سكرتير تحرير جديدة حالياً.</td></tr></tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- قسم طلبات النشر المربوط بفايربيس -->
+        <div id="articlesTab" class="tab-content active">
+            <div class="card">
+                <h3><i class="fa-solid fa-pen-nib"></i> المقالات والأخبار الواردة للنشر (تحديث تلقائي)</h3>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="min-width: 220px;">عنوان المقال / الخبر</th>
+                                <th style="min-width: 140px;">اسم المراسل / الكاتب</th>
+                                <th style="min-width: 130px;">القسم</th>
+                                <th style="min-width: 110px;">التاريخ</th>
+                                <th style="min-width: 170px; text-align: center;">حالة النشر</th>
+                                <th style="min-width: 220px; text-align: center;">الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="articlesTableBody">
+                            <tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 25px;">جاري تحميل مقالات النشر من فايربيز...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="companiesTab" class="tab-content">
+            <div class="card">
+                <h3>
+                    <span><i class="fa-solid fa-building"></i> قائمة الشركات المسجلة (تحديث تلقائي)</span>
+                </h3>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>اسم الشركة</th>
+                                <th>مجال العمل</th>
+                                <th>رقم الهاتف / البريد</th>
+                                <th>تاريخ الإضافة</th>
+                                <th>الحالة في فايربيز</th>
+                                <th>الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="companiesTableBody">
+                            <tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 25px;">جاري تحميل الشركات وتحديثها من فايربيز...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="honorsTab" class="tab-content">
+            <div class="card">
+                <h3>
+                    <span><i class="fa-solid fa-award"></i> طلبات استمارة التكريم</span>
+                    <button class="btn btn-approve" onclick="openAddHonorModal()" style="background:var(--success); color:#fff; border:none; padding:8px 14px; border-radius:8px; cursor:pointer;"><i class="fa-solid fa-plus"></i> إضافة تكريم جديد</button>
+                </h3>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>اسم المكرم</th>
+                                <th>سبب أو مجال التكريم</th>
+                                <th>جهة الاتصال / الجهة</th>
+                                <th>تاريخ التسجيل</th>
+                                <th>الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="honorsTableBody">
+                            <tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 25px;">لا توجد طلبات تكريم مسجلة حالياً.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="tickerTab" class="tab-content">
+            <div class="card">
+                <h3><i class="fa-solid fa-bullhorn"></i> إضافة وتحديث الشريط الإخباري (يظهر في index)</h3>
+                <form id="tickerForm" onsubmit="saveNewsTicker(event)">
+                    <div class="detail-group">
+                        <label>نص الشريط الإخباري:</label>
+                        <textarea id="tickerTextInput" rows="4" required placeholder="اكتب نص الشريط الإخباري هنا ليظهر مباشرة في صفحة index..." style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border); background: #0f172a; color: #fff; box-sizing: border-box; font-family: 'Cairo'; font-size: 1rem;"></textarea>
+                    </div>
+                    <div style="text-align: left; margin-top: 20px;">
+                        <button type="submit" class="btn btn-approve" style="padding: 12px 24px; font-size: 1rem; background:var(--success); color:#fff; border:none; border-radius:8px; cursor:pointer;"><i class="fa-solid fa-floppy-disk"></i> حفظ ونشر الشريط الإخباري عبر البريد والنظام</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- قسم إدارة البثوث المباشرة وسجل البثوث المنتهية -->
+        <div id="liveStreamsTab" class="tab-content">
+            <div class="card">
+                <h3>
+                    <span><i class="fa-solid fa-video"></i> إدارة البثوث المباشرة بالمنصة</span>
+                </h3>
+
+                <div class="sub-tabs-container">
+                    <button class="sub-tab-btn active" id="subTabActiveStreamsBtn" onclick="switchSubTab('activeStreamsContent', this)"><i class="fa-solid fa-tower-broadcast"></i> البثوث النشطة والفورية</button>
+                    <button class="sub-tab-btn" id="subTabRequestsBtn" onclick="switchSubTab('streamRequestsContent', this)"><i class="fa-solid fa-clipboard-question"></i> طلبات البث</button>
+                    <button class="sub-tab-btn" id="subTabHistoryBtn" onclick="switchSubTab('streamHistoryContent', this)"><i class="fa-solid fa-clock-rotate-left"></i> سجل البثوث المنتهية</button>
+                </div>
+
+                <div id="activeStreamsContent" class="sub-tab-content active">
+                    <div style="overflow-x: auto;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>عنوان البث</th>
+                                    <th>القائم بالبث</th>
+                                    <th>الصلاحية</th>
+                                    <th>توقيت البدء</th>
+                                    <th>الحالة</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="liveStreamsTableBody">
+                                <tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 25px;">لا توجد بثوث نشطة حالياً.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="streamRequestsContent" class="sub-tab-content">
+                    <div style="overflow-x: auto;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>اسم مقدم الطلب</th>
+                                    <th>عنوان البث المقترح</th>
+                                    <th>تاريخ التقديم</th>
+                                    <th>الحالة</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="streamRequestsTableBody">
+                                <tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 25px;">جاري تحميل طلبات البث من فايربيز...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 3. سجل البثوث المنتهية -->
+                <div id="streamHistoryContent" class="sub-tab-content">
+                    <div style="overflow-x: auto;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>عنوان البث المنتهي</th>
+                                    <th>القائم بالبث</th>
+                                    <th>تاريخ ووقت الإنهاء</th>
+                                    <th>الحالة</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="streamHistoryTableBody">
+                                <tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 25px;">سجل البثوث المنتهية فارغ حالياً.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة بدء البث -->
+    <div class="standard-modal-overlay" id="createLiveModal">
+        <div class="custom-popup-box-center" style="max-width: 580px;">
+            <div class="custom-popup-header" style="border-bottom: 1px solid #23324a;">
+                <h3 class="custom-popup-title" style="color: var(--danger);"><i class="fa-solid fa-tower-broadcast"></i> بدء بث مباشر جديد</h3>
+                <button class="close-popup-btn" onclick="closePopup('createLiveModal')"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <div class="live-mode-selector">
+                <div class="live-mode-card active-human" id="modeCardHuman" onclick="selectLiveMode('human')">
+                    <i class="fa-solid fa-video" style="color:var(--danger);"></i>
+                    <h4>🔴 لايف بشري</h4>
+                    <p>بث فوري بالكاميرا والمايك</p>
+                </div>
+                <div class="live-mode-card" id="modeCardAI" onclick="selectLiveMode('ai')">
+                    <i class="fa-solid fa-robot" style="color:var(--purple);"></i>
+                    <h4>🤖 لايف ذكاء اصطناعي</h4>
+                    <p>توليد مذيع ذكي بالسكريبت</p>
+                </div>
+            </div>
+
+            <form id="humanLiveForm" onsubmit="startNewLiveStream(event)">
+                <div class="detail-group">
+                    <label>عنوان البث المباشر:</label>
+                    <input type="text" id="liveStreamTitleInput" required placeholder="أدخل عنوان البث المباشر..." style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: #0f172a; color: #fff; box-sizing: border-box; font-family: 'Cairo';">
+                </div>
+                <div class="detail-group">
+                    <label>مصدر الكاميرا:</label>
+                    <select id="liveCameraSourceSelect" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: #0f172a; color: #fff; box-sizing: border-box; font-family: 'Cairo';">
+                        <option value="">جاري تحميل قائمة الكاميرات...</option>
+                    </select>
+                </div>
+                <div class="detail-group">
+                    <label><i class="fa-solid fa-image" style="color:var(--accent);"></i> صورة مصغرة للبث (Thumbnail):</label>
+                    <input type="file" id="liveThumbnailInput" accept="image/*" style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid var(--border); background: #0f172a; color: #fff; box-sizing: border-box; font-family: 'Cairo';">
+                </div>
+                <div style="text-align: left; margin-top: 20px;">
+                    <button type="submit" class="btn" style="background: var(--danger); color: #fff; padding: 10px 20px; font-size: 0.95rem; border-radius: 8px; border:none; cursor:pointer;"><i class="fa-solid fa-tower-broadcast"></i> بدء البث الآن ونشره للمشاهدين</button>
+                </div>
+            </form>
+
+            <form id="aiLiveForm" onsubmit="scheduleAILiveStream(event)" style="display:none;">
+                <div class="detail-group">
+                    <label><i class="fa-solid fa-heading" style="color:var(--purple);"></i> عنوان اللايف:</label>
+                    <input type="text" id="aiStreamTitleInput" required placeholder="أدخل عنوان بث الذكاء الاصطناعي..." style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: #0f172a; color: #fff; box-sizing: border-box; font-family: 'Cairo';">
+                </div>
+                <div class="detail-group">
+                    <label><i class="fa-solid fa-image" style="color:var(--purple);"></i> صورة الغلاف (Thumbnail):</label>
+                    <input type="file" id="aiThumbnailInput" accept="image/*" required style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid var(--border); background: #0f172a; color: #fff; box-sizing: border-box; font-family: 'Cairo';">
+                </div>
+                <div class="detail-group">
+                    <label><i class="fa-solid fa-user-tie" style="color:var(--purple);"></i> صورة المذيع (AI Avatar):</label>
+                    <input type="file" id="aiPresenterAvatarInput" accept="image/*" required style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid var(--border); background: #0f172a; color: #fff; box-sizing: border-box; font-family: 'Cairo';">
+                </div>
+                <div class="detail-group">
+                    <label><i class="fa-solid fa-scroll" style="color:var(--purple);"></i> السكريبت الكامل:</label>
+                    <textarea id="aiScriptInput" rows="4" required placeholder="اكتب السكريبت هنا..." style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: #0f172a; color: #fff; box-sizing: border-box; font-family: 'Cairo';"></textarea>
+                </div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                    <div class="detail-group">
+                        <label><i class="fa-regular fa-clock" style="color:var(--purple);"></i> ميعاد بدء البث:</label>
+                        <input type="datetime-local" id="aiStartTimeInput" required style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid var(--border); background: #0f172a; color: #fff; box-sizing: border-box; font-family: 'Cairo';">
+                    </div>
+                    <div class="detail-group">
+                        <label><i class="fa-solid fa-stopwatch" style="color:var(--purple);"></i> المدة (بالدقائق):</label>
+                        <input type="number" id="aiDurationInput" min="1" max="180" value="15" required style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid var(--border); background: #0f172a; color: #fff; box-sizing: border-box; font-family: 'Cairo';">
+                    </div>
+                </div>
+                <div style="text-align: left; margin-top: 20px;">
+                    <button type="submit" class="btn" style="background: linear-gradient(135deg, var(--purple), #7c3aed); color: #fff; padding: 10px 20px; font-size: 0.95rem; border-radius: 8px; border:none; cursor:pointer;"><i class="fa-solid fa-wand-magic-sparkles"></i> جدولة وتوليد بث الذكاء الاصطناعي</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="inboxPopup">
+        <div class="custom-popup-box">
+            <div class="custom-popup-header">
+                <h3 class="custom-popup-title"><i class="fa-solid fa-bell" style="color: var(--secondary);"></i> مركز الإشعارات والبريد اللحظي <span class="mail-badge" id="inboxPopupCountBadge">0</span></h3>
+                <button class="close-popup-btn" onclick="closePopup('inboxPopup')"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="inboxCardsContainer"></div>
+        </div>
+    </div>
+
+    <div class="standard-modal-overlay" id="notificationDetailModal">
+        <div class="custom-popup-box-center">
+            <div class="custom-popup-header" style="border-bottom: 1px solid #23324a;">
+                <h3 class="custom-popup-title" id="notifDetailTitle" style="color: var(--secondary);"><i class="fa-solid fa-bell"></i> تفاصيل الإشعار</h3>
+                <button class="close-popup-btn" onclick="closePopup('notificationDetailModal')"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="detail-group"><label>المرسل:</label><div class="detail-content" id="notifDetailSender"></div></div>
+            <div class="detail-group"><label>تاريخ الإشعار:</label><div class="detail-content" id="notifDetailDate"><span dir="ltr"></span></div></div>
+            <div class="detail-group"><label>نص الرسالة:</label><div class="detail-content" id="notifDetailContent" style="white-space: pre-wrap; line-height: 1.8;"></div></div>
+        </div>
+    </div>
+
+    <div class="standard-modal-overlay" id="trashPopup">
+        <div class="custom-popup-box-center" style="border-color: rgba(239, 68, 68, 0.5); max-width: 950px;">
+            <div class="custom-popup-header" style="border-bottom: 1px solid #23324a;">
+                <h3 class="custom-popup-title" style="color: var(--danger);"><i class="fa-solid fa-trash-can"></i> سلة المحذوفات المقسمة</h3>
+                <button class="close-popup-btn" onclick="closePopup('trashPopup')"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="notification-center-header">
+                <p><i class="fa-solid fa-triangle-exclamation" style="color: var(--accent);"></i> أي عنصر يتم حذفه يذهب مباشرة إلى قسمه المخصص هنا.</p>
+                <button class="btn-clear-all" style="padding: 6px 12px; font-size: 0.82rem;" onclick="confirmClearTrash()"><i class="fa-solid fa-trash-can"></i> إفراغ السلة</button>
+            </div>
+            
+            <div class="trash-layout">
+                <div class="trash-sidebar">
+                    <button class="trash-side-btn active" onclick="switchTrashCategory('applications', this)">
+                        <span><i class="fa-solid fa-id-card-clip" style="margin-left: 6px;"></i> طلبات التقديم</span>
+                        <span class="badge-count" id="countTrashApp">0</span>
+                    </button>
+                    <button class="trash-side-btn" onclick="switchTrashCategory('articles', this)">
+                        <span><i class="fa-solid fa-newspaper" style="margin-left: 6px;"></i> طلبات النشر</span>
+                        <span class="badge-count" id="countTrashArt">0</span>
+                    </button>
+                    <button class="trash-side-btn" onclick="switchTrashCategory('companies', this)">
+                        <span><i class="fa-solid fa-building" style="margin-left: 6px;"></i> الشركات</span>
+                        <span class="badge-count" id="countTrashComp">0</span>
+                    </button>
+                    <button class="trash-side-btn" onclick="switchTrashCategory('honors', this)">
+                        <span><i class="fa-solid fa-award" style="margin-left: 6px;"></i> استمارة التكريم</span>
+                        <span class="badge-count" id="countTrashHonor">0</span>
+                    </button>
+                    <button class="trash-side-btn" onclick="switchTrashCategory('livestreams', this)">
+                        <span><i class="fa-solid fa-video" style="margin-left: 6px;"></i> البثوث المباشرة</span>
+                        <span class="badge-count" id="countTrashLive">0</span>
+                    </button>
+                    <button class="trash-side-btn" onclick="switchTrashCategory('streamRequests', this)">
+                        <span><i class="fa-solid fa-clipboard-question" style="margin-left: 6px;"></i> طلبات البث</span>
+                        <span class="badge-count" id="countTrashStreamReq">0</span>
+                    </button>
+                </div>
+
+                <div class="trash-main-content">
+                    <div id="trashCardsContainer"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="standard-modal-overlay" id="detailsModal">
+        <div class="custom-popup-box-center">
+            <div class="custom-popup-header" style="border-bottom: 1px solid #23324a;">
+                <h3 class="custom-popup-title" style="color: var(--accent);"><i class="fa-solid fa-id-card"></i> بيانات العنصر الكاملة ومرفقاته</h3>
+                <button class="close-popup-btn" onclick="closeDetailsModal()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="modalDetailsContainer"></div>
+        </div>
+    </div>
+
+    <div class="standard-modal-overlay" id="addHonorModal">
+        <div class="custom-popup-box-center" style="max-width: 500px;">
+            <div class="custom-popup-header" style="border-bottom: 1px solid #23324a;">
+                <h3 class="custom-popup-title" style="color: var(--accent);"><i class="fa-solid fa-award"></i> إضافة طلب تكريم جديد</h3>
+                <button class="close-popup-btn" onclick="closePopup('addHonorModal')"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="addHonorForm" onsubmit="saveNewHonor(event)">
+                <div class="detail-group"><label>اسم المكرم:</label><input type="text" id="honorName" required style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: #0f172a; color: #fff; box-sizing: border-box; font-family: 'Cairo';"></div>
+                <div class="detail-group"><label>سبب أو مجال التكريم:</label><input type="text" id="honorReason" required style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: #0f172a; color: #fff; box-sizing: border-box; font-family: 'Cairo';"></div>
+                <div class="detail-group"><label>جهة الاتصال:</label><input type="text" id="honorContact" required style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: #0f172a; color: #fff; box-sizing: border-box; font-family: 'Cairo';"></div>
+                <div style="text-align: left; margin-top: 20px;"><button type="submit" class="btn btn-approve" style="padding: 10px 20px; font-size: 0.95rem; background:var(--success); color:#fff; border:none; border-radius:8px; cursor:pointer;"><i class="fa-solid fa-check"></i> حفظ التكريم</button></div>
+            </form>
+        </div>
+    </div>
+
+    <!-- كود فايربيس الأصلي بالكامل -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
+        import { getFirestore, collection, getDocs, doc, updateDoc, setDoc, getDoc, serverTimestamp, deleteDoc, addDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyD_pyEgRtBzObOTf-msTwC0nbhsyCmJ92s",
+            authDomain: "gamarek.firebaseapp.com",
+            databaseURL: "https://gamarek-default-rtdb.firebaseio.com",
+            projectId: "gamarek",
+            storageBucket: "gamarek.firebasestorage.app",
+            messagingSenderId: "139734553489",
+            appId: "1:139734553489:web:1339f96b98cebd32610030",
+            measurementId: "G-H1FRFXK1FG"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const db = getFirestore(app);
+        
+        window.firebaseApp = app;
+        window.firebaseAnalytics = analytics;
+        window.db = db;
+        window.allLoadedCompaniesMap = {};
+        window.allLoadedApplicationsMap = {};
+        window.allLoadedLiveRequestsMap = {};
+        window.allLoadedArticlesMap = {};
+
+        // ===== دالة جلب وعرض طلبات النشر والمقالات الحقيقية من فايربيس (تظهر فقط بعد اعتماد رئيس القسم) =====
+        async function loadArticles() {
+            try {
+                const querySnapshot = await getDocs(collection(db, "articles"));
+                const tableContainer = document.getElementById("articlesTableBody");
+                if (!tableContainer) return;
+
+                let allArticlesList = [];
+                window.allLoadedArticlesMap = {};
+
+                if (!querySnapshot.empty) {
+                    querySnapshot.forEach((documentSnap) => {
+                        let data = documentSnap.data();
+                        let docId = documentSnap.id;
+                        window.allLoadedArticlesMap[docId] = data;
+
+                        let title = data.title || "مقال بدون عنوان";
+                        let reporterName = data.reporterName || data.reporterUsername || "محرر";
+                        let category = data.category || "عام";
+                        let dateAdded = data.date || "حديث";
+                        let status = data.status || 'pending';
+
+                        // رئيس التحرير يرى فقط المقالات التي اعتمدها رئيس القسم أو المنشورة بالفعل
+                        if (status === 'pending_chief_editor' || status === 'pending_final_approval' || status === 'published' || status === 'publish') {
+                            allArticlesList.push({
+                                id: docId,
+                                title: title,
+                                reporterName: reporterName,
+                                category: category,
+                                date: dateAdded,
+                                status: status
+                            });
+                        }
+                    });
+                }
+
+                let rowsHTML = "";
+                allArticlesList.forEach((item) => {
+                    let badgeHtml = '';
+                    if (item.status === 'published' || item.status === 'publish') {
+                        badgeHtml = '<span class="badge badge-approved"><i class="fa-solid fa-globe"></i> منشور على المجلة</span>';
+                    } else if (item.status === 'rejected') {
+                        badgeHtml = '<span class="badge badge-rejected"><i class="fa-solid fa-rotate-left"></i> معاد للمراجعة</span>';
+                    } else {
+                        badgeHtml = '<span class="badge badge-pending"><i class="fa-solid fa-stamp"></i> معتمد من رئيس القسم</span>';
+                    }
+
+                    let isPublished = (item.status === 'published' || item.status === 'publish');
+
+                    let rightActionsHtml = `
+                        <div class="article-actions-row">
+                            ${!isPublished ? `
+                                <button class="btn-publish-direct" onclick="publishArticleLive('${item.id}', '${item.title}')" title="اعتماد ونشر فوري على المجلة">
+                                    <i class="fa-solid fa-paper-plane"></i>
+                                    <span>نشر بالمجلة</span>
+                                </button>
+                            ` : ''}
+
+                            <button class="btn-action-view" onclick="viewArticleDetails('${item.id}')" title="معاينة تفاصيل المادة والصور">
+                                <i class="fa-solid fa-eye"></i>
+                                <span>البيانات</span>
+                            </button>
+
+                            <button class="btn-action-delete" onclick="trashArticleItem('${item.id}', '${item.title}')" title="نقل لسلة المحذوفات">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </div>
+                    `;
+
+                    rowsHTML += `
+                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.06);">
+                            <td style="font-weight: 700; color: #fff; max-width: 280px; line-height: 1.5;">${item.title}</td>
+                            <td><span style="color:var(--accent); font-weight:600;"><i class="fa-solid fa-user-pen"></i> ${item.reporterName}</span></td>
+                            <td><span style="color:var(--text-muted);">${item.category}</span></td>
+                            <td style="white-space: nowrap;"><span style="color:var(--text-muted);">${item.date}</span></td>
+                            <td style="white-space: nowrap; text-align: center;">${badgeHtml}</td>
+                            <td style="white-space: nowrap;">
+                                ${rightActionsHtml}
+                            </td>
+                        </tr>
+                    `;
+                });
+
+                if (rowsHTML === "") {
+                    rowsHTML = `<tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 35px;">✨ لا توجد مقالات معتمدة من رئيس القسم بانتظار قرار النشر حالياً.</td></tr>`;
+                }
+
+                tableContainer.innerHTML = rowsHTML;
+
+            } catch (error) {
+                console.error("خطأ أثناء جلب مقالات النشر من فايربيز: ", error);
+            }
+        }
+
+        window.loadArticles = loadArticles;
+
+        // دالة نشر المقال بالمجلة
+        window.publishArticleLive = async function(docId, title) {
+            try {
+                const docRef = doc(db, "articles", docId);
+                await updateDoc(docRef, { 
+                    status: "published",
+                    workflowStage: 6,
+                    publishedBy: "الأستاذ / محمد الجزار (رئيس التحرير)",
+                    publishedAt: serverTimestamp()
+                });
+                loadArticles();
+                logActivityToInbox('نشر مقال بالمجلة', `تم اعتماد ونشر المقال [${title}] بنجاح على الصفحة الرئيسية index.`, 'رئيس التحرير أ. محمد الجزار');
+                showBanner(`✅ تم نشر المقال [${title}] بنجاح على الصفحة الرئيسية index!`, 'success');
+            } catch(e) {
+                console.error(e);
+            }
+        };
+
+        window.viewArticleDetails = function(docId) {
+            let targetObj = window.allLoadedArticlesMap ? window.allLoadedArticlesMap[docId] : null;
+            if (targetObj) {
+                renderFullDetailsContent(targetObj);
+                document.getElementById('detailsModal').classList.add('active');
+            }
+        };
+
+        window.trashArticleItem = function(docId, title) {
+            showCustomConfirm('نقل المقال لسلة المحذوفات', `هل أنت متأكد من مسح المقال <b>[${title}]</b> ونقله لسلة المحذوفات؟`, async () => {
+                try {
+                    let trash = JSON.parse(localStorage.getItem('gmarik_trash')) || [];
+                    trash.push({
+                        item: { id: docId, title: title },
+                        category: 'articles',
+                        itemName: title,
+                        deletedAt: new Date()
+                    });
+                    localStorage.setItem('gmarik_trash', JSON.stringify(trash));
+                    
+                    await deleteDoc(doc(db, "articles", docId));
+                    loadArticles();
+                    updateBadges();
+                    showBanner(`🗑️ تم نقل المقال [${title}] لسلة المحذوفات`, 'danger');
+                } catch(e) { console.error(e); }
+            }, 'نعم، نقل للسلة', 'btn-yes');
+        };
+
+        async function loadReporterApplications() {
+            try {
+                const querySnapshot = await getDocs(collection(db, "reporterApplications"));
+                const tableContainer = document.getElementById("applicationsTableBody");
+                
+                let hiddenApps = JSON.parse(localStorage.getItem('gmarik_hidden_applications')) || [];
+                let localApps = JSON.parse(localStorage.getItem('gmarik_reporter_applications')) || [];
+
+                let allAppsList = [];
+                window.allLoadedApplicationsMap = {};
+
+                localApps.forEach((appItem, index) => {
+                    let uniqueId = 'local_' + index;
+                    if (!hiddenApps.includes(uniqueId)) {
+                        window.allLoadedApplicationsMap[uniqueId] = appItem;
+                        allAppsList.unshift({
+                            id: uniqueId,
+                            fullName: appItem['الاسم الرباعي'] || appItem.fullName || appItem.name || 'متقدم',
+                            employmentStatus: appItem['الوضع المهني'] || appItem.employmentStatus || appItem.department || 'غير محدد',
+                            date: appItem['تاريخ التقديم'] ? new Date(appItem['تاريخ التقديم']) : new Date(0),
+                            trackingCode: appItem['كود التتبع'] || appItem.trackingCode || 'N/A',
+                            status: appItem.status || 'pending',
+                            isLocal: true
+                        });
+                    }
+                });
+
+                if (!querySnapshot.empty) {
+                    querySnapshot.forEach((documentSnap) => {
+                        let data = documentSnap.data();
+                        let uniqueId = 'fb_' + documentSnap.id;
+                        
+                        if (!hiddenApps.includes(uniqueId)) {
+                            window.allLoadedApplicationsMap[uniqueId] = data;
+                            let fullName = data.fullName || data.name || data.reporterName || data['الاسم الرباعي'] || "غير محدد";
+                            let employment = data.employmentStatus || data.jobStatus || data.department || data['الوضع المهني'] || "غير محدد";
+                            let dateAdded = data.date && data.date.seconds ? new Date(data.date.seconds * 1000) : (data.date ? new Date(data.date) : new Date(0));
+                            let trackingCode = data.trackingCode || documentSnap.id;
+                            let status = data.status || 'pending';
+
+                            allAppsList.unshift({
+                                realDocId: documentSnap.id,
+                                id: uniqueId,
+                                fullName: fullName,
+                                employmentStatus: employment,
+                                date: dateAdded,
+                                trackingCode: trackingCode,
+                                status: status,
+                                isLocal: false
+                            });
+                        }
+                    });
+                }
+
+                allAppsList.sort((a, b) => (b.date - a.date) || a.id.localeCompare(b.id));
+
+                let rowsHTML = "";
+                allAppsList.forEach((item) => {
+                    let badgeClass = 'badge-pending';
+                    let badgeText = 'قيد المراجعة';
+                    if (item.status === 'approved') {
+                        badgeClass = 'badge-approved';
+                        badgeText = 'مقبول';
+                    } else if (item.status === 'rejected') {
+                        badgeClass = 'badge-rejected';
+                        badgeText = 'مرفوض';
+                    }
+
+                    let isDecided = (item.status === 'approved' || item.status === 'rejected');
+
+                    let rightActionsHtml = `
+                        <div style="display: inline-flex; align-items: center; gap: 8px; flex-wrap: nowrap;" dir="ltr">
+                            <button class="btn-action-delete" onclick="trashReporterApp('${item.id}', '${item.fullName}')" title="مسح ونقل للسلة">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+
+                            <button class="btn-action-view" onclick="viewApplicationDetails('${item.id}')" title="رؤية البيانات">
+                                <i class="fa-solid fa-eye"></i>
+                                <span>البيانات</span>
+                            </button>
+
+                            ${!isDecided ? `
+                                <button onclick="rejectReporterApp('${item.id}', '${item.realDocId || ''}', ${item.isLocal}, '${item.fullName}')" title="رفض الطلب" style="background: rgba(244, 63, 94, 0.18); color: #fb7185; border: 1.5px solid rgba(244, 63, 94, 0.4); padding: 9px 16px; border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: bold; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s;" onmouseover="this.style.background='#e11d48'; this.style.color='#ffffff';" onmouseout="this.style.background='rgba(244, 63, 94, 0.18)'; this.style.color='#fb7185';">
+                                    <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                    <span>رفض</span>
+                                </button>
+
+                                <button onclick="approveReporterApp('${item.id}', '${item.realDocId || ''}', ${item.isLocal}, '${item.fullName}')" title="قبول الطلب" style="background: rgba(16, 185, 129, 0.18); color: #34d399; border: 1.5px solid rgba(16, 185, 129, 0.4); padding: 9px 16px; border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: bold; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s;" onmouseover="this.style.background='#059669'; this.style.color='#ffffff';" onmouseout="this.style.background='rgba(16, 185, 129, 0.18)'; this.style.color='#34d399';">
+                                    <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                    <span>قبول</span>
+                                </button>
+                            ` : ''}
+                        </div>
+                    `;
+
+                    rowsHTML += `
+                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                            <td><strong>${item.fullName}</strong></td>
+                            <td>${item.employmentStatus}</td>
+                            <td><span dir="ltr">${formatExactDate(item.date)}</span></td>
+                            <td><code style="color: var(--accent);">${item.trackingCode}</code></td>
+                            <td><span class="badge ${badgeClass}">${badgeText}</span></td>
+                            <td style="text-align: left;">
+                                ${rightActionsHtml}
+                            </td>
+                        </tr>
+                    `;
+                });
+
+                if (rowsHTML === "") {
+                    rowsHTML = `<tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 25px;">لا توجد طلبات مراسلين مسجلة في فايربيز حالياً.</td></tr>`;
+                }
+
+                tableContainer.innerHTML = rowsHTML;
+
+            } catch (error) {
+                console.error("خطأ أثناء جلب طلبات المراسلين من فايربيز: ", error);
+            }
+        }
+
+        window.loadReporterApplications = loadReporterApplications;
+
+        window.approveReporterApp = async function(itemId, realDocId, isLocal, name) {
+            try {
+                if (!isLocal && realDocId) {
+                    const docRef = doc(db, "reporterApplications", realDocId);
+                    await updateDoc(docRef, { status: "approved" });
+                }
+                loadReporterApplications();
+                logActivityToInbox('قبول طلب مراسل', `تم قبول طلب المراسل [${name}] بنجاح.`, 'رئيس التحرير أ. محمد الجزار');
+                showBanner(`✅ تم قبول طلب المراسل بنجاح`, 'success');
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
+        window.rejectReporterApp = async function(itemId, realDocId, isLocal, name) {
+            try {
+                if (!isLocal && realDocId) {
+                    const docRef = doc(db, "reporterApplications", realDocId);
+                    await updateDoc(docRef, { status: "rejected" });
+                }
+                loadReporterApplications();
+                logActivityToInbox('رفض طلب مراسل', `تم رفض طلب المراسل [${name}].`, 'رئيس التحرير أ. محمد الجزار');
+                showBanner(`⚠️ تم رفض طلب المراسل`, 'danger');
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
+        window.viewApplicationDetails = function(itemId) {
+            let targetObj = window.allLoadedApplicationsMap ? window.allLoadedApplicationsMap[itemId] : null;
+            if (targetObj) {
+                renderApplicationDetailsContent(targetObj);
+                document.getElementById('detailsModal').classList.add('active');
+            }
+        }
+
+        // ===== عرض كامل ومنظم لبيانات طلب المراسل (كل حقول الاستمارة + الصورة + المرفقات) =====
+        function renderApplicationDetailsContent(item) {
+            const container = document.getElementById('modalDetailsContainer');
+            if (!container) return;
+
+            const esc = (val) => (val === null || val === undefined) ? '' : String(val).replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+            const fieldLabels = {
+                fullName: 'الاسم الرباعي',
+                birthDate: 'تاريخ الميلاد',
+                nationality: 'الجنسية',
+                country: 'الدولة',
+                city: 'المدينة',
+                address: 'العنوان بالتفصيل',
+                phone: 'رقم الهاتف',
+                whatsapp: 'رقم الواتساب',
+                email: 'البريد الإلكتروني',
+                facebook: 'فيسبوك',
+                linkedin: 'لينكدإن',
+                threads: 'Threads',
+                employmentStatus: 'الوضع الوظيفي',
+                trackingCode: 'كود التتبع'
+            };
+
+            const statusTextMap = { approved: '✅ مقبول', rejected: '🚫 مرفوض', pending: '⏳ قيد المراجعة' };
+
+            let dateObj = null;
+            if (item.date && item.date.seconds) {
+                dateObj = new Date(item.date.seconds * 1000);
+            } else if (item.date) {
+                dateObj = new Date(item.date);
+            }
+            const dateText = (dateObj && !isNaN(dateObj)) ? dateObj.toLocaleString('ar-EG') : 'غير محدد';
+
+            let html = '';
+
+            // -- الصورة الشخصية --
+            if (item.personalPhoto) {
+                html += `
+                    <div class="detail-group">
+                        <label>الصورة الشخصية:</label>
+                        <img src="${item.personalPhoto}" style="max-width:180px; max-height:180px; border-radius:12px; border:1px solid var(--border); margin-top:5px; object-fit:cover;" alt="الصورة الشخصية">
+                    </div>
+                `;
+            }
+
+            // -- البيانات الأساسية --
+            for (let key in fieldLabels) {
+                if (item[key] !== undefined && item[key] !== null && item[key] !== '') {
+                    html += `
+                        <div class="detail-group">
+                            <label>${fieldLabels[key]}:</label>
+                            <div class="detail-content"><span>${esc(item[key])}</span></div>
+                        </div>
+                    `;
+                }
+            }
+
+            // -- اللغات --
+            if (Array.isArray(item.languages) && item.languages.length > 0) {
+                html += `
+                    <div class="detail-group">
+                        <label>اللغات:</label>
+                        <div class="detail-content"><span>${esc(item.languages.join('، '))}</span></div>
+                    </div>
+                `;
+            }
+
+            // -- مجالات التغطية --
+            if (Array.isArray(item.coverage) && item.coverage.length > 0) {
+                html += `
+                    <div class="detail-group">
+                        <label>مجالات التغطية:</label>
+                        <div class="detail-content"><span>${esc(item.coverage.join('، '))}</span></div>
+                    </div>
+                `;
+            }
+
+            // -- تاريخ التقديم وحالة الطلب --
+            html += `
+                <div class="detail-group">
+                    <label>تاريخ التقديم:</label>
+                    <div class="detail-content"><span dir="ltr">${dateText}</span></div>
+                </div>
+                <div class="detail-group">
+                    <label>حالة الطلب:</label>
+                    <div class="detail-content"><span>${statusTextMap[item.status] || 'غير محدد'}</span></div>
+                </div>
+            `;
+
+            // -- صورة الهوية / البطاقة --
+            if (item.idFile) {
+                const isImg = item.idFile.startsWith('data:image');
+                html += `
+                    <div class="detail-group">
+                        <label>صورة الهوية / البطاقة${item.idFileName ? ' — ' + esc(item.idFileName) : ''}:</label>
+                        ${isImg
+                            ? `<img src="${item.idFile}" style="max-width:100%; border-radius:10px; border:1px solid var(--border); margin-top:5px;" alt="صورة الهوية">`
+                            : `<div class="detail-content"><a href="${item.idFile}" download="${esc(item.idFileName || 'id-file')}" style="color: var(--accent);"><i class="fa-solid fa-file-arrow-down"></i> فتح / تحميل الملف</a></div>`
+                        }
+                    </div>
+                `;
+            } else if (item.idFileName) {
+                html += `
+                    <div class="detail-group">
+                        <label>صورة الهوية / البطاقة:</label>
+                        <div class="detail-content"><span>${esc(item.idFileName)} (الملف كبير الحجم ولم يُحفظ، اطلبه من المتقدم مباشرة)</span></div>
+                    </div>
+                `;
+            }
+
+            // -- السيرة الذاتية --
+            if (item.cvFile) {
+                const isImg = item.cvFile.startsWith('data:image');
+                html += `
+                    <div class="detail-group">
+                        <label>السيرة الذاتية (CV)${item.cvFileName ? ' — ' + esc(item.cvFileName) : ''}:</label>
+                        ${isImg
+                            ? `<img src="${item.cvFile}" style="max-width:100%; border-radius:10px; border:1px solid var(--border); margin-top:5px;" alt="السيرة الذاتية">`
+                            : `<div class="detail-content"><a href="${item.cvFile}" download="${esc(item.cvFileName || 'cv-file')}" style="color: var(--accent);"><i class="fa-solid fa-file-arrow-down"></i> فتح / تحميل الملف</a></div>`
+                        }
+                    </div>
+                `;
+            } else if (item.cvFileName) {
+                html += `
+                    <div class="detail-group">
+                        <label>السيرة الذاتية (CV):</label>
+                        <div class="detail-content"><span>${esc(item.cvFileName)} (الملف كبير الحجم ولم يُحفظ، اطلبه من المتقدم مباشرة)</span></div>
+                    </div>
+                `;
+            }
+
+            container.innerHTML = html || '<div class="detail-group"><div class="detail-content">لا توجد بيانات متاحة لعرضها.</div></div>';
+        }
+        
+        window.trashReporterApp = function(itemId, name) {
+            showCustomConfirm('نقل الطلب لسلة المحذوفات', `هل أنت متأكد من مسح طلب المراسل <b>[${name}]</b> ونقله لسلة المحذوفات؟`, () => {
+                let hiddenApps = JSON.parse(localStorage.getItem('gmarik_hidden_applications')) || [];
+                if (!hiddenApps.includes(itemId)) {
+                    hiddenApps.push(itemId);
+                    localStorage.setItem('gmarik_hidden_applications', JSON.stringify(hiddenApps));
+                }
+
+                let trash = JSON.parse(localStorage.getItem('gmarik_trash')) || [];
+                trash.push({
+                    item: { id: itemId, name: name },
+                    category: 'applications',
+                    itemName: name,
+                    deletedAt: new Date()
+                });
+                localStorage.setItem('gmarik_trash', JSON.stringify(trash));
+
+                loadReporterApplications();
+                updateBadges();
+                showBanner(`🗑️ تم إزالة الطلب [${name}] ونقله لسلة المحذوفات`, 'danger');
+            }, 'نعم، نقل للسلة', 'btn-yes');
+        }
+
+        async function loadCompanyOrders() {
+            try {
+                const querySnapshot = await getDocs(collection(db, "companyOrders"));
+                const tableContainer = document.getElementById("companiesTableBody");
+                
+                let hiddenCompanies = JSON.parse(localStorage.getItem('gmarik_hidden_companies')) || [];
+                let companyStatuses = JSON.parse(localStorage.getItem('gmarik_company_statuses')) || {};
+                let localCompanies = JSON.parse(localStorage.getItem('gmarik_companies')) || [];
+
+                let allCompaniesList = [];
+                window.allLoadedCompaniesMap = {};
+
+                localCompanies.forEach((comp, index) => {
+                    let uniqueId = 'local_' + index;
+                    if (!hiddenCompanies.includes(uniqueId)) {
+                        window.allLoadedCompaniesMap[uniqueId] = comp;
+                        let currentStatus = companyStatuses[uniqueId] || comp.status || 'pending';
+                        companyStatuses[uniqueId] = currentStatus;
+
+                        allCompaniesList.unshift({
+                            id: uniqueId,
+                            name: comp.name || 'شركة',
+                            field: comp.field || 'غير محدد',
+                            contact: comp.contact || 'غير محدد',
+                            date: comp.date ? new Date(comp.date) : new Date(0),
+                            status: currentStatus,
+                            isLocal: true
+                        });
+                    }
+                });
+
+                if (!querySnapshot.empty) {
+                    querySnapshot.forEach((documentSnap) => {
+                        let data = documentSnap.data();
+                        let uniqueId = 'fb_' + documentSnap.id;
+                        
+                        if (!hiddenCompanies.includes(uniqueId)) {
+                            window.allLoadedCompaniesMap[uniqueId] = data;
+                            let companyName = data.companyName || data.name || data.companyTitle || "غير محدد";
+                            let field = data.field || data.businessField || data.activityField || "غير محدد";
+                            let phoneOrEmail = data.phoneOrEmail || data.phone || data.email || data.contact || "غير محدد";
+                            let dateAdded = data.createdAt ? new Date(data.createdAt.seconds * 1000) : (data.date ? new Date(data.date) : new Date(0));
+
+                            let remoteStatus = data.status || data.approvalStatus || companyStatuses[uniqueId] || 'pending';
+                            companyStatuses[uniqueId] = remoteStatus;
+
+                            allCompaniesList.unshift({
+                                realDocId: documentSnap.id,
+                                id: uniqueId,
+                                name: companyName,
+                                field: field,
+                                contact: phoneOrEmail,
+                                date: dateAdded,
+                                status: remoteStatus,
+                                isLocal: false
+                            });
+                        }
+                    });
+                }
+
+                localStorage.setItem('gmarik_company_statuses', JSON.stringify(companyStatuses));
+                allCompaniesList.sort((a, b) => (b.date - a.date) || a.id.localeCompare(b.id));
+
+                let rowsHTML = "";
+                allCompaniesList.forEach((item) => {
+                    let badgeClass = 'badge-pending';
+                    let badgeText = 'قيد الانتظار';
+                    if (item.status === 'approved') {
+                        badgeClass = 'badge-approved';
+                        badgeText = 'مقبول';
+                    } else if (item.status === 'rejected') {
+                        badgeClass = 'badge-rejected';
+                        badgeText = 'مرفوض';
+                    }
+
+                    let isDecided = (item.status === 'approved' || item.status === 'rejected');
+
+                    let rightActionsHtml = `
+                        <div style="display: inline-flex; align-items: center; gap: 8px; flex-wrap: nowrap;" dir="ltr">
+                            <button class="btn-action-delete" onclick="trashCompanyOrder('${item.id}', '${item.name}')" title="مسح ونقل للسلة">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+
+                            <button class="btn-action-view" onclick="viewCompanyDetails('${item.id}')" title="رؤية البيانات">
+                                <i class="fa-solid fa-eye"></i>
+                                <span>البيانات</span>
+                            </button>
+
+                            ${!isDecided ? `
+                                <button onclick="rejectCompanyOrder('${item.id}', '${item.realDocId || ''}', ${item.isLocal}, '${item.name}')" title="رفض الطلب" style="background: rgba(244, 63, 94, 0.18); color: #fb7185; border: 1.5px solid rgba(244, 63, 94, 0.4); padding: 9px 16px; border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: bold; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s;" onmouseover="this.style.background='#e11d48'; this.style.color='#ffffff';" onmouseout="this.style.background='rgba(244, 63, 94, 0.18)'; this.style.color='#fb7185';">
+                                    <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                    <span>رفض</span>
+                                </button>
+
+                                <button onclick="approveCompanyOrder('${item.id}', '${item.realDocId || ''}', ${item.isLocal}, '${item.name}')" title="قبول الطلب" style="background: rgba(16, 185, 129, 0.18); color: #34d399; border: 1.5px solid rgba(16, 185, 129, 0.4); padding: 9px 16px; border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: bold; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s;" onmouseover="this.style.background='#059669'; this.style.color='#ffffff';" onmouseout="this.style.background='rgba(16, 185, 129, 0.18)'; this.style.color='#34d399';">
+                                    <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                    <span>قبول</span>
+                                </button>
+                            ` : ''}
+                        </div>
+                    `;
+
+                    rowsHTML += `
+                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                            <td><strong>${item.name}</strong></td>
+                            <td>${item.field}</td>
+                            <td>${item.contact}</td>
+                            <td><span dir="ltr">${formatExactDate(item.date)}</span></td>
+                            <td><span class="badge ${badgeClass}">${badgeText}</span></td>
+                            <td style="text-align: left;">
+                                ${rightActionsHtml}
+                            </td>
+                        </tr>
+                    `;
+                });
+
+                if (rowsHTML === "") {
+                    rowsHTML = `<tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 25px;">لا توجد شركات مسجلة في فايربيز حالياً.</td></tr>`;
+                }
+
+                tableContainer.innerHTML = rowsHTML;
+
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        window.loadCompanyOrders = loadCompanyOrders;
+
+        window.approveCompanyOrder = async function(itemId, realDocId, isLocal, name) {
+            try {
+                if (!isLocal && realDocId) {
+                    const docRef = doc(db, "companyOrders", realDocId);
+                    await updateDoc(docRef, { status: "approved" });
+                }
+                loadCompanyOrders();
+                logActivityToInbox('قبول طلب شركة', `تم قبول شركة [${name}].`, 'رئيس التحرير أ. محمد الجزار');
+                showBanner(`✅ تم قبول الشركة [${name}] بنجاح`, 'success');
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
+        window.rejectCompanyOrder = async function(itemId, realDocId, isLocal, name) {
+            try {
+                if (!isLocal && realDocId) {
+                    const docRef = doc(db, "companyOrders", realDocId);
+                    await updateDoc(docRef, { status: "rejected" });
+                }
+                loadCompanyOrders();
+                logActivityToInbox('رفض طلب شركة', `تم رفض شركة [${name}].`, 'رئيس التحرير أ. محمد الجزار');
+                showBanner(`⚠️ تم رفض الشركة [${name}]`, 'danger');
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
+        window.viewCompanyDetails = function(itemId) {
+            let targetObj = window.allLoadedCompaniesMap ? window.allLoadedCompaniesMap[itemId] : null;
+            if (targetObj) {
+                renderFullDetailsContent(targetObj);
+                document.getElementById('detailsModal').classList.add('active');
+            }
+        }
+        
+        window.trashCompanyOrder = function(itemId, name) {
+            showCustomConfirm('نقل الشركة لسلة المحذوفات', `هل أنت متأكد من مسح الشركة <b>[${name}]</b> ونقلها لسلة المحذوفات؟`, () => {
+                let hiddenCompanies = JSON.parse(localStorage.getItem('gmarik_hidden_companies')) || [];
+                if (!hiddenCompanies.includes(itemId)) {
+                    hiddenCompanies.push(itemId);
+                    localStorage.setItem('gmarik_hidden_companies', JSON.stringify(hiddenCompanies));
+                }
+
+                let trash = JSON.parse(localStorage.getItem('gmarik_trash')) || [];
+                trash.push({
+                    item: { id: itemId, name: name },
+                    category: 'companies',
+                    itemName: name,
+                    deletedAt: new Date()
+                });
+                localStorage.setItem('gmarik_trash', JSON.stringify(trash));
+
+                loadCompanyOrders();
+                updateBadges();
+                showBanner(`🗑️ تم إزالة الشركة [${name}] ونقلها لسلة المحذوفات`, 'danger');
+            }, 'نعم، نقل للسلة', 'btn-yes');
+        }
+
+        async function loadLiveStreamRequests() {
+            try {
+                const querySnapshot = await getDocs(collection(db, "liveStreamRequests"));
+                const tableContainer = document.getElementById("streamRequestsTableBody");
+                
+                let hiddenLiveRequests = JSON.parse(localStorage.getItem('gmarik_hidden_livestream_requests')) || [];
+                let localLiveRequests = JSON.parse(localStorage.getItem('gmarik_live_requests')) || [];
+
+                let allRequestsList = [];
+                window.allLoadedLiveRequestsMap = {};
+
+                localLiveRequests.forEach((req, index) => {
+                    let uniqueId = 'local_' + index;
+                    if (!hiddenLiveRequests.includes(uniqueId)) {
+                        window.allLoadedLiveRequestsMap[uniqueId] = req;
+                        allRequestsList.unshift({
+                            id: uniqueId,
+                            applicantName: req.applicantName || req.name || 'مراسل / مستخدم',
+                            streamTitle: req.streamTitle || req.title || 'بث مباشر',
+                            date: req.date ? new Date(req.date) : new Date(0),
+                            status: req.status || 'pending',
+                            isLocal: true
+                        });
+                    }
+                });
+
+                if (!querySnapshot.empty) {
+                    querySnapshot.forEach((documentSnap) => {
+                        let data = documentSnap.data();
+                        let uniqueId = 'fb_' + documentSnap.id;
+                        
+                        if (!hiddenLiveRequests.includes(uniqueId)) {
+                            window.allLoadedLiveRequestsMap[uniqueId] = data;
+                            let applicantName = data.applicantName || data.name || data.userName || "مراسل / مستخدم";
+                            let streamTitle = data.streamTitle || data.title || data.broadcastTitle || "بث مباشر";
+                            let dateAdded = data.createdAt && data.createdAt.seconds ? new Date(data.createdAt.seconds * 1000) : (data.date ? new Date(data.date) : new Date(0));
+                            let status = data.status || 'pending';
+
+                            allRequestsList.unshift({
+                                realDocId: documentSnap.id,
+                                id: uniqueId,
+                                applicantName: applicantName,
+                                streamTitle: streamTitle,
+                                date: dateAdded,
+                                status: status,
+                                isLocal: false
+                            });
+                        }
+                    });
+                }
+
+                allRequestsList.sort((a, b) => (b.date - a.date) || a.id.localeCompare(b.id));
+
+                let rowsHTML = "";
+                allRequestsList.forEach((item) => {
+                    let badgeClass = 'badge-pending';
+                    let badgeText = 'قيد الانتظار';
+                    if (item.status === 'approved') {
+                        badgeClass = 'badge-approved';
+                        badgeText = 'مقبول';
+                    } else if (item.status === 'rejected') {
+                        badgeClass = 'badge-rejected';
+                        badgeText = 'مرفوض';
+                    }
+
+                    let isDecided = (item.status === 'approved' || item.status === 'rejected');
+
+                    let rightActionsHtml = `
+                        <div style="display: inline-flex; align-items: center; gap: 8px; flex-wrap: nowrap;" dir="ltr">
+                            <button class="btn-action-delete" onclick="trashLiveStreamRequest('${item.id}', '${item.streamTitle}')" title="مسح ونقل للسلة">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+
+                            <button class="btn-action-view" onclick="viewLiveRequestDetails('${item.id}')" title="رؤية البيانات">
+                                <i class="fa-solid fa-eye"></i>
+                                <span>البيانات</span>
+                            </button>
+
+                            ${!isDecided ? `
+                                <button onclick="rejectLiveStreamRequest('${item.id}', '${item.realDocId || ''}', ${item.isLocal}, '${item.streamTitle}')" title="رفض البث" style="background: rgba(244, 63, 94, 0.18); color: #fb7185; border: 1.5px solid rgba(244, 63, 94, 0.4); padding: 9px 16px; border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: bold; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s;" onmouseover="this.style.background='#e11d48'; this.style.color='#ffffff';" onmouseout="this.style.background='rgba(244, 63, 94, 0.18)'; this.style.color='#fb7185';">
+                                    <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                    <span>رفض</span>
+                                </button>
+
+                                <button onclick="approveLiveStreamRequest('${item.id}', '${item.realDocId || ''}', ${item.isLocal}, '${item.streamTitle}')" title="قبول البث" style="background: rgba(16, 185, 129, 0.18); color: #34d399; border: 1.5px solid rgba(16, 185, 129, 0.4); padding: 9px 16px; border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: bold; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s;" onmouseover="this.style.background='#059669'; this.style.color='#ffffff';" onmouseout="this.style.background='rgba(16, 185, 129, 0.18)'; this.style.color='#34d399';">
+                                    <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                    <span>قبول</span>
+                                </button>
+                            ` : ''}
+                        </div>
+                    `;
+
+                    rowsHTML += `
+                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                            <td><strong>${item.applicantName}</strong></td>
+                            <td>${item.streamTitle}</td>
+                            <td><span dir="ltr">${formatExactDate(item.date)}</span></td>
+                            <td><span class="badge ${badgeClass}">${badgeText}</span></td>
+                            <td style="text-align: left;">
+                                ${rightActionsHtml}
+                            </td>
+                        </tr>
+                    `;
+                });
+
+                if (rowsHTML === "") {
+                    rowsHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 25px;">لا توجد طلبات بث مسجلة في فايربيز حالياً.</td></tr>`;
+                }
+
+                tableContainer.innerHTML = rowsHTML;
+
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        window.loadLiveStreamRequests = loadLiveStreamRequests;
+
+        window.loadStreamHistory = async function() {
+            const tableBody = document.getElementById('streamHistoryTableBody');
+            if (!tableBody) return;
+
+            let history = JSON.parse(localStorage.getItem('gmarik_stream_history')) || [];
+
+            try {
+                if (window.db) {
+                    const snap = await getDocs(collection(db, "streamHistory"));
+                    snap.forEach(docSnap => {
+                        const data = docSnap.data();
+                        if (!history.some(h => h.id === docSnap.id || (h.title === data.title && h.endedAt === data.endedAt))) {
+                            history.push({ id: docSnap.id, ...data });
+                        }
+                    });
+                }
+            } catch(e) {}
+
+            history.sort((a, b) => new Date(b.endedAt || b.startTime) - new Date(a.endedAt || a.startTime));
+            localStorage.setItem('gmarik_stream_history', JSON.stringify(history));
+
+            if (history.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 25px;">سجل البثوث المنتهية فارغ حالياً.</td></tr>`;
+                return;
+            }
+
+            let html = '';
+            history.forEach((stream, index) => {
+                html += `
+                    <tr>
+                        <td><strong>${stream.title}</strong></td>
+                        <td>${stream.broadcasterName || 'الأستاذ / محمد الجزار (رئيس التحرير)'}</td>
+                        <td><span dir="ltr">${formatExactDate(new Date(stream.endedAt || stream.startTime))}</span></td>
+                        <td><span class="badge badge-rejected">بث منتهي ومحفوظ</span></td>
+                        <td style="text-align: left;">
+                            <button class="btn-action-delete" onclick="trashStreamHistoryItem(${index})"><i class="fa-solid fa-trash-can"></i> مسح</button>
+                        </td>
+                    </tr>
+                `;
+            });
+            tableBody.innerHTML = html;
+        };
+
+        window.trashStreamHistoryItem = function(index) {
+            let history = JSON.parse(localStorage.getItem('gmarik_stream_history')) || [];
+            let item = history[index];
+            if (!item) return;
+
+            showCustomConfirm('حذف البث من السجل', `هل أنت متأكد من مسح البث <b>[${item.title}]</b> من السجل ونقله لسلة المحذوفات؟`, () => {
+                history.splice(index, 1);
+                localStorage.setItem('gmarik_stream_history', JSON.stringify(history));
+
+                let trash = JSON.parse(localStorage.getItem('gmarik_trash')) || [];
+                trash.push({
+                    item: item,
+                    category: 'livestreams',
+                    itemName: item.title,
+                    deletedAt: new Date()
+                });
+                localStorage.setItem('gmarik_trash', JSON.stringify(trash));
+
+                loadStreamHistory();
+                updateBadges();
+                showBanner('🗑️ تم نقل البث لسلة المحذوفات بنجاح', 'danger');
+            }, 'نعم، مسح', 'btn-yes');
+        };
+
+        window.scheduleAILiveStream = async function(e) {
+            e.preventDefault();
+            const title = document.getElementById('aiStreamTitleInput').value.trim();
+            const script = document.getElementById('aiScriptInput').value.trim();
+            const startTime = document.getElementById('aiStartTimeInput').value;
+            const duration = document.getElementById('aiDurationInput').value;
+            
+            const thumbFile = document.getElementById('aiThumbnailInput').files[0];
+            const avatarFile = document.getElementById('aiPresenterAvatarInput').files[0];
+
+            const readFile = (file) => new Promise(res => {
+                const r = new FileReader();
+                r.onload = () => res(r.result);
+                r.readAsDataURL(file);
+            });
+
+            const thumbBase64 = thumbFile ? await readFile(thumbFile) : '';
+            const avatarBase64 = avatarFile ? await readFile(avatarFile) : '';
+
+            const aiStreamData = {
+                title: title,
+                type: 'ai_stream',
+                broadcasterName: 'مذيع الذكاء الاصطناعي الافتراضي',
+                thumbnailUrl: thumbBase64,
+                avatarUrl: avatarBase64,
+                script: script,
+                scheduledStartTime: startTime,
+                durationMinutes: duration,
+                status: 'scheduled',
+                createdAt: serverTimestamp()
+            };
+
+            try {
+                await addDoc(collection(db, "aiLiveStreams"), aiStreamData);
+                closePopup('createLiveModal');
+                logActivityToInbox('جدولة بث ذكاء اصطناعي', `تمت جدولة بث بالذكاء الاصطناعي بعنوان: [${title}].`, 'رئيس التحرير أ. محمد الجزار');
+                showBanner('🤖 تم جدولة وتوليد بث الذكاء الاصطناعي بنجاح!', 'success');
+                document.getElementById('aiLiveForm').reset();
+            } catch (err) {
+                console.error(err);
+                showBanner('حدث خطأ أثناء حفظ البث الذكي.', 'danger');
+            }
+        };
+
+        loadReporterApplications();
+        loadCompanyOrders();
+        loadLiveStreamRequests();
+        loadArticles(); // تحميل مقالات النشر
+        loadStreamHistory();
+        updateBadges();
+
+        // استماع لحظي لتحديث المقالات فور اعتمادها من رئيس القسم
+        try {
+            onSnapshot(collection(db, "articles"), () => {
+                loadArticles();
+            });
+        } catch(e) {}
+
+        window.saveNewsTickerToFirestore = async function(text) {
+            await setDoc(doc(db, "siteSettings", "newsTicker"), {
+                text: text,
+                updatedAt: serverTimestamp(),
+                updatedBy: "رئيس التحرير أ. محمد الجزار"
+            }, { merge: true });
+        };
+    </script>
+
+    <!-- سكربت تفاصيل المرفقات والمقالات -->
+    <script>
+        function renderFullDetailsContent(item) {
+            const container = document.getElementById('modalDetailsContainer');
+            if (!container) return;
+
+            const esc = (val) => (val === null || val === undefined) ? '' : String(val).replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+            let html = '';
+
+            // 1. عرض الصورة كاملة بدون قص
+            const artImage = item.image || item.imageUrl || item.thumbnail;
+            if (artImage && typeof artImage === 'string' && artImage.trim() !== '') {
+                html += `
+                    <div class="detail-group" style="margin-bottom: 20px;">
+                        <label style="color:var(--accent); font-weight:800; font-size:0.95rem;"><i class="fa-solid fa-image"></i> صورة المقال / المرفق الإعلامي كاملة (اضغط للتكبير):</label>
+                        <div style="background:#020617; border:1px solid var(--border); border-radius:14px; overflow:hidden; text-align:center; padding:5px; margin-top:8px;">
+                            <img src="${artImage}" style="max-width:100%; max-height:480px; object-fit:contain; cursor:pointer;" onclick="window.open('${artImage}', '_blank')" alt="صورة المقال" title="اضغط لفتح الصورة بحجمها الكامل">
+                        </div>
+                    </div>
+                `;
+            }
+
+            // 2. عرض الفيديو إن وجد
+            if (item.video && typeof item.video === 'string' && item.video.trim() !== '') {
+                html += `
+                    <div class="detail-group" style="margin-bottom: 20px;">
+                        <label style="color:var(--cyan); font-weight:800;"><i class="fa-solid fa-video"></i> فيديو المقال المرفق:</label>
+                        <video src="${item.video}" controls style="width:100%; max-height:380px; border-radius:12px; background:#000; margin-top:8px;"></video>
+                    </div>
+                `;
+            }
+
+            const fieldLabels = {
+                title: 'عنوان المقال',
+                reporterName: 'اسم الكاتب / المراسل',
+                reporterEmail: 'البريد الإلكتروني للكاتب',
+                category: 'القسم الصحفي',
+                date: 'تاريخ الإرسال / النشر',
+                description: 'الملخص والوصف الصحفي',
+                content: 'المحتوى الصحفي الكامل',
+                tags: 'الكلمات المفتاحية (SEO Tags)',
+                status: 'الحالة في مسار النشر',
+                publishedBy: 'جهة الاعتماد والنشر'
+            };
+
+            for (let key in fieldLabels) {
+                if (item[key] !== undefined && item[key] !== null && String(item[key]).trim() !== '') {
+                    html += `
+                        <div class="detail-group" style="margin-bottom: 14px;">
+                            <label style="color:var(--accent); font-weight:700;">${fieldLabels[key]}:</label>
+                            <div class="detail-content" style="background:#0b0f19; padding:12px 16px; border-radius:10px; border:1px solid rgba(255,255,255,0.08); color:#f8fafc; line-height:1.7; white-space:pre-wrap;">${esc(item[key])}</div>
+                        </div>
+                    `;
+                }
+            }
+
+            // عرض باقي الحقول غير المعرفة
+            for (let key in item) {
+                if (!fieldLabels[key] && key !== 'image' && key !== 'imageUrl' && key !== 'thumbnail' && key !== 'video' && key !== 'id' && key !== '_docId') {
+                    if (typeof item[key] === 'string' || typeof item[key] === 'number') {
+                        html += `
+                            <div class="detail-group" style="margin-bottom: 10px;">
+                                <label style="color:var(--text-muted); font-size:0.85rem;">${key}:</label>
+                                <div class="detail-content" style="background:#0b0f19; padding:8px 12px; border-radius:8px;">${esc(item[key])}</div>
+                            </div>
+                        `;
+                    }
+                }
+            }
+
+            container.innerHTML = html || '<div class="detail-group"><div class="detail-content">لا توجد بيانات متاحة لعرضها.</div></div>';
+        }
+    </script>
+
+    <!-- سكربت التحكم الكامل في البث، الكاميرا، والإنهاء الفوري وسجل البثوث (تم توحيده على Agora فقط) -->
+    <script>
+        let currentActionCallback = null;
+        let currentTrashCategory = 'applications';
+        let mediaStream = null;
+        let commentsOpen = true;
+
+        let micAudioContext = null;
+        let micAnalyser = null;
+        let micDataArray = null;
+        let micMeterFrame = null;
+        let activeStreamTitleGlobal = '';
+        let currentActiveStreamObject = null;
+        let currentActiveStreamId = null;
+
+        let agoraClient = null;
+        let agoraAudioTrack = null;
+        let agoraVideoTrack = null;
+        let liveChatUnsubscribe = null;
+
+        const AGORA_APP_ID = "710459b97c0b46789a4601b175cd24c5".trim();
+
+        const liveBroadcastBus = new BroadcastChannel('gmarik_live_stream_bus');
+
+        function selectLiveMode(mode) {
+            const cardHuman = document.getElementById('modeCardHuman');
+            const cardAI = document.getElementById('modeCardAI');
+            const formHuman = document.getElementById('humanLiveForm');
+            const formAI = document.getElementById('aiLiveForm');
+
+            if (mode === 'human') {
+                cardHuman.className = 'live-mode-card active-human';
+                cardAI.className = 'live-mode-card';
+                formHuman.style.display = 'block';
+                formAI.style.display = 'none';
+            } else {
+                cardHuman.className = 'live-mode-card';
+                cardAI.className = 'live-mode-card active-ai';
+                formHuman.style.display = 'none';
+                formAI.style.display = 'block';
+
+                const now = new Date();
+                now.setMinutes(now.getMinutes() + 15);
+                const isoString = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+                document.getElementById('aiStartTimeInput').value = isoString;
+            }
+        }
+
+        function openCreateLiveModal() {
+            openPopup('createLiveModal');
+            selectLiveMode('human');
+            if (typeof populateLiveCameraSources === 'function') populateLiveCameraSources();
+        }
+
+        function switchAppSubTab(targetSectionId, btnElement) {
+            const container = document.getElementById('applicationsTab');
+            container.querySelectorAll('.sub-tab-content').forEach(el => el.classList.remove('active'));
+            container.querySelectorAll('.sub-tab-btn').forEach(el => el.classList.remove('active'));
+
+            const target = document.getElementById(targetSectionId);
+            if (target) target.classList.add('active');
+            if (btnElement) btnElement.classList.add('active');
+        }
+
+        async function populateLiveCameraSources() {
+            const select = document.getElementById('liveCameraSourceSelect');
+            if (!select) return;
+            select.innerHTML = '<option value="">جاري تحميل قائمة الكاميرات...</option>';
+            try {
+                const tempStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+                tempStream.getTracks().forEach(t => t.stop());
+
+                const devices = await navigator.mediaDevices.enumerateDevices();
+                const cams = devices.filter(d => d.kind === 'videoinput' && !/obs/i.test(d.label));
+                select.innerHTML = '';
+                if (cams.length === 0) {
+                    select.innerHTML = '<option value="">لا توجد كاميرات متاحة</option>';
+                    return;
+                }
+                cams.forEach((cam, i) => {
+                    const opt = document.createElement('option');
+                    opt.value = cam.deviceId;
+                    const label = cam.label || `كاميرا ${i + 1}`;
+                    opt.textContent = /camo/i.test(label) ? `📱 ${label} (Camo Studio)` : `🎥 ${label}`;
+                    select.appendChild(opt);
+                });
+            } catch (err) {
+                console.error('تعذر جلب قائمة الكاميرات:', err);
+                select.innerHTML = '<option value="">تعذر الوصول للكاميرات - تحقق من الأذونات</option>';
+            }
+        }
+
+        function formatExactDate(dateObj) {
+            if (!dateObj || isNaN(dateObj.getTime())) return 'غير محدد';
+            let d = new Date(dateObj);
+            return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+        }
+
+        function logActivityToInbox(title, message, sender = 'النظام الآلي') {
+            let inbox = JSON.parse(localStorage.getItem('gmarik_inbox')) || [];
+            let now = new Date();
+            let expireDate = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+            
+            inbox.unshift({
+                id: 'notif_' + Date.now(),
+                title: title,
+                message: message,
+                sender: sender,
+                date: now.toISOString(),
+                expireDate: expireDate.toISOString(),
+                read: false
+            });
+
+            localStorage.setItem('gmarik_inbox', JSON.stringify(inbox));
+            updateBadges();
+        }
+
+        function updateBadges() {
+            let inbox = JSON.parse(localStorage.getItem('gmarik_inbox')) || [];
+            let unreadCount = inbox.filter(i => !i.read).length;
+            
+            const badge1 = document.getElementById('mailCountBadge');
+            const badge2 = document.getElementById('inboxPopupCountBadge');
+            if (badge1) badge1.innerText = unreadCount;
+            if (badge2) badge2.innerText = unreadCount;
+
+            renderInboxCards();
+            updateTrashCounts();
+        }
+
+        function renderInboxCards() {
+            const container = document.getElementById('inboxCardsContainer');
+            if (!container) return;
+
+            let inbox = JSON.parse(localStorage.getItem('gmarik_inbox')) || [];
+            if (inbox.length === 0) {
+                container.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 40px;">لا توجد إشعارات أو رسائل بريدية حالياً.</div>`;
+                return;
+            }
+
+            let html = '';
+            inbox.forEach(item => {
+                html += `
+                    <div style="background: ${item.read ? '#162032' : '#1e293b'}; border: 1px solid ${item.read ? 'var(--border)' : 'var(--secondary)'}; padding: 16px; border-radius: 12px; margin-bottom: 12px; cursor: pointer; transition: 0.2s;" onclick="openNotificationDetail('${item.id}')">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <strong style="color: ${item.read ? 'var(--text-main)' : 'var(--accent)'}; font-size: 1rem;"><i class="fa-solid fa-envelope"></i> ${item.title}</strong>
+                            <span style="font-size: 0.78rem; color: var(--text-muted);" dir="ltr">${formatExactDate(new Date(item.date))}</span>
+                        </div>
+                        <p style="margin: 0; color: var(--text-muted); font-size: 0.88rem; line-height: 1.5;">${item.message}</p>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function switchTrashCategory(category, btnElement) {
+            currentTrashCategory = category;
+            document.querySelectorAll('.trash-side-btn').forEach(b => b.classList.remove('active'));
+            if (btnElement) btnElement.classList.add('active');
+            renderTrashCategoryContent(category);
+        }
+
+        function renderTrashCategoryContent(category) {
+            const container = document.getElementById('trashCardsContainer');
+            if (!container) return;
+
+            let trash = JSON.parse(localStorage.getItem('gmarik_trash')) || [];
+            let filtered = trash.filter(i => i.category === category);
+
+            if (filtered.length === 0) {
+                container.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 40px;">سلة المحذوفات لهذا القسم فارغة تماماً.</div>`;
+                return;
+            }
+
+            let html = `<div style="display: flex; flex-direction: column; gap: 10px;">`;
+            filtered.forEach((entry, idx) => {
+                let actualIndex = trash.indexOf(entry);
+                html += `
+                    <div style="background: #0f172a; border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;">
+                        <div>
+                            <strong style="color: #fff; display: block; margin-bottom: 4px;">${entry.itemName || 'عنصر محذوف'}</strong>
+                            <span style="font-size: 0.78rem; color: var(--danger);"><i class="fa-solid fa-clock"></i> حذف في: ${formatExactDate(new Date(entry.deletedAt))}</span>
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <button class="btn-action-restore" onclick="restoreTrashItem(${actualIndex})"><i class="fa-solid fa-rotate-left"></i> استعادة</button>
+                            <button class="btn-action-delete" onclick="permanentDeleteTrashItem(${actualIndex})"><i class="fa-solid fa-xmark"></i> حذف نهائي</button>
+                        </div>
+                    </div>
+                `;
+            });
+            html += `</div>`;
+            container.innerHTML = html;
+        }
+
+        function updateTrashCounts() {
+            let trash = JSON.parse(localStorage.getItem('gmarik_trash')) || [];
+            let countApp = trash.filter(i => i.category === 'applications').length;
+            let countArt = trash.filter(i => i.category === 'articles').length;
+            let countComp = trash.filter(i => i.category === 'companies').length;
+            let countHonor = trash.filter(i => i.category === 'honors').length;
+            let countLive = trash.filter(i => i.category === 'livestreams').length;
+            let countStreamReq = trash.filter(i => i.category === 'streamRequests').length;
+
+            if (document.getElementById('countTrashApp')) document.getElementById('countTrashApp').innerText = countApp;
+            if (document.getElementById('countTrashArt')) document.getElementById('countTrashArt').innerText = countArt;
+            if (document.getElementById('countTrashComp')) document.getElementById('countTrashComp').innerText = countComp;
+            if (document.getElementById('countTrashHonor')) document.getElementById('countTrashHonor').innerText = countHonor;
+            if (document.getElementById('countTrashLive')) document.getElementById('countTrashLive').innerText = countLive;
+            if (document.getElementById('countTrashStreamReq')) document.getElementById('countTrashStreamReq').innerText = countStreamReq;
+
+            renderTrashCategoryContent(currentTrashCategory);
+        }
+
+        function restoreTrashItem(index) {
+            let trash = JSON.parse(localStorage.getItem('gmarik_trash')) || [];
+            let item = trash[index];
+            if (!item) return;
+
+            trash.splice(index, 1);
+            localStorage.setItem('gmarik_trash', JSON.stringify(trash));
+            updateBadges();
+            showBanner('♻️ تم استعادة العنصر بنجاح', 'success');
+        }
+
+        function permanentDeleteTrashItem(index) {
+            let trash = JSON.parse(localStorage.getItem('gmarik_trash')) || [];
+            trash.splice(index, 1);
+            localStorage.setItem('gmarik_trash', JSON.stringify(trash));
+            updateBadges();
+            showBanner('🗑️ تم إزالة العنصر نهائياً', 'danger');
+        }
+
+        function confirmClearTrash() {
+            showCustomConfirm('إفراغ سلة المحذوفات بالكامل', 'هل أنت متأكد من تفريغ كافة محتويات سلة المحذوفات نهائياً؟', () => {
+                localStorage.removeItem('gmarik_trash');
+                updateBadges();
+                showBanner('🗑️ تم تفريغ سلة المحذوفات بالكامل', 'danger');
+            }, 'نعم، إفراغ نهائي', 'btn-yes');
+        }
+
+        function showBanner(text, type = 'success') {
+            const banner = document.getElementById('customBanner');
+            if (!banner) return;
+            banner.innerHTML = text;
+            banner.style.borderColor = type === 'success' ? 'var(--success)' : 'var(--danger)';
+            banner.style.display = 'block';
+            setTimeout(() => {
+                banner.style.display = 'none';
+            }, 3500);
+        }
+
+        function showCustomConfirm(title, text, callback, yesBtnText = 'نعم', yesBtnClass = 'btn-yes') {
+            document.getElementById('confirmTitle').innerText = title;
+            document.getElementById('confirmText').innerHTML = text;
+            const yesBtn = document.getElementById('confirmYesBtn');
+            yesBtn.innerText = yesBtnText;
+            yesBtn.className = 'custom-confirm-actions button ' + yesBtnClass;
+            currentActionCallback = callback;
+            document.getElementById('customConfirmModal').classList.add('active');
+        }
+
+        function executeConfirmAction() {
+            if (typeof currentActionCallback === 'function') currentActionCallback();
+            closeConfirmModal();
+        }
+
+        function closeConfirmModal() {
+            document.getElementById('customConfirmModal').classList.remove('active');
+            currentActionCallback = null;
+        }
+
+        function openPopup(popupId) {
+            const modal = document.getElementById(popupId);
+            if (modal) modal.classList.add('active');
+        }
+
+        function closePopup(popupId) {
+            const modal = document.getElementById(popupId);
+            if (modal) modal.classList.remove('active');
+        }
+
+        function closeDetailsModal() {
+            document.getElementById('detailsModal').classList.remove('active');
+        }
+
+        function switchTab(tabId, btnElement) {
+            document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(tb => tb.classList.remove('active'));
+            
+            const targetTab = document.getElementById(tabId);
+            if (targetTab) targetTab.classList.add('active');
+            if (btnElement) btnElement.classList.add('active');
+        }
+
+        function switchSubTab(subTabId, btnElement) {
+            const container = btnElement.closest('.card');
+            if (!container) return;
+            container.querySelectorAll('.sub-tab-content').forEach(st => st.classList.remove('active'));
+            container.querySelectorAll('.sub-tab-btn').forEach(sb => sb.classList.remove('active'));
+            
+            const targetSub = container.querySelector('#' + subTabId);
+            if (targetSub) targetSub.classList.add('active');
+            if (btnElement) btnElement.classList.add('active');
+
+            if (subTabId === 'streamHistoryContent' && typeof window.loadStreamHistory === 'function') {
+                window.loadStreamHistory();
+            }
+        }
+
+        function switchTabContentToLiveStreams() {
+            switchSubTab('activeStreamsContent', document.getElementById('subTabActiveStreamsBtn'));
+        }
+
+        // ===== تصفير القسم الحالي فقط (المكان اللي رئيس التحرير واقف فيه) =====
+        const CLEAR_SECTION_LABELS = {
+            reportersSubTab: 'طلبات المراسلين',
+            editorsSubTab: 'طلبات المحررين',
+            translatorsSubTab: 'طلبات المترجمين',
+            proofreadersSubTab: 'طلبات المدققين / المراجعين',
+            linguisticSubTab: 'طلبات المراجعين اللغويين',
+            managingEditorsSubTab: 'طلبات مديري التحرير',
+            articlesTab: 'طلبات النشر',
+            companiesTab: 'الشركات',
+            honorsTab: 'استمارات التكريم',
+            tickerTab: 'الشريط الإخباري',
+            activeStreamsContent: 'البثوث النشطة',
+            streamRequestsContent: 'طلبات البث',
+            streamHistoryContent: 'سجل البثوث المنتهية'
+        };
+
+        function getCurrentSectionId() {
+            const activeMainTab = document.querySelector('.tab-content.active');
+            if (!activeMainTab) return null;
+            if (activeMainTab.id === 'applicationsTab' || activeMainTab.id === 'liveStreamsTab') {
+                const activeSub = activeMainTab.querySelector('.sub-tab-content.active');
+                if (activeSub) return activeSub.id;
+            }
+            return activeMainTab.id;
+        }
+
+        async function clearSectionData(sectionId) {
+            let cleared = 0;
+            let trash = JSON.parse(localStorage.getItem('gmarik_trash')) || [];
+            const pushTrash = (category, id, name) => {
+                trash.push({ item: { id, name }, category, itemName: name, deletedAt: new Date() });
+            };
+
+            switch (sectionId) {
+                case 'reportersSubTab': {
+                    const map = window.allLoadedApplicationsMap || {};
+                    const ids = Object.keys(map);
+                    let hidden = JSON.parse(localStorage.getItem('gmarik_hidden_applications')) || [];
+                    ids.forEach(id => {
+                        if (!hidden.includes(id)) hidden.push(id);
+                        pushTrash('applications', id, (map[id] && (map[id].fullName || map[id].name)) || 'متقدم');
+                    });
+                    localStorage.setItem('gmarik_hidden_applications', JSON.stringify(hidden));
+                    cleared = ids.length;
+                    if (typeof loadReporterApplications === 'function') loadReporterApplications();
+                    break;
+                }
+                case 'articlesTab': {
+                    const map = window.allLoadedArticlesMap || {};
+                    const ids = Object.keys(map);
+                    if (ids.length && window.db) {
+                        try {
+                            const { doc, deleteDoc } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
+                            for (const id of ids) {
+                                pushTrash('articles', id, (map[id] && map[id].title) || 'مقال');
+                                await deleteDoc(doc(window.db, "articles", id));
+                            }
+                        } catch (e) { console.error(e); }
+                    }
+                    cleared = ids.length;
+                    if (typeof window.loadArticles === 'function') window.loadArticles();
+                    break;
+                }
+                case 'companiesTab': {
+                    const map = window.allLoadedCompaniesMap || {};
+                    const ids = Object.keys(map);
+                    let hidden = JSON.parse(localStorage.getItem('gmarik_hidden_companies')) || [];
+                    ids.forEach(id => {
+                        if (!hidden.includes(id)) hidden.push(id);
+                        pushTrash('companies', id, (map[id] && (map[id].companyName || map[id].name)) || 'شركة');
+                    });
+                    localStorage.setItem('gmarik_hidden_companies', JSON.stringify(hidden));
+                    cleared = ids.length;
+                    if (typeof window.loadCompanyOrders === 'function') window.loadCompanyOrders();
+                    break;
+                }
+                case 'honorsTab': {
+                    let honors = JSON.parse(localStorage.getItem('gmarik_honors')) || [];
+                    cleared = honors.length;
+                    localStorage.setItem('gmarik_honors', JSON.stringify([]));
+                    if (typeof renderHonorsTable === 'function') renderHonorsTable();
+                    break;
+                }
+                case 'streamRequestsContent': {
+                    const map = window.allLoadedLiveRequestsMap || {};
+                    const ids = Object.keys(map);
+                    let hidden = JSON.parse(localStorage.getItem('gmarik_hidden_livestream_requests')) || [];
+                    ids.forEach(id => {
+                        if (!hidden.includes(id)) hidden.push(id);
+                        pushTrash('streamRequests', id, (map[id] && (map[id].streamTitle || map[id].title)) || 'طلب بث');
+                    });
+                    localStorage.setItem('gmarik_hidden_livestream_requests', JSON.stringify(hidden));
+                    cleared = ids.length;
+                    if (typeof window.loadLiveStreamRequests === 'function') window.loadLiveStreamRequests();
+                    break;
+                }
+                case 'streamHistoryContent': {
+                    let history = JSON.parse(localStorage.getItem('gmarik_stream_history')) || [];
+                    history.forEach(item => pushTrash('livestreams', item.id || '', item.title || 'بث'));
+                    cleared = history.length;
+                    localStorage.setItem('gmarik_stream_history', JSON.stringify([]));
+                    if (typeof window.loadStreamHistory === 'function') window.loadStreamHistory();
+                    break;
+                }
+                default:
+                    cleared = 0;
+            }
+
+            localStorage.setItem('gmarik_trash', JSON.stringify(trash));
+            if (typeof updateBadges === 'function') updateBadges();
+            return cleared;
+        }
+
+        function confirmClearAll() {
+            const sectionId = getCurrentSectionId();
+            const label = CLEAR_SECTION_LABELS[sectionId] || 'هذا القسم';
+            const notClearable = ['tickerTab', 'activeStreamsContent', 'editorsSubTab', 'translatorsSubTab', 'proofreadersSubTab', 'linguisticSubTab', 'managingEditorsSubTab'];
+
+            if (!sectionId || notClearable.includes(sectionId)) {
+                showBanner(`ℹ️ لا توجد بيانات قابلة للتصفير في [${label}] حالياً`, 'danger');
+                return;
+            }
+
+            showCustomConfirm('تصفير القسم الحالي', `هل أنت متأكد من تصفير ونقل كل عناصر [<b>${label}</b>] الظاهرة أمامك الآن لسلة المحذوفات؟`, async () => {
+                const count = await clearSectionData(sectionId);
+                if (count > 0) {
+                    showBanner(`🗑️ تم تصفير [${label}] ونقل ${count} عنصر لسلة المحذوفات`, 'danger');
+                } else {
+                    showBanner(`ℹ️ [${label}] فارغ بالفعل، لا يوجد ما يتم تصفيره`, 'danger');
+                }
+            }, 'نعم، تصفير القسم', 'btn-yes');
+        }
+
+        function saveNewsTicker(e) {
+            e.preventDefault();
+            const text = document.getElementById('tickerTextInput').value;
+            if (typeof window.saveNewsTickerToFirestore === 'function') {
+                window.saveNewsTickerToFirestore(text).then(() => {
+                    logActivityToInbox('تحديث الشريط الإخباري', `تم تحديث الشريط الإخباري بنجاح.`, 'رئيس التحرير أ. محمد الجزار');
+                    showBanner('📢 تم حفظ ونشر الشريط الإخباري بنجاح', 'success');
+                });
+            }
+        }
+
+        function openAddHonorModal() { openPopup('addHonorModal'); }
+
+        function saveNewHonor(e) {
+            e.preventDefault();
+            const name = document.getElementById('honorName').value;
+            const reason = document.getElementById('honorReason').value;
+            const contact = document.getElementById('honorContact').value;
+
+            let honors = JSON.parse(localStorage.getItem('gmarik_honors')) || [];
+            honors.unshift({ name, reason, contact, date: new Date().toISOString() });
+            localStorage.setItem('gmarik_honors', JSON.stringify(honors));
+
+            renderHonorsTable();
+            closePopup('addHonorModal');
+            document.getElementById('addHonorForm').reset();
+            showBanner('✅ تم حفظ طلب التكريم بنجاح', 'success');
+        }
+
+        function renderHonorsTable() {
+            const tableBody = document.getElementById('honorsTableBody');
+            if (!tableBody) return;
+
+            let honors = JSON.parse(localStorage.getItem('gmarik_honors')) || [];
+            if (honors.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 25px;">لا توجد طلبات تكريم مسجلة حالياً.</td></tr>`;
+                return;
+            }
+
+            let html = '';
+            honors.forEach((item, index) => {
+                html += `
+                    <tr>
+                        <td><strong>${item.name}</strong></td>
+                        <td>${item.reason}</td>
+                        <td>${item.contact}</td>
+                        <td><span dir="ltr">${formatExactDate(new Date(item.date))}</span></td>
+                        <td style="text-align: left;">
+                            <button class="btn-action-delete" onclick="deleteHonor(${index})"><i class="fa-solid fa-trash-can"></i> حذف</button>
+                        </td>
+                    </tr>
+                `;
+            });
+            tableBody.innerHTML = html;
+        }
+
+        function deleteHonor(index) {
+            showCustomConfirm('حذف استمارة التكريم', 'هل أنت متأكد من حذف استمارة التكريم هذه؟', () => {
+                let honors = JSON.parse(localStorage.getItem('gmarik_honors')) || [];
+                honors.splice(index, 1);
+                localStorage.setItem('gmarik_honors', JSON.stringify(honors));
+                renderHonorsTable();
+                showBanner('🗑️ تم حذف استمارة التكريم بنجاح', 'danger');
+            }, 'نعم، حذف', 'btn-yes');
+        }
+
+        function startEditorChatListener(streamId) {
+            if (liveChatUnsubscribe) { liveChatUnsubscribe(); liveChatUnsubscribe = null; }
+            const chatMessages = document.getElementById('liveChatMessages');
+            if (chatMessages) chatMessages.innerHTML = `<div style="color: var(--text-muted); text-align: center; font-size: 0.8rem; margin-top: 20px;">تم بدء البث وبثه لجميع مستخدمي المنصة بنجاح.</div>`;
+
+            try {
+                if (window.db) {
+                    import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js").then(({ collection, onSnapshot }) => {
+                        liveChatUnsubscribe = onSnapshot(collection(window.db, `activeLiveStreams/${streamId}/chat`), (snapshot) => {
+                            let msgs = [];
+                            snapshot.forEach(doc => msgs.push(doc.data()));
+                            msgs.sort((a, b) => new Date(a.time) - new Date(b.time));
+                            renderChatList(msgs);
+                        });
+                    });
+                }
+            } catch(e) { console.warn(e); }
+        }
+
+        function renderChatList(messages) {
+            const container = document.getElementById('liveChatMessages');
+            if (!container) return;
+            if (messages.length === 0) {
+                container.innerHTML = `<div style="color: var(--text-muted); text-align: center; font-size: 0.8rem; margin-top: 20px;">تم بدء البث وبثه لجميع مستخدمي المنصة بنجاح.</div>`;
+                return;
+            }
+            let html = '';
+            messages.forEach(msg => {
+                const isOwner = msg.senderRole === 'editor';
+                const displayName = msg.senderName || 'مستخدم';
+                const avatarLetter = isOwner ? 'م.ج' : (displayName.charAt(0) || 'م');
+                html += `
+                    <div class="chat-msg-item ${isOwner ? 'is-owner' : ''}">
+                        <div class="chat-msg-avatar">${avatarLetter}</div>
+                        <div class="chat-msg-body">
+                            <span class="chat-msg-username">${displayName}</span>
+                            <p class="chat-msg-text">${msg.text}</p>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+            container.scrollTop = container.scrollHeight;
+        }
+
+        async function sendLiveChatMessage() {
+            const input = document.getElementById('liveChatInput');
+            const text = input.value.trim();
+            if (!text || !commentsOpen || !currentActiveStreamId) return;
+
+            const newMsg = {
+                text: text,
+                senderName: "أ. محمد الجزار (رئيس التحرير)",
+                senderRole: "editor",
+                time: new Date().toISOString()
+            };
+
+            input.value = '';
+
+            try {
+                const { collection, addDoc, serverTimestamp } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
+                await addDoc(collection(window.db, `activeLiveStreams/${currentActiveStreamId}/chat`), {
+                    ...newMsg,
+                    createdAt: serverTimestamp()
+                });
+            } catch(e){ console.error(e); }
+        }
+
+        // ===== تشغيل البث المباشر الجديد (Agora فقط - تم حذف نظام WebRTC اليدوي غير المستخدم) =====
+        async function startNewLiveStream(e) {
+            e.preventDefault();
+            const titleInput = document.getElementById('liveStreamTitleInput').value.trim();
+            activeStreamTitleGlobal = titleInput;
+            currentActiveStreamId = "live_" + Date.now();
+            commentsOpen = true;
+
+            const thumbFileInput = document.getElementById('liveThumbnailInput');
+            let thumbnailUrl = '';
+            if (thumbFileInput && thumbFileInput.files && thumbFileInput.files[0]) {
+                const file = thumbFileInput.files[0];
+                thumbnailUrl = await new Promise((resolve) => {
+                    const reader = new FileReader();
+                    reader.onload = (e) => resolve(e.target.result);
+                    reader.readAsDataURL(file);
+                });
+            }
+
+            closePopup('createLiveModal');
+            document.getElementById('activeRoomTitle').innerHTML = `<i class="fa-solid fa-tower-broadcast"></i> ${titleInput}`;
+            document.getElementById('liveBroadcastRoom').classList.add('active');
+
+            const cameraSourceSelect = document.getElementById('liveCameraSourceSelect');
+            const selectedDeviceId = cameraSourceSelect ? cameraSourceSelect.value : '';
+            const videoConstraints = selectedDeviceId ? { deviceId: { exact: selectedDeviceId } } : true;
+
+            try {
+                mediaStream = await navigator.mediaDevices.getUserMedia({ video: videoConstraints, audio: true });
+                const videoEl = document.getElementById('liveVideoElement');
+                videoEl.srcObject = mediaStream;
+                videoEl.play();
+
+                setupMicMeter(mediaStream);
+
+                // كل بث جديد له اسم قناة خاص به مبني على معرف البث - عشان مايحصلش تصادم بين بثوث سابقة ولاحقة
+                const channelName = "editor_live_" + currentActiveStreamId;
+                const uid = Math.floor(Math.random() * 10000);
+
+                try {
+                    agoraClient = AgoraRTC.createClient({ mode: "live", codec: "vp8" });
+                    await agoraClient.setClientRole("host");
+                    await agoraClient.join(AGORA_APP_ID, channelName, null, uid);
+
+                    agoraAudioTrack = AgoraRTC.createCustomAudioTrack({ mediaStreamTrack: mediaStream.getAudioTracks()[0] });
+                    agoraVideoTrack = AgoraRTC.createCustomVideoTrack({ mediaStreamTrack: mediaStream.getVideoTracks()[0] });
+                    await agoraClient.publish([agoraAudioTrack, agoraVideoTrack]);
+                } catch (agoraErr) {
+                    console.error('تعذر النشر على Agora:', agoraErr);
+                    showBanner('⚠️ تعذر بدء البث السحابي (Agora). راجع بيانات الاتصال.', 'danger');
+                }
+
+                const liveData = {
+                    id: currentActiveStreamId,
+                    title: titleInput,
+                    broadcasterName: "الأستاذ / محمد الجزار (رئيس التحرير)",
+                    channelName: channelName,
+                    thumbnailUrl: thumbnailUrl,
+                    isLive: true,
+                    commentsLocked: false,
+                    startTime: new Date().toISOString()
+                };
+
+                currentActiveStreamObject = liveData;
+                localStorage.setItem('gmarik_active_live', JSON.stringify(liveData));
+
+                // إرسال إشعار فوري للمشاهدين لظهور الكارت الجديد (لمن يشاهد لوحات محلية على نفس الجهاز)
+                liveBroadcastBus.postMessage({ type: 'STREAM_STARTED', data: liveData });
+
+                try {
+                    const { doc, setDoc, serverTimestamp } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
+                    await setDoc(doc(window.db, "activeLiveStreams", currentActiveStreamId), {
+                        ...liveData,
+                        createdAt: serverTimestamp()
+                    });
+                } catch(err) { console.error(err); }
+
+                startEditorChatListener(currentActiveStreamId);
+                showBanner(`🔴 تم بدء البث المباشر [${titleInput}] بنجاح`, 'success');
+            } catch (err) {
+                console.error("Camera Error:", err);
+                showBanner('⚠️ تعذر تشغيل الكاميرا أو الميكروفون.', 'danger');
+            }
+        }
+
+        function setupMicMeter(stream) {
+            try {
+                micAudioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const source = micAudioContext.createMediaStreamSource(stream);
+                micAnalyser = micAudioContext.createAnalyser();
+                micAnalyser.fftSize = 256;
+                source.connect(micAnalyser);
+                micDataArray = new Uint8Array(micAnalyser.frequencyBinCount);
+
+                function updateMeter() {
+                    if (!micAnalyser) return;
+                    micAnalyser.getByteFrequencyData(micDataArray);
+                    let sum = 0;
+                    for (let i = 0; i < micDataArray.length; i++) {
+                        sum += micDataArray[i];
+                    }
+                    let average = sum / micDataArray.length;
+                    let percentage = Math.min(100, Math.round((average / 128) * 100));
+                    
+                    const fill = document.getElementById('micMeterFill');
+                    if (fill) fill.style.height = percentage + '%';
+                    micMeterFrame = requestAnimationFrame(updateMeter);
+                }
+                updateMeter();
+            } catch (e) {
+                console.error("مقياس الميكروفون غير متوفر:", e);
+            }
+        }
+
+        // ===== إنهاء البث المباشر فورياً ونقله للسجل وحذفه عند المشاهدين =====
+        async function stopActiveLiveStream() {
+            // 1. إرسال إشعار فوري لحظي للمشاهدين على نفس الجهاز ليختفي الكارت
+            liveBroadcastBus.postMessage({ type: 'STREAM_ENDED', streamId: currentActiveStreamId });
+            localStorage.removeItem('gmarik_active_live');
+
+            if (agoraAudioTrack) { agoraAudioTrack.close(); agoraAudioTrack = null; }
+            if (agoraVideoTrack) { agoraVideoTrack.close(); agoraVideoTrack = null; }
+            if (agoraClient) { await agoraClient.leave(); agoraClient = null; }
+            if (liveChatUnsubscribe) { liveChatUnsubscribe(); liveChatUnsubscribe = null; }
+
+            const streamToEnd = currentActiveStreamObject || {
+                id: currentActiveStreamId,
+                title: activeStreamTitleGlobal || "بث مباشر",
+                broadcasterName: "الأستاذ / محمد الجزار (رئيس التحرير)",
+                startTime: new Date().toISOString()
+            };
+
+            const endedTime = new Date().toISOString();
+            const historyEntry = {
+                ...streamToEnd,
+                endedAt: endedTime,
+                status: 'ended'
+            };
+
+            // 2. الحفظ في سجل البثوث المنتهية المحلي
+            let history = JSON.parse(localStorage.getItem('gmarik_stream_history')) || [];
+            history.unshift(historyEntry);
+            localStorage.setItem('gmarik_stream_history', JSON.stringify(history));
+
+            // 3. الحفظ في فايربيس تحت مجموعة سجل البثوث وحذف البث فوراً من activeLiveStreams
+            //    (المشاهدون بيراقبون activeLiveStreams لحظياً، فحذف الـ doc هنا يخلي صفحة المشاهد
+            //     تكتشف الإنهاء فوراً وتقفل نفسها تلقائياً)
+            if (currentActiveStreamId && window.db) {
+                try {
+                    const { doc, deleteDoc, setDoc, serverTimestamp } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
+                    await setDoc(doc(window.db, "streamHistory", currentActiveStreamId), {
+                        ...historyEntry,
+                        endedAtServer: serverTimestamp()
+                    });
+                    await deleteDoc(doc(window.db, "activeLiveStreams", currentActiveStreamId));
+                } catch(e){ console.error(e); }
+            }
+
+            currentActiveStreamObject = null;
+            currentActiveStreamId = null;
+
+            if (mediaStream) {
+                mediaStream.getTracks().forEach(track => track.stop());
+                mediaStream = null;
+            }
+            if (micAudioContext) {
+                micAudioContext.close();
+                micAudioContext = null;
+            }
+            if (micMeterFrame) {
+                cancelAnimationFrame(micMeterFrame);
+                micMeterFrame = null;
+            }
+
+            // إغلاق نافذة البث
+            document.getElementById('liveBroadcastRoom').classList.remove('active');
+            
+            // الانتقال المباشر لسجل البثوث المنتهية
+            switchTab('liveStreamsTab', document.getElementById('liveStreamsTabBtn'));
+            switchSubTab('streamHistoryContent', document.getElementById('subTabHistoryBtn'));
+            if (typeof window.loadStreamHistory === 'function') window.loadStreamHistory();
+
+            showBanner('⏹️ تم إنهاء البث، حذفه من عند المشاهدين، ونقله للسجل بنجاح', 'success');
+        }
+
+        function toggleCamera() {
+            if (mediaStream) {
+                const videoTrack = mediaStream.getVideoTracks()[0];
+                if (videoTrack) {
+                    videoTrack.enabled = !videoTrack.enabled;
+                    const btn = document.getElementById('toggleCamBtn');
+                    const btnChat = document.getElementById('toggleCamBtnChat');
+                    if (videoTrack.enabled) {
+                        if (btn) btn.classList.remove('active-off');
+                        if (btnChat) btnChat.classList.remove('active-off');
+                    } else {
+                        if (btn) btn.classList.add('active-off');
+                        if (btnChat) btnChat.classList.add('active-off');
+                    }
+                }
+            }
+        }
+
+        function toggleMic() {
+            if (mediaStream) {
+                const audioTrack = mediaStream.getAudioTracks()[0];
+                if (audioTrack) {
+                    audioTrack.enabled = !audioTrack.enabled;
+                    const btn = document.getElementById('toggleMicBtn');
+                    const btnChat = document.getElementById('toggleMicBtnChat');
+                    if (audioTrack.enabled) {
+                        if (btn) btn.classList.remove('active-off');
+                        if (btnChat) btnChat.classList.remove('active-off');
+                    } else {
+                        if (btn) btn.classList.add('active-off');
+                        if (btnChat) btnChat.classList.add('active-off');
+                    }
+                }
+            }
+        }
+
+        async function toggleComments() {
+            commentsOpen = !commentsOpen;
+            const inputArea = document.getElementById('liveChatInputArea');
+            const btn = document.getElementById('toggleCommentsBtn');
+
+            if (commentsOpen) {
+                inputArea.classList.remove('comments-closed');
+                btn.classList.remove('active-off');
+                showBanner('💬 تم فتح التعليقات للمشاهدين', 'success');
+            } else {
+                inputArea.classList.add('comments-closed');
+                btn.classList.add('active-off');
+                showBanner('🔒 تم قفل التعليقات للمشاهدين', 'danger');
+            }
+
+            let live = JSON.parse(localStorage.getItem('gmarik_active_live'));
+            if (live) {
+                live.commentsLocked = !commentsOpen;
+                localStorage.setItem('gmarik_active_live', JSON.stringify(live));
+            }
+
+            if (currentActiveStreamId && window.db) {
+                try {
+                    const { doc, updateDoc } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
+                    await updateDoc(doc(window.db, "activeLiveStreams", currentActiveStreamId), {
+                        commentsLocked: !commentsOpen
+                    });
+                } catch(e){ console.error(e); }
+            }
+        }
+
+        function handleLiveChatKey(e) {
+            if (e.key === 'Enter') {
+                sendLiveChatMessage();
+            }
+        }
+    </script>
+    <script src="role-password-gate.js"></script>
+<script src="صلاحيات-لوحات-التحكم.js"></script>
+<script>protectEditorInChiefDashboard();</script>
+</body>
+</html>

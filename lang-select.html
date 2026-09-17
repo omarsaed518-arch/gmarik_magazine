@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gamarek Magazine - Choose Language</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+        .glass-card {
+            background: rgba(17, 24, 39, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-950 via-gray-900 to-emerald-950 text-white min-h-screen flex items-center justify-center p-4 m-0 overflow-hidden">
+
+    <!-- خلفية جمالية متحركة -->
+    <div class="absolute -top-40 -left-40 w-96 h-96 bg-emerald-600/20 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-40 -right-40 w-96 h-96 bg-blue-600/20 rounded-full blur-3xl pointer-events-none"></div>
+
+    <div class="glass-card p-8 md:p-10 rounded-3xl shadow-2xl w-full max-w-lg text-center animate-fade-in relative z-10">
+        <!-- شعار أو أيقونة متحركة -->
+        <div class="inline-flex items-center justify-center w-16 h-16 bg-emerald-500/10 text-emerald-400 rounded-2xl mb-6 border border-emerald-500/20 shadow-inner">
+            <svg class="w-8 h-8 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path>
+            </svg>
+        </div>
+
+        <h1 class="text-3xl font-extrabold mb-2 tracking-tight bg-gradient-to-r from-white via-gray-200 to-emerald-400 bg-clip-text text-transparent">
+            Gamarek Magazine
+        </h1>
+        <p class="text-gray-400 mb-8 text-sm">Please select your preferred language to begin the experience</p>
+
+        <!-- قائمة اللغات الـ 12 بالترتيب الدقيق -->
+        <div class="space-y-4 text-right">
+            <label class="block text-xs font-semibold text-emerald-400 uppercase tracking-wider mb-2">Languages / اللغات</label>
+            <select id="langSelect" class="w-full bg-gray-900/80 border border-gray-700/80 rounded-xl p-4 text-white text-base focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all duration-300 shadow-inner cursor-pointer">
+                <option value="ar">1. العربية (Arabic)</option>
+                <option value="en">2. English (الإنجليزية)</option>
+                <option value="zh">3. 中文 (الصينية)</option>
+                <option value="es">4. Español (الإسبانية)</option>
+                <option value="de">5. Deutsch (الألمانية)</option>
+                <option value="fr">6. Français (الفرنسية)</option>
+                <option value="tr">7. Türkçe (التركية)</option>
+                <option value="ja">8. 日本語 (اليابانية)</option>
+                <option value="ko">9. 한국어 (الكورية)</option>
+                <option value="el">10. Ελληνικά (اليونانية)</option>
+                <option value="it">11. Italiano (الإيطالية)</option>
+                <option value="ru">12. Русский (الروسية)</option>
+            </select>
+        </div>
+
+        <!-- زر الانطلاق -->
+        <button onclick="startExperience()" class="mt-8 w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold py-4 rounded-xl transition-all duration-300 shadow-lg shadow-emerald-900/30 transform hover:-translate-y-0.5 active:translate-y-0 cursor-pointer">
+            ابدأ الآن / Start Journey
+        </button>
+    </div>
+
+    <script>
+        function startExperience() {
+            const select = document.getElementById('langSelect');
+            const selectedLang = select.value;
+
+            // حفظ اللغة في الـ LocalStorage عشان الـ intro وباقي الموقع يقروها صح
+            localStorage.setItem('selectedLang', selectedLang);
+            localStorage.setItem('gmarik_lang', selectedLang);
+
+            // الانتقال لصفحة intro.html مباشرة وبكل سلاسة
+            window.location.href = 'intro.html';
+        }
+    </script>
+</body>
+</html>

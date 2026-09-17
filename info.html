@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" id="htmlTag">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="pageTitle">من نحن - Gmarik Magazine</title>
+    <!-- مكتبة Tailwind CSS للتصميم الفشيخ -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- مكتبة Animate.css للأنيميشن الحماسي -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <!-- خطوط جوجل للتنسيق -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Cairo', 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+            color: #f8fafc;
+            min-height: 100vh;
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+        .glow-effect {
+            text-shadow: 0 0 20px rgba(56, 189, 248, 0.5);
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-center p-4 md:p-8">
+
+    <!-- حاوية المحتوى الرئيسية -->
+    <div class="w-full max-w-4xl glass-card rounded-3xl p-8 md:p-12 transform transition-all duration-700 animate__animated animate__fadeInDown">
+        
+        <!-- الهيدر أو العنوان مع أنيميشن -->
+        <div class="text-center mb-8">
+            <span class="inline-block px-4 py-1.5 mb-4 text-xs font-semibold tracking-widest text-sky-400 uppercase bg-sky-950/80 rounded-full border border-sky-500/30 animate__animated animate__pulse animate__infinite">
+                Gmarik Magazine - Global 12 Languages
+            </span>
+            <h1 id="sectionTitle" class="text-3xl md:text-5xl font-black tracking-tight glow-effect mb-4">
+                <!-- العنوان يترجم أوتوماتيكياً -->
+            </h1>
+            <div class="w-24 h-1.5 bg-gradient-to-r from-sky-500 to-indigo-500 mx-auto rounded-full"></div>
+        </div>
+
+        <!-- نص "من نحن" مع تأثيرات التلاشي والظهور عند تغير اللغة -->
+        <div class="relative overflow-hidden mb-8">
+            <p id="sectionContent" class="text-lg md:text-xl leading-relaxed text-slate-300 text-justify transition-opacity duration-300">
+                <!-- المحتوى يترجم أوتوماتيكياً -->
+            </p>
+        </div>
+
+        <!-- التوقيع والرابط الفوتر -->
+        <div class="pt-6 border-t border-slate-700/60 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-slate-400">
+            <span id="footerText" class="font-medium text-slate-300"></span>
+            <a id="websiteLink" href="#" target="_blank" class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-sky-600 to-indigo-600 text-white font-bold shadow-lg shadow-sky-500/20 hover:shadow-sky-500/40 transform hover:-translate-y-0.5 transition-all duration-300">
+                www.gmarikmagazine.com
+            </a>
+        </div>
+
+    </div>
+
+    <!-- زر العودة للرئيسية (اختياري) -->
+    <div class="mt-8">
+        <a href="index.html" id="backBtn" class="text-sm text-slate-400 hover:text-sky-400 transition-colors duration-200 flex items-center gap-2">
+            ← العودة للصفحة الرئيسية
+        </a>
+    </div>
+
+    <script>
+        // قاعدة بيانات النصوص للـ 12 لغة المستخرجة بدقة
+        const translations = {
+            ar: {
+                dir: "rtl",
+                lang: "ar",
+                title: "من نحن - مجلة جمارك مجازين",
+                heading: "من نحن",
+                content: "هي مجلة \"جمارك مجازين\"، تصدر وتبث برامجها الإعلامية والصحفية من الولايات المتحدة الأمريكية وفقاً للقوانين الأمريكية. وهي المجلة الأولى عالمياً المستقله في مجال الجمارك، وهي أيضاً أول مجلة عالمياً تصدر بـ 12 لغة دولية، والمتخصصة رقم واحد عالمياً في مجال الجمارك الدولية. تهتم المجلة بشؤون الجمارك عالمياً، الاستيراد والتصدير، التخليص الجمركي، الملاحة البحرية والجوية، الشحن والتفريغ، اللوجستيات، التجارة، الصناعة، الزراعة، وكل ما له علاقة بالجمارك. كما أن المجلة تختص أيضاً بالتكريمات الدولية؛ وهي المجلة الأولى عالمياً في تكريم العاملين في الجمارك والمتعاملين معها، كما تُكرم العديد من الشخصيات الدولية والمحلية والإقليمية الذين حققوا إنجازات ساهمت في تطوير مجتمعاتهم ونشر مبادئ السلام والمحبة، ودعم ثقافة الحضارات المختلفة، واحترام حقوق الإنسان، والعدل، والمساواة، وحق المرأة في المجتمع، ودعم الفن والفنانين، الرياضة والرياضيين، والمهن المختلفة، ودعم قيم العدالة والمساواة في المجتمع. هي مسابقة دولية بـ 12 لغة عالمية لفتح حوار بين الثقافات ولتأكيد أن عالم الإنسانية عالم واحد تحكمه القيم الإنسانية. حقاً إنها مجلة \"جمارك مجازين\"، مجلة القيم الإنسانية، مجلة الإيجابيات ونشر تلك الإيجابيات لكي يستفيد منها المجتمع، ولتكن دعوة للعالم أجمع للتضامن والتعاون من أجل الإنسان ومن أجل ثقافة الحضارات حول العالم.",
+                footer: "مع تحيات مجلة الجمارك مجازين وموقعها على الإنترنت:",
+                back: "← العودة للصفحة الرئيسية"
+            },
+            en: {
+                dir: "ltr",
+                lang: "en",
+                title: "About Us - Gmarik Magazine",
+                heading: "About Us",
+                content: "This is Gmarik Magazine, which broadcasts and publishes its media and journalistic programs from the United States of America in accordance with U.S. laws. It is the world's first independent magazine in the field of customs, as well as the first global magazine to be published in 12 international languages, making it the number one specialized global publication in international customs. The magazine focuses on global customs affairs, import and export, customs clearance, maritime and air navigation, shipping and unloading, logistics, trade, industry, agriculture, and everything related to customs. Furthermore, the magazine specializes in international honors; it is the first magazine globally to honor customs employees and clients. It also recognizes many international, local, and regional figures who have achieved milestones that contributed to the development of their societies, the promotion of peace and love, supporting the culture of diverse civilizations, and respecting human rights, justice, equality, and women's rights in society, alongside supporting art, artists, sports, athletes, and various professions. It represents an international competition in 12 global languages to open a dialogue between cultures and to reaffirm that humanity is one world governed by human values. Truly, it is Gmarik Magazine—the magazine of human values and positive stories, spreading optimism for the benefit of society, and serving as a global call for solidarity and cooperation for the sake of humanity and cultural civilizations around the world.",
+                footer: "With the compliments of Gmarik Magazine and its website:",
+                back: "← Back to Home"
+            },
+            zh: {
+                dir: "ltr",
+                lang: "zh",
+                title: "关于我们 - Gmarik Magazine",
+                heading: "关于我们",
+                content: "这是《Customs Magazine》（Gmarik Magazine），根据美国法律在美国发行并广播其媒体和新闻节目。它是全球第一本海关领域的独立杂志，也是全球第一本以12种国际语言出版的杂志，在国际海关领域排名全球第一。该杂志关注全球海关事务、进出口、通关、海运与空运、装卸、物流、贸易、工业、农业以及与海关相关的一切事务。此外，该杂志还专门设立了国际表彰项目；它是全球第一本表彰海关员工及海关相关从业者的杂志。它还表彰了许多国际、本地和区域性人物，他们在促进社会发展、传播和平与爱、支持多元文明文化、尊重人权、正义、平等和女性社会权利方面做出了杰出贡献，同时也支持艺术与艺术家、体育与运动员以及各行各业，维护社会正义与平等的价值观。这是一项涵盖12种世界语言的国际竞赛，旨在开启文化对话，并重申人类世界是一个由人类价值统治的统一体。这确实是《Gmarik Magazine》——一本传递人类价值与正能量的杂志，传播这些积极内容以造福社会，并呼吁全世界为了人类和全球文明文化而团结合作。",
+                footer: "《Gmarik Magazine》致敬，官方网站：",
+                back: "← 返回首页"
+            },
+            es: {
+                dir: "ltr",
+                lang: "es",
+                title: "Quiénes Somos - Gmarik Magazine",
+                heading: "Quiénes Somos",
+                content: "Esta es Gmarik Magazine, que edita y emite sus programas informativos y periodísticos desde los Estados Unidos de América de conformidad con las leyes estadounidenses. Es la primera revista independiente del mundo en el ámbito aduanero, así como la primera revista global que se publica en 12 idiomas internacionales, lo que la convierte en la publicación especializada número uno a nivel mundial en aduanas internacionales. La revista se enfoca en los asuntos aduaneros globales, importación y exportación, despacho de aduanas, navegación marítima y aérea, carga y descarga, logística, comercio, industria, agricultura y todo lo relacionado con las aduanas. Además, la revista se especializa en honores internacionales; es la primera revista a nivel mundial en homenajear a los empleados y usuarios de aduanas. También reconoce a numerosas figuras internacionales, locales y regionales que han logrado hitos que contribuyeron al desarrollo de sus sociedades, la promoción de la paz y el amor, el apoyo a la cultura de diversas civilizaciones y el respeto a los derechos humanos, la justicia, la igualdad y los derechos de las mujeres en la sociedad, además de apoyar el arte, a los artistas, el deporte, a los atletas y a diversas profesiones. Representa un certamen internacional en 12 idiomas globales para abrir un diálogo entre culturas y reafirmar que la humanidad es un solo mundo gobernado por los valores humanos. Verdaderamente, es Gmarik Magazine, la revista de los valores humanos y de las historias positivas, que difunde el optimismo para beneficio de la sociedad y sirve como un llamado global a la solidaridad y la cooperación por el bien del ser humano y de las civilizaciones culturales en todo el mundo.",
+                footer: "Con los saludos de Gmarik Magazine y su sitio web:",
+                back: "← Volver al inicio"
+            },
+            fr: {
+                dir: "ltr",
+                lang: "fr",
+                title: "Qui sommes-nous - Gmarik Magazine",
+                heading: "Qui sommes-nous",
+                content: "Voici Gmarik Magazine, qui édite et diffuse ses programmes médiatiques et journalistiques depuis les États-Unis d'Amérique, conformément aux lois américaines. Il s'agit du premier magazine indépendant au monde dans le domaine des douanes, ainsi que du premier magazine mondial publié en 12 langues internationales, ce qui en fait la publication spécialisée numéro un mondiale en matière de douanes internationales. Le magazine se concentre sur les affaires douanières mondiales, l'importation et l'exportation, le dédouanement, la navigation maritime et aérienne, le chargement et le déchargement, la logistique, le commerce, l'industrie, l'agriculture et tout ce qui touche aux douanes. De plus, le magazine est spécialisé dans les distinctions internationales ; c'est le premier magazine au monde à honorer les employés des douanes et leurs usagers. Il distingue également de nombreuses personnalités internationales, locales et régionales dont les réalisations ont contribué au développement de leurs sociétés, à la promotion de la paix et de l'amour, au soutien de la culture de diverses civilisations, et au respect des droits de l'homme, de la justice, de l'égalité et des droits des femmes dans la société, tout en soutenant l'art, les artistes, le sport, les athlètes et diverses professions. Il s'agit d'un concours international en 12 langues mondiales visant à ouvrir un dialogue entre les cultures et à réaffirmer que le monde de l'humanité est un monde unique régi par des valeurs humaines. Il s'agit véritablement de Gmarik Magazine, le magazine des valeurs humaines et des ondes positives, diffusant cet optimisme pour le bien de la société, et constituant un appel mondial à la solidarité et à la coopération pour l'homme et pour la culture des civilisations à travers le monde.",
+                footer: "Avec les salutations de Gmarik Magazine et son site internet :",
+                back: "← Retour à l'accueil"
+            },
+            tr: {
+                dir: "ltr",
+                lang: "tr",
+                title: "Hakkımızda - Gmarik Magazine",
+                heading: "Hakkımızda",
+                content: "Bu, ABD yasalarına uygun olarak medya ve gazetecilik programlarını Amerika Birleşik Devletleri'nden yayınlayan ve sunan Gmarik Magazine'dir. Gümrük alanında dünyanın ilk bağımsız dergisi olmasının yanı sıra, 12 uluslararası dilde yayınlanan ilk küresel dergidir ve uluslararası gümrük alanında dünya çapında bir numaralı uzman yayın konumundadır. Dergi; küresel gümrük işleri, ithalat ve ihracat, gümrükleme, deniz ve hava taşımacılığı, yükleme ve boşaltma, lojistik, ticaret, sanayi, tarım ve gümrükle ilgili her şeye odaklanmaktadır. Ayrıca dergi, uluslararası ödüller konusunda da uzmanlaşmıştır; gümrük çalışanlarını ve gümrükle iş yapanları onurlandıran dünya çapındaki ilk dergidir. Toplumlarının gelişmesine katkıda bulunan, barış ve sevgi ilkelerini yayan, farklı medeniyetlerin kültürlerini destekleyen, insan haklarına, adalete, eşitliğe ve kadının toplumdaki haklarına saygı duyan, ayrıca sanatı, sanatçıları, sporu, sporcuları ve çeşitli meslekleri destekleyen birçok uluslararası, yerel ve bölgesel şahsiyeti de onurlandırmaktadır. Kültürler arası bir diyalog açmak ve insanlık dünyasının insani değerler tarafından yönetilen tek bir dünya olduğunu teyit etmek amacıyla 12 dünya dilinde düzenlenen uluslararası bir yarışmadır. Gerçekten de bu, insani değerlerin dergisi, toplumun yararlanması için pozitifliği ve bu pozitifliği yaymayı amaçlayan Gmarik Magazine'dir; insanlık ve dünya genelindeki medeniyetlerin kültürü adına tüm dünyaya bir dayanışma ve iş birliği çağrısıdır.",
+                footer: "Gmarik Magazine ve web sitesinin saygılarıyla:",
+                back: "← Ana Sayفyaya Dön"
+            },
+            ja: {
+                dir: "ltr",
+                lang: "ja",
+                title: "私たちについて - Gmarik Magazine",
+                heading: "私たちについて",
+                content: "これは、米国の法律に基づき、アメリカ合衆国からメディアおよびジャーナリズムプログラムを発行・放送している『Gmarik Magazine』です。税関分野における世界初の独立系雑誌であり、12の国際言語で出版される世界初のグローバル雑誌でもあります。そのため、国際税関分野において世界ナンバーワンの専門誌となっています。当雑誌は、世界の税関事務、輸出入、通関、海運・空運、荷役、物流、貿易、産業、農業、および税関に関連するあらゆる事項に焦点を当てています。さらに、当雑誌は国際的な表彰も専門としており、税関職員や税関利用者を称える世界初の雑誌です。また、社会の発展、平和と愛の普及、多様な文明の文化の支援、人権・正義・平等・社会における女性の権利の尊重に貢献する偉業を達成した、多くの国際的、地域的、地元の人物を表彰しています。同時に、芸術や芸術家、スポーツやアスリート、様々な職業、そして社会における正義と平等の価値観を支援しています。これは、文化間の対話を開き、人類の世界が人間の価値観によって支配される一つの世界であることを再確認するための、12の世界言語による国際的な取り組みです。まさに、人間の価値観の雑誌、ポジティブな要素を発信して社会に役立つ雑誌『Gmarik Magazine』であり、人類のため、および世界中の文明の文化のために、連帯と協力を全世界に呼びかけるものです。",
+                footer: "Gmarik Magazine および公式ウェブサイトより敬意を込めて：",
+                back: "← ホームに戻る"
+            },
+            ko: {
+                dir: "ltr",
+                lang: "ko",
+                title: "회사 소개 - Gmarik Magazine",
+                heading: "회사 소개",
+                content: "본지는 미국 법률에 따라 미국에서 미디어 및 저널리즘 프로그램을 발행하고 방송하는 'Gmarik Magazine'입니다. 관세 분야 세계 최초의 독립 잡지이자, 12개 국제 언어로 발행되는 세계 최초의 글로벌 잡지로서 국제 관세 분야에서 세계 1위의 전문지입니다. 본지는 글로벌 관세 업무, 수출입, 통관, 해운 및 항공 운송, 하역, 물류, 무역, 산업, 농업 및 관세와 관련된 모든 분야에 초점을 맞추고 있습니다. 또한, 본지는 국제 포상을 전문으로 하며, 관세청 직원과 세관 이용자들을 기리는 세계 최초의 잡지입니다. 사회 발전, 평화와 사랑의 가치 전파, 다양한 문명 문화 지원, 인권 존중, 정의, 평등, 사회 내 여성 권리 신장에 기여한 수많은 국제적, 지역적, 로컬 인물들을 시상하고 있습니다. 이와 함께 예술과 예술가, 스포츠와 스포츠인, 다양한 전문직을 지원하며 사회적 정의와 평등의 가치를 지지합니다. 이는 문화 간의 대화를 열고 인류 사회가 인간의 가치에 의해 지배되는 하나의 세계임을 재확인하기 위해 12개 세계 언어로 진행되는 국제적인 경연입니다. 진정으로 인간의 가치를 담은 잡지, 긍정적인 에너지를 전파하여 사회에 기여하는 잡지인 'Gmarik Magazine'은 인류와 전 세계 문명 문화를 위한 연대와 협력을 전 세계에 촉구하는 부름입니다.",
+                footer: "Gmarik Magazine 및 웹사이트 배상:",
+                back: "← 홈으로 돌아가기"
+            },
+            el: {
+                dir: "ltr",
+                lang: "el",
+                title: "Ποιοι Είμαστε - Gmarik Magazine",
+                heading: "Ποιοι Είμαστε",
+                content: "Αυτό είναι το Gmarik Magazine, το οποίο εκδίδει και μεταδίδει τα ενημερωτικά και δημοσιογραφικά του προγράμματα από τις Ηνωμένες Πολιτείες Αμερικής, σύμφωνα με τους αμερικανικούς νόμους. Είναι το πρώτο ανεξάρτητο περιοδικό στον κόσμο στον τομέα των τελωνείων, καθώς και το πρώτο παγκόσμιο περιοδικό που εκδίδεται σε 12 διεθνείς γλώσσες, γεγονός που το καθιστά το νούμερο ένα εξειδικευμένο παγκόσμιο έντυπο στα διεθνή τελωνεία. Το περιοδικό εστιάζει στις παγκόσμιες τελωνειακές υποθέσεις, τις εισαγωγές και εξαγωγές, τον εκτελωνισμό, τη θαλάσσια και αεροπορική ναυτιλία, τη φόρτωση και εκφόρτωση, τα logistics, το εμπόριο, τη βιομηχανία, τη γεωργία και καθετί που σχετίζεται με τα τελωνεία. Επιπλέον, το περιοδικό εξειδικεύεται σε διεθνείς τιμητικές διακρίσεις· είναι το πρώτο περιοδικό παγκοσμίως που τιμά τους τελωνειακούς υπαλλήλους και τους συναλλασσόμενους με τα τελωνεία. Τιμά επίσης πολλές διεθνείς, τοπικές και περιφερειακές προσωπικότητες που πέτυχαν επιτεύγματα που συνέβαλαν στην ανάπτυξη των κοινωνιών τους, στην προώθηση των αρχών της ειρήνης και της αγάπης, στη στήριξη του πολιτισμού των διαφορετικών πολιτισμών και στον σεβασμό των ανθρωπίνων δικαιωμάτων, της δικαιοσύνης, της ισότητας και των δικαιωμάτων των γυναικών στην κοινωνία, παράλληλα με τη στήριξη της τέχνης και των καλλιτεχνών, του αθλητισμού και των αθλητών, καθώς και διαφόρων επαγγελμάτων. Αντιπροσωπεύει έναν διεθνή διαγωνισμό σε 12 παγκόσμιες γλώσσες για να ανοίξει ένας διάλογος μεταξύ των πολιτισμών και να επιβεβαιωθεί εκ νέου ότι η ανθρωπότητα είναι ένας ενιαίος κόσμος που κυβερνάται από τις ανθρώπινες αξίες. Πραγματικά, είναι το Gmarik Magazine, το περιοδικό των ανθρωπίνων αξιών και των θετικών ειδήσεων, που διαδίδει την αισιοδοξία προς όφελος της κοινωνίας και αποτελεί μια παγκόσμια πρόσκληση για αλληλεγγύη και συνεργασία για χάρη του ανθρώπου και του πολιτισμού των πολιτισμών σε όλο τον κόσμο.",
+                footer: "Με τους χαιρετισμούς του Gmarik Magazine και της ιστοσελίδας του:",
+                back: "← Αρχική Σελίδα"
+            },
+            it: {
+                dir: "ltr",
+                lang: "it",
+                title: "Chi Siamo - Gmarik Magazine",
+                heading: "Chi Siamo",
+                content: "Questo è Gmarik Magazine, che pubblica e trasmette i suoi programmi mediatici e giornalistici dagli Stati Uniti d'America in conformità con le leggi statunitensi. È la prima rivista indipendente al mondo nel settore delle dogane, nonché la prima rivista globale ad essere pubblicata in 12 lingue internazionali, il che la rende la pubblicazione specializzata numero uno a livello mondiale per le dogane internazionali. La rivista si concentra sulle questioni doganali globali, importazione ed esportazione, sdoganamento, navigazione marittima e aerea, carico e scarico, logistica, commercio, industria, agricoltura e tutto ciò che riguarda le dogane. Inoltre, la rivista è specializzata in onorificenze internazionali; è la prima rivista a livello globale a premiare i dipendenti doganali e i loro utenti. Riconosce anche numerose figure internazionali, locali e regionali che hanno raggiunto traguardi che hanno contribuito allo sviluppo delle loro società, alla promozione della pace e dell'amore, al sostegno della cultura di diverse civiltà e al rispetto dei diritti umani, della giustizia, dell'uguaglianza e dei diritti delle donne nella società, oltre a sostenere l'arte, gli artisti, lo sport, gli atleti e le varie professioni. Rappresenta un concorso internazionale in 12 lingue globali per aprire un dialogo tra le culture e ribadire che l'umanità è un solo mondo governato da valori umani. È davvero Gmarik Magazine, la rivista dei valori umani e delle storie positive, che diffonde l'ottimismo a beneficio della società e funge da appello globale alla solidarietà e alla cooperazione per il bene dell'uomo e delle civiltà culturali in tutto il mondo.",
+                footer: "Con i più cordiali saluti di Gmarik Magazine e del suo sito web:",
+                back: "← Torna alla Home"
+            },
+            ru: {
+                dir: "ltr",
+                lang: "ru",
+                title: "О нас - Gmarik Magazine",
+                heading: "О нас",
+                content: "Это журнал «Gmarik Magazine», который издает и транслирует свои информационные и журналистские программы из Соединенных Штатов Америки в соответствии с законодательством США. Это первый в мире независимый журнал в области таможенного дела, а также первый в мире глобальный журнал, издающийся на 12 международных языках, что делает его специализированным изданием номер один в мире в сфере международной таможни. Журнал посвящен глобальным таможенным вопросам, импорту и экспорту, таможенному оформлению, морскому и воздушному судоходству, погрузке и разгрузке, логистике, коммерции, промышленности, сельскому хозяйству и всему, что связано с таможней. Кроме того, журнал специализируется на международных наградах; это первый журнал в мире, чествующий сотрудников таможни и лиц, взаимодействующих с ней. Он также награждает многих международных, местных и региональных деятелей, чьи достижения способствовали развитию их обществ, продвижению принципов мира и любви, поддержке культуры различных цивилизаций и уважению прав человека, справедливости, равенства и прав женщин в обществе, наряду с поддержкой искусства и художников, спорта и спортсменов, различных профессий, а также поддержкой ценностей справедливости и равенства в обществе. Это международный конкурс на 12 языках мира, призванный открыть диалог между культурами и подтвердить, что человечество — это единый мир, управляемый общечеловеческими ценностями. Поистине, это журнал «Gmarik Magazine» — журнал человеческих ценностей и позитива, распространяющий этот позитив на благо общества, и служащий призывом ко всему миру к солидарности и сотрудничеству ради человека и ради культуры цивилизаций по всему миру.",
+                footer: "С уважением, журнал «Gmarik Magazine» и его веб-сайт:",
+                back: "← На главную"
+            },
+            de: {
+                dir: "ltr",
+                lang: "de",
+                title: "Über uns - Gmarik Magazine",
+                heading: "Über uns",
+                content: "Dies ist das Gmarik Magazine, das seine Medien- und Journalismusprogramme aus den Vereinigten Staaten von Amerika in Übereinstimmung mit den US-Gesetzen herausgibt und ausstrahlt. Es ist das weltweit erste unabhängige Magazin im Bereich des Zollwesens sowie das erste globale Magazin, das in 12 internationalen Sprachen erscheint, was es zur weltweiten Nummer eins unter den Fachpublikationen im internationalen Zollwesen macht. Das Magazin konzentriert sich auf globale Zollangelegenheiten, Import und Export, Zollabfertigung, See- und Luftfahrt, Be- und Entladen, Logistik, Handel, Industrie, Landwirtschaft und alles, was mit dem Zoll zu tun hat. Darüber hinaus ist das Magazin auf internationale Ehrungen spezialisiert; es ist das weltweit erste Magazin, das Zollangestellte und deren Kunden ehrt. Es würdigt auch viele internationale, lokale und regionale Persönlichkeiten, die Meilensteine erreicht haben, die zur Entwicklung ihrer Gesellschaften, zur Förderung von Frieden und Liebe, zur Unterstützung der Kultur verschiedener Zivilisationen und zur Respektierung der Menschenrechte, der Gerechtigkeit, der Gleichheit und der Rechte der Frauen in der Gesellschaft beigetragen haben, neben der Unterstützung von Kunst, Künstlern, Sport, Athleten und verschiedenen Berufen. Es stellt einen internationalen Wettbewerb in 12 Weltsprachen dar, um einen Dialog zwischen den Kulturen zu eröffnen und zu bekräftigen, dass die Menschheit eine einzige Welt ist, die von menschlichen Werten geleitet wird. Wahrlich, es ist das Gmarik Magazine – das Magazin der menschlichen Werte und der positiven Geschichten, das Optimismus zum Wohle der Gesellschaft verbreitet und als globaler Aufruf zur Solidarität und Zusammenarbeit für den Menschen und für die Kultur der Zivilisationen auf der ganzen Welt dient.",
+                footer: "Mit den besten Empfehlungen des Gmarik Magazine und seiner Website:",
+                back: "← Zur Startseite"
+            }
+        };
+
+        // دالة تحديث المحتوى مع أنيميشن سلس
+        function loadLanguage() {
+            // جلب اللغة المخزنة من الـ index (نفس المفتاح gmarik_lang المستخدم في index.html)
+            const selectedLang = localStorage.getItem('gmarik_lang') || 'ar';
+            const data = translations[selectedLang] || translations['ar'];
+
+            // ضبط اتجاه الصفحة واللغة
+            const htmlTag = document.getElementById('htmlTag');
+            htmlTag.setAttribute('lang', data.lang);
+            htmlTag.setAttribute('dir', data.dir);
+
+            // تحديد العناصر وتطبيق الأنيميشن
+            const titleEl = document.getElementById('pageTitle');
+            const headingEl = document.getElementById('sectionTitle');
+            const contentEl = document.getElementById('sectionContent');
+            const footerEl = document.getElementById('footerText');
+            const backEl = document.getElementById('backBtn');
+
+            // تأثير اختفاء سريع لتغيير النص بانسيابية
+            contentEl.style.opacity = '0';
+            headingEl.style.opacity = '0';
+
+            setTimeout(() => {
+                titleEl.innerText = data.title;
+                headingEl.innerText = data.heading;
+                contentEl.innerText = data.content;
+                footerEl.innerText = data.footer;
+                backEl.innerText = data.back;
+
+                // إعادة ظهور النص بحركة ناعمة
+                contentEl.style.opacity = '1';
+                headingEl.style.opacity = '1';
+            }, 200);
+        }
+
+        // تشغيل الدالة عند فتح الصفحة
+        window.onload = loadLanguage;
+    </script>
+</body>
+</html>

@@ -1,0 +1,1447 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" id="html-root">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="meta-title">لوحة المترجم والتحرير الاحترافية | Gmarik Magazine</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/images/favicon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary: #070d1b;
+            --secondary: #0f172a;
+            --accent: #e2b714;
+            --accent-glow: rgba(226, 183, 20, 0.4);
+            --card-bg: rgba(15, 23, 42, 0.85);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: rgba(226, 183, 20, 0.22);
+            --success: #10b981;
+            --danger: #ef4444;
+            --info: #38bdf8;
+        }
+
+        * { box-sizing: border-box; }
+
+        body { 
+            font-family: 'Cairo', sans-serif; 
+            background: linear-gradient(135deg, #050a15 0%, #0d1527 50%, #151d32 100%);
+            color: var(--text-main);
+            margin: 0; 
+            padding: 30px 20px; 
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; }
+
+        /* الهيدر الفاخر */
+        .header { 
+            background: rgba(4, 8, 18, 0.95);
+            backdrop-filter: blur(15px);
+            padding: 24px 30px; 
+            border-radius: 20px; 
+            margin-bottom: 25px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+            border: 1px solid var(--border);
+            border-top: 4px solid var(--accent);
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .header h2 { margin: 0; font-size: 1.55rem; font-weight: 900; display: flex; align-items: center; gap: 12px; }
+        .header h2 i { color: var(--accent); }
+        .header-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+        
+        .btn-header-action {
+            background: rgba(226, 183, 20, 0.15);
+            color: var(--accent);
+            border: 1px solid var(--accent);
+            padding: 10px 18px;
+            border-radius: 12px;
+            font-family: inherit;
+            font-weight: 800;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px var(--accent-glow);
+            transition: all 0.25s ease;
+        }
+        .btn-header-action:hover { background: var(--accent); color: #070d1b; transform: translateY(-2px); }
+
+        .btn-add-section-top {
+            background: linear-gradient(135deg, #e2b714, #ca9a0d);
+            color: #070d1b;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 12px;
+            font-family: inherit;
+            font-weight: 800;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px var(--accent-glow);
+            transition: all 0.25s ease;
+        }
+        .btn-add-section-top:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(226, 183, 20, 0.5); }
+
+        /* التبويبات الرئيسية */
+        .main-tabs-nav {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 22px;
+            background: rgba(15, 23, 42, 0.7);
+            padding: 6px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+        }
+        .main-tab-btn {
+            flex: 1;
+            background: transparent;
+            color: var(--text-muted);
+            border: none;
+            padding: 14px 20px;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .main-tab-btn:hover { color: #fff; background: rgba(255, 255, 255, 0.05); }
+        .main-tab-btn.active {
+            background: var(--accent);
+            color: #070d1b;
+            font-weight: 900;
+            box-shadow: 0 4px 18px var(--accent-glow);
+        }
+
+        /* الكروت والبطاقات */
+        .card { 
+            background: var(--card-bg); 
+            backdrop-filter: blur(16px);
+            padding: 26px; 
+            border-radius: 20px; 
+            box-shadow: 0 12px 35px rgba(0,0,0,0.45); 
+            margin-bottom: 25px; 
+            border: 1px solid var(--border);
+            animation: fadeIn 0.4s ease;
+        }
+        .card h3 { 
+            margin-top: 0; 
+            font-size: 1.25rem;
+            font-weight: 800;
+            border-bottom: 1px solid rgba(226, 183, 20, 0.2); 
+            padding-bottom: 15px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between;
+            gap: 10px; 
+            flex-wrap: wrap;
+        }
+        .card h3 i { color: var(--accent); }
+
+        /* شريط اللغات */
+        .languages-scroll-bar {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 12px;
+            margin-bottom: 20px;
+            scrollbar-width: thin;
+        }
+        .languages-scroll-bar::-webkit-scrollbar { height: 5px; }
+        .languages-scroll-bar::-webkit-scrollbar-thumb { background: rgba(226, 183, 20, 0.35); border-radius: 10px; }
+
+        .lang-filter-btn {
+            background: rgba(9, 14, 26, 0.85);
+            color: var(--text-muted);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 8px 15px;
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.25s;
+            white-space: nowrap;
+        }
+        .lang-filter-btn:hover { border-color: var(--accent); color: #fff; transform: translateY(-1px); }
+        .lang-filter-btn.active {
+            background: rgba(226, 183, 20, 0.18);
+            color: var(--accent);
+            border-color: var(--accent);
+            box-shadow: 0 0 12px var(--accent-glow);
+        }
+
+        /* صندوق المنشورات */
+        .inbox-list { 
+            max-height: 520px; 
+            overflow-y: auto; 
+            padding-inline-end: 8px; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 15px; 
+        }
+        .inbox-list::-webkit-scrollbar { width: 6px; }
+        .inbox-list::-webkit-scrollbar-thumb { background: rgba(226, 183, 20, 0.3); border-radius: 10px; }
+
+        .article-box { 
+            border: 1px solid rgba(226, 183, 20, 0.2); 
+            padding: 20px; 
+            border-radius: 16px; 
+            background: rgba(9, 14, 26, 0.85); 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            transition: all 0.3s ease;
+            gap: 18px;
+            flex-wrap: wrap;
+        }
+        .article-box:hover { 
+            border-color: var(--accent); 
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+            transform: translateY(-3px);
+        }
+        .article-info { flex: 1; min-width: 260px; }
+        .article-info h4 { margin: 0 0 8px 0; color: #f8fafc; font-size: 1.1rem; font-weight: 800; line-height: 1.5; }
+        .article-info p { margin: 0; color: var(--text-muted); font-size: 0.86rem; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+        
+        .article-thumb-mini {
+            width: 80px;
+            height: 80px;
+            border-radius: 10px;
+            object-fit: cover;
+            border: 1px solid var(--border);
+            flex-shrink: 0;
+            background: #000;
+        }
+
+        .badge-source {
+            background: rgba(226, 183, 20, 0.15);
+            color: var(--accent);
+            border: 1px solid rgba(226, 183, 20, 0.3);
+            font-size: 0.76rem;
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .article-actions-group {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .btn-action { 
+            background: rgba(226, 183, 20, 0.12); 
+            color: var(--accent); 
+            border: 1px solid var(--accent);
+            padding: 8px 14px;
+            border-radius: 10px;
+            font-family: inherit;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex; 
+            align-items: center; 
+            gap: 6px; 
+            white-space: nowrap;
+        }
+        .btn-action:hover { background: var(--accent); color: #070d1b; transform: translateY(-2px); box-shadow: 0 4px 12px var(--accent-glow); }
+
+        .btn-action-view {
+            background: rgba(56, 189, 248, 0.15);
+            color: var(--info);
+            border: 1px solid var(--info);
+            padding: 8px 14px;
+            border-radius: 10px;
+            font-family: inherit;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+        }
+        .btn-action-view:hover { background: var(--info); color: #070d1b; transform: translateY(-2px); }
+
+        .btn-action-delete {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--danger);
+            border: 1px solid var(--danger);
+            padding: 8px 12px;
+            border-radius: 10px;
+            font-family: inherit;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-action-delete:hover { background: var(--danger); color: #fff; transform: translateY(-2px); }
+
+        /* نموذج التحرير */
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        @media (max-width: 768px) { .form-grid { grid-template-columns: 1fr; } }
+
+        .form-group { margin-bottom: 18px; }
+        label { display: block; font-size: 0.92rem; color: var(--accent); margin-bottom: 8px; font-weight: 700; }
+        
+        input[type="text"], textarea, select { 
+            width: 100%; 
+            padding: 13px 16px; 
+            border: 1px solid rgba(255, 255, 255, 0.15); 
+            border-radius: 12px; 
+            font-family: inherit; 
+            outline: none; 
+            font-size: 0.94rem; 
+            background: rgba(9, 14, 26, 0.9); 
+            color: #ffffff;
+            transition: all 0.25s;
+        }
+        select option { background: #070d1b; color: #fff; }
+        input:focus, textarea:focus, select:focus { 
+            border-color: var(--accent); 
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+        textarea { height: 160px; resize: vertical; line-height: 1.7; }
+
+        /* قسم رفع الصور */
+        .image-input-wrapper {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .btn-upload-file {
+            background: rgba(226, 183, 20, 0.15);
+            color: var(--accent);
+            border: 1px dashed var(--accent);
+            padding: 12px 18px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.25s;
+        }
+        .btn-upload-file:hover { background: var(--accent); color: #070d1b; }
+        .image-preview-thumb {
+            width: 55px;
+            height: 55px;
+            border-radius: 10px;
+            object-fit: cover;
+            border: 1px solid var(--border);
+            display: none;
+        }
+
+        .btn-submit-main { 
+            background: linear-gradient(135deg, #e2b714, #ca9a0d); 
+            color: #070d1b; 
+            width: 100%; 
+            padding: 16px; 
+            font-size: 1.05rem; 
+            font-weight: 900;
+            box-shadow: 0 4px 15px var(--accent-glow);
+            border-radius: 14px;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s;
+        }
+        .btn-submit-main:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(226, 183, 20, 0.5); }
+
+        /* نوافذ منبثقة (Modals) */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(2, 6, 15, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 6000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal-box {
+            background: #0f172a;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            width: 100%;
+            max-width: 750px;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 26px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+            animation: modalScale 0.3s ease;
+        }
+        @keyframes modalScale {
+            from { transform: scale(0.92); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(226,183,20,0.2);
+            padding-bottom: 14px;
+            margin-bottom: 18px;
+        }
+        .modal-header h3 { margin: 0; color: var(--accent); font-size: 1.25rem; display: flex; align-items: center; gap: 8px; }
+        .modal-close-btn { background: none; border: none; color: #cbd5e1; font-size: 1.3rem; cursor: pointer; }
+        .modal-close-btn:hover { color: var(--danger); }
+
+        /* جدول الأقسام */
+        .sections-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        .sections-table th, .sections-table td {
+            padding: 12px 14px;
+            text-align: start;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            font-size: 0.92rem;
+        }
+        .sections-table th { color: var(--accent); font-weight: 800; }
+        .sections-table tr:hover { background: rgba(255, 255, 255, 0.03); }
+
+        .back-link { 
+            display: inline-flex; 
+            align-items: center; 
+            gap: 8px; 
+            margin-top: 15px; 
+            color: var(--text-muted); 
+            text-decoration: none; 
+            font-weight: 700; 
+            transition: color 0.2s;
+        }
+        .back-link:hover { color: var(--accent); }
+        .no-data { text-align: center; color: var(--text-muted); padding: 40px; font-size: 1rem; }
+
+        #customBanner { 
+            display: none; 
+            position: fixed; 
+            top: 20px; 
+            left: 50%; 
+            transform: translateX(-50%); 
+            background: #040812; 
+            border: 2px solid var(--accent); 
+            padding: 14px 28px; 
+            border-radius: 14px; 
+            z-index: 7000; 
+            box-shadow: 0 12px 35px rgba(0,0,0,0.8); 
+            text-align: center; 
+            font-weight: 800; 
+            color: #fff; 
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div id="customBanner"></div>
+
+    <div class="container">
+        <!-- الهيدر -->
+        <div class="header">
+            <h2><i class="fa-solid fa-language"></i> <span>لوحة المترجم والتحرير الاحترافية</span></h2>
+            <div class="header-actions">
+                <button class="btn-header-action" onclick="openManageSectionsModal()">
+                    <i class="fa-solid fa-layer-group"></i> <span>⚙️ إدارة وتعديل الأقسام</span>
+                </button>
+                <button class="btn-add-section-top" onclick="openAddSectionModal()">
+                    <i class="fa-solid fa-folder-plus"></i> <span>إضافة قسم جديد</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- التبويبات الأساسية للترجمة ومسار النشر -->
+        <div class="main-tabs-nav">
+            <button class="main-tab-btn active" id="tabBtnWorkflow" onclick="switchMainSourceTab('workflow')">
+                <i class="fa-solid fa-file-circle-check" style="color:var(--accent);"></i>
+                <span>المقالات الواردة للترجمة (المرحلة 3 -> 4: تمرر لرئيس القسم)</span>
+                <span id="counter-workflow" style="background:rgba(226,183,20,0.3); color:#fff; padding:2px 8px; border-radius:10px; font-size:0.8rem;">0</span>
+            </button>
+            <button class="main-tab-btn" id="tabBtnInternal" onclick="switchMainSourceTab('internal')">
+                <i class="fa-solid fa-newspaper"></i>
+                <span>المقالات المنشورة بالمجلة</span>
+                <span id="counter-internal" style="background:rgba(0,0,0,0.3); padding:2px 8px; border-radius:10px; font-size:0.8rem;">0</span>
+            </button>
+            <button class="main-tab-btn" id="tabBtnExternal" onclick="switchMainSourceTab('external')">
+                <i class="fa-solid fa-earth-americas"></i>
+                <span>أخبار المصادر الخارجية والسكرابر</span>
+                <span id="counter-external" style="background:rgba(0,0,0,0.3); padding:2px 8px; border-radius:10px; font-size:0.8rem;">0</span>
+            </button>
+        </div>
+
+        <!-- قائمة المنشورات مع شريط الـ 12 لغة -->
+        <div class="card">
+            <h3>
+                <span id="tab-current-title"><i class="fa-solid fa-inbox"></i> <span>أخبار من مصادر خارجية</span></span>
+                <span id="active-count-badge" style="background:rgba(226,183,20,0.15); color:var(--accent); border:1px solid var(--accent); font-size:0.8rem; padding:3px 12px; border-radius:20px;">0 منشور</span>
+            </h3>
+
+            <!-- شريط الـ 12 لغة -->
+            <div class="languages-scroll-bar">
+                <button class="lang-filter-btn active" onclick="filterByLanguage('ar', this)">🇸🇦 العربية</button>
+                <button class="lang-filter-btn" onclick="filterByLanguage('en', this)">🇺🇸 English</button>
+                <button class="lang-filter-btn" onclick="filterByLanguage('zh', this)">🇨🇳 中文</button>
+                <button class="lang-filter-btn" onclick="filterByLanguage('es', this)">🇪🇸 Español</button>
+                <button class="lang-filter-btn" onclick="filterByLanguage('de', this)">🇩🇪 Deutsch</button>
+                <button class="lang-filter-btn" onclick="filterByLanguage('fr', this)">🇫🇷 Français</button>
+                <button class="lang-filter-btn" onclick="filterByLanguage('tr', this)">🇹🇷 Türkçe</button>
+                <button class="lang-filter-btn" onclick="filterByLanguage('ja', this)">🇯🇵 日本語</button>
+                <button class="lang-filter-btn" onclick="filterByLanguage('ko', this)">🇰🇷 한국어</button>
+                <button class="lang-filter-btn" onclick="filterByLanguage('el', this)">🇬🇷 Ελληνικά</button>
+                <button class="lang-filter-btn" onclick="filterByLanguage('it', this)">🇮🇹 Italiano</button>
+                <button class="lang-filter-btn" onclick="filterByLanguage('ru', this)">🇷🇺 Русский</button>
+            </div>
+
+            <div class="inbox-list" id="translator-inbox">
+                <div class="no-data"><i class="fa-solid fa-spinner fa-spin" style="font-size:1.8rem; color:var(--accent); margin-bottom:8px;"></i><br>جاري تحميل المنشورات...</div>
+            </div>
+        </div>
+
+        <!-- قسم صندوق التحرير والترجمة ونقل القسم والصورة -->
+        <div class="card" id="translation-card">
+            <h3>
+                <span><i class="fa-solid fa-pen-nib"></i> <span>صندوق تحرير وترجمة المنشور وتعيين القسم والصورة</span></span>
+                <span id="active-editing-badge" style="display:none; background:rgba(226,183,20,0.2); color:var(--accent); font-size:0.8rem; padding:4px 12px; border-radius:20px; border:1px solid var(--accent);">جاري التعديل</span>
+            </h3>
+            
+            <form id="translator-form" onsubmit="saveAndPublishTranslatedPost(event)">
+                <input type="hidden" id="active-post-id">
+                <input type="hidden" id="active-doc-real-id">
+                <input type="hidden" id="active-is-editorial">
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label><i class="fa-solid fa-language"></i> <span>لغة الصياغة والترجمة:</span></label>
+                        <select id="target-language-select" onchange="performAutoTranslateForForm()">
+                            <option value="ar">العربية (Arabic)</option>
+                            <option value="en">English (الإنجليزية)</option>
+                            <option value="zh">中文 (الصينية)</option>
+                            <option value="es">Español (الإسبانية)</option>
+                            <option value="de">Deutsch (الألمانية)</option>
+                            <option value="fr">Français (الفرنسية)</option>
+                            <option value="tr">Türkçe (التركية)</option>
+                            <option value="ja">日本語 (اليابانية)</option>
+                            <option value="ko">한국어 (الكورية)</option>
+                            <option value="el">Ελληνικά (اليونانية)</option>
+                            <option value="it">Italiano (الإيطالية)</option>
+                            <option value="ru">Русский (الروسية)</option>
+                        </select>
+                    </div>
+
+                    <!-- نقل المنشور لقسم معين -->
+                    <div class="form-group">
+                        <label><i class="fa-solid fa-tags"></i> <span>نقل المنشور إلى قسم معين في الصفحة الرئيسية:</span></label>
+                        <select id="trans-category-select">
+                            <!-- تملأ بالأقسام ديناميكياً -->
+                        </select>
+                    </div>
+                </div>
+
+                <!-- حقل الصورة ورفع من الجهاز -->
+                <div class="form-group">
+                    <label><i class="fa-solid fa-image"></i> <span>صورة المنشور (من جهازك أو عبر رابط):</span></label>
+                    <div class="image-input-wrapper">
+                        <label class="btn-upload-file">
+                            <i class="fa-solid fa-upload"></i> 📁 اختيار صورة من جهازك
+                            <input type="file" id="trans-file-input" accept="image/*" style="display:none;" onchange="handleImageFileUpload(event)">
+                        </label>
+                        <input type="text" id="trans-image-url" style="flex:1; min-width:220px;" placeholder="أو الصق رابط الصورة المباشر هنا...">
+                        <img id="trans-image-preview" class="image-preview-thumb" alt="معاينة الصورة">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                        <label style="margin:0;"><i class="fa-solid fa-heading"></i> <span>عنوان المنشور:</span></label>
+                        <button type="button" class="btn-action" style="padding:4px 10px; font-size:0.78rem;" onclick="performAutoTranslateForForm()">
+                            <i class="fa-solid fa-bolt"></i> ترجمة آلية سريعة
+                        </button>
+                    </div>
+                    <input type="text" id="trans-title" placeholder="أدخل العنوان المعتمد هنا..." required>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fa-solid fa-align-right"></i> <span>المحتوى والمقال الكامل:</span></label>
+                    <textarea id="trans-content" placeholder="اكتب أو عدل المقال والترجمة النهائية هنا..." required></textarea>
+                </div>
+
+                <div id="workflow-article-actions" style="display:flex; gap:12px; margin-bottom:15px; flex-wrap:wrap;">
+                    <button type="button" class="btn-submit-main" style="background: linear-gradient(135deg, #059669, #10b981); color:#fff; flex:1; min-width:260px;" onclick="approveCurrentArticleToHead()">
+                        <i class="fa-solid fa-stamp"></i> <span>اعتماد الترجمة وتمرير لرئيس القسم (المرحلة 4)</span>
+                    </button>
+                    <button type="button" class="btn-action-delete" style="background:rgba(245,158,11,0.2); color:#fbbf24; border:1px solid #f59e0b; padding:14px 20px; border-radius:14px; font-weight:700; cursor:pointer;" onclick="rejectCurrentArticleToSec()">
+                        <i class="fa-solid fa-rotate-left"></i> <span>إعادة لسكرتير التحرير</span>
+                    </button>
+                </div>
+
+                <button type="submit" class="btn-submit-main">
+                    <i class="fa-solid fa-floppy-disk"></i> <span>حفظ وتطبيق التعديل والصورة والترجمة فورياً</span>
+                </button>
+            </form>
+        </div>
+
+        <a href="index.html" class="back-link"><i class="fa-solid fa-arrow-right"></i> <span>الذهاب للصفحة الرئيسية</span></a>
+    </div>
+
+    <!-- نافذة عرض المنشور (Preview Modal) -->
+    <div class="modal-overlay" id="preview-modal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-eye"></i> <span>معاينة المنشور المباشرة</span></h3>
+                <button class="modal-close-btn" onclick="closePreviewModal()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="preview-image-container" style="display:none; text-align:center; margin-bottom:15px; background:#020617; border-radius:14px; overflow:hidden; border:1px solid var(--border);">
+                <img id="preview-image" src="" style="max-width:100%; max-height:480px; object-fit:contain; cursor:pointer;" onclick="window.open(this.src, '_blank')" alt="صورة المنشور" title="اضغط لفتح الصورة بحجمها الكامل">
+                <div style="padding:6px 12px; font-size:0.8rem; color:var(--text-muted); background:rgba(0,0,0,0.6);"><i class="fa-solid fa-image"></i> صورة المنشور كاملة (اضغط للتكبير)</div>
+            </div>
+            <div style="display:flex; gap:10px; margin-bottom:12px; align-items:center; flex-wrap:wrap;">
+                <span id="preview-category-badge" class="badge-source">القسم</span>
+                <span id="preview-date" style="color:var(--text-muted); font-size:0.85rem;"><i class="fa-regular fa-calendar"></i> اليوم</span>
+            </div>
+            <h2 id="preview-title" style="color:var(--accent); font-size:1.3rem; margin:0 0 15px; line-height:1.5;">العنوان</h2>
+            <div id="preview-content" style="color:#cbd5e1; font-size:0.98rem; line-height:1.8; white-space:pre-wrap;">المحتوى...</div>
+        </div>
+    </div>
+
+    <!-- نافذة إدارة وتعديل وحذف الأقسام -->
+    <div class="modal-overlay" id="manage-sections-modal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-layer-group"></i> <span>إدارة وتعديل وحذف الأقسام الجمركية</span></h3>
+                <button class="modal-close-btn" onclick="closeManageSectionsModal()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div style="overflow-x:auto;">
+                <table class="sections-table">
+                    <thead>
+                        <tr>
+                            <th>اسم القسم</th>
+                            <th>الكلمات المفتاحية</th>
+                            <th>إجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sections-table-body">
+                        <!-- تملأ بالأقسام -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة تعديل قسم محدد -->
+    <div class="modal-overlay" id="edit-single-section-modal">
+        <div class="modal-box" style="max-width:480px;">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-pen-to-square"></i> <span>تعديل القسم الجمركي</span></h3>
+                <button class="modal-close-btn" onclick="closeEditSingleSectionModal()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form onsubmit="submitEditCustomSection(event)">
+                <input type="hidden" id="edit-sec-id">
+                <input type="hidden" id="edit-sec-old-name">
+                <div class="form-group">
+                    <label>اسم القسم:</label>
+                    <input type="text" id="edit-sec-name" required>
+                </div>
+                <div class="form-group">
+                    <label>الكلمات المفتاحية (مفصولة بفاصلة):</label>
+                    <input type="text" id="edit-sec-keywords">
+                </div>
+                <button type="submit" class="btn-submit-main">
+                    <i class="fa-solid fa-check"></i> <span>حفظ التعديلات في الصفحة الرئيسية</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- نافذة إضافة قسم جمركي جديد -->
+    <div class="modal-overlay" id="add-section-modal">
+        <div class="modal-box" style="max-width:480px;">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-folder-plus"></i> <span>إضافة قسم جمركي جديد</span></h3>
+                <button class="modal-close-btn" onclick="closeAddSectionModal()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form onsubmit="submitNewCustomSection(event)">
+                <div class="form-group">
+                    <label>اسم القسم الجديد:</label>
+                    <input type="text" id="new-sec-name" placeholder="مثال: جمارك البحر الأحمر، جمارك الطيران..." required>
+                </div>
+                <div class="form-group">
+                    <label>كلمات مفتاحية للأرشفة التلقائية (مفصولة بفاصلة):</label>
+                    <input type="text" id="new-sec-keywords" placeholder="مثال: مطار، طيران، شحن جوي...">
+                </div>
+                <button type="submit" class="btn-submit-main">
+                    <i class="fa-solid fa-plus"></i> <span>إنشاء وتثبيت القسم في الصفحة الرئيسية</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- مكتبات فايربيس -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+    <!-- محرك الترجمة -->
+    <script>
+        const newsTranslationCache = {};
+
+        function toGoogleLangCode(lang) {
+            const map = { zh: 'zh-CN', el: 'el' };
+            return map[lang] || lang;
+        }
+
+        async function translateText(text, targetLang) {
+            if (!text || targetLang === 'ar') return text;
+            const cacheKey = targetLang + '::' + text;
+            if (newsTranslationCache[cacheKey]) return newsTranslationCache[cacheKey];
+
+            try {
+                const googleLang = toGoogleLangCode(targetLang);
+                const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${googleLang}&dt=t&q=${encodeURIComponent(text)}`;
+                const res = await fetch(url);
+                if (!res.ok) throw new Error('Translation API error');
+                const data = await res.json();
+                const translated = data[0].map(part => part[0]).join('');
+                newsTranslationCache[cacheKey] = translated;
+                return translated;
+            } catch (err) {
+                return text;
+            }
+        }
+
+        function getPostId(title) {
+            return 'post_' + Math.abs(Array.from(title || '').reduce((s, c) => Math.imul(31, s) + c.charCodeAt(0) | 0, 0));
+        }
+    </script>
+
+    <!-- المنطق البرمجي الكامل والربط السحابي -->
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyD_pyEgRtBzObOTf-msTwC0nbhsyCmJ92s",
+            authDomain: "gamarek.firebaseapp.com",
+            projectId: "gamarek",
+            storageBucket: "gamarek.firebasestorage.app",
+            messagingSenderId: "139734553489",
+            appId: "1:139734553489:web:1339f96b98cebd32610030",
+            measurementId: "G-H1FRFXK1FG"
+        };
+
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const db = firebase.firestore();
+
+        const DEFAULT_SECTIONS_OBJECTS = [
+            { name: "جمارك مصر", keywords: ["مصر", "المصرية", "الإسكندرية", "بورسعيد", "السخنة", "نافذة", "aci"] },
+            { name: "جمارك السعودية", keywords: ["السعودية", "المملكة", "زاتكا", "zatca", "الرياض", "جدة", "سابر"] },
+            { name: "جمارك الإمارات", keywords: ["دبي", "الإمارات", "أبوظبي", "جبل علي", "الشارقة"] },
+            { name: "جمارك الكويت والخليج", keywords: ["الكويت", "قطر", "البحرين", "عمان", "ميناء الشويخ"] },
+            { name: "جمارك السيارات والمركبات", keywords: ["سيارات", "سيارة", "مركبات", "سيارات المعاقين", "الملاكي"] },
+            { name: "الشحن والموانئ البحرية", keywords: ["ميناء", "موانئ", "شحن", "حاويات", "سفن", "ملاحة"] },
+            { name: "التعريفة الجمركية والقوانين", keywords: ["تعريفة", "تعرفة", "بنود", "بند جمركي", "hs code"] },
+            { name: "مكافحة التهريب والرقابة", keywords: ["تهريب", "ضبطية", "ضبط", "تفتيش", "مكافحة التهريب"] },
+            { name: "الاتفاقيات والتجارة الدولية", keywords: ["منظمة الجمارك العالمية", "wco", "اتفاقية", "تجارة دولية"] },
+            { name: "أخبار جمركية عامة", keywords: ["جمرك", "جمارك", "استيراد", "تصدير", "شحنة", "تخليص"] }
+        ];
+
+        let currentMainTab = 'workflow'; // الافتراضي: مسار النشر بانتظار الترجمة
+        let currentLang = 'ar';
+        let liveNewsList = [];
+        let internalCompanyPosts = [];
+        let workflowPostsList = [];
+        let activeOriginalPost = null;
+        let dynamicSectionsList = [];
+
+        // 1. قراءة الأقسام
+        async function loadCustomSections() {
+            dynamicSectionsList = [];
+            try {
+                const snap = await db.collection("customSections").get();
+                snap.forEach(d => {
+                    dynamicSectionsList.push({ id: d.id, ...d.data() });
+                });
+            } catch(e){}
+
+            const selectEl = document.getElementById('trans-category-select');
+            if (selectEl) {
+                let allNames = [...DEFAULT_SECTIONS_OBJECTS.map(s => s.name)];
+                dynamicSectionsList.forEach(s => {
+                    if (s.name && !allNames.includes(s.name)) allNames.push(s.name);
+                });
+                selectEl.innerHTML = allNames.map(name => `<option value="${name}">${name}</option>`).join('');
+            }
+        }
+
+        // 2. تحميل المنشورات
+        async function loadIndexPosts() {
+            await loadCustomSections();
+
+            let loadedExternal = [];
+
+            try {
+                const snap = await db.collection('newsFeed').get();
+                if (!snap.empty) {
+                    snap.forEach(docSnap => {
+                        loadedExternal.push({ ...docSnap.data(), _docId: docSnap.id, _isEditorial: false });
+                    });
+                }
+            } catch(e){}
+
+            if (loadedExternal.length === 0) {
+                const files = ['gmarik_195_countries_database.json', 'gmarik_news_output.json'];
+                for (let f of files) {
+                    try {
+                        const res = await fetch(f);
+                        if (res.ok) {
+                            const data = await res.json();
+                            const arr = Array.isArray(data) ? data : (data.news || data.posts || []);
+                            if (arr.length > 0) {
+                                loadedExternal = arr.map(item => ({ ...item, _isEditorial: false }));
+                                break;
+                            }
+                        }
+                    } catch(e){}
+                }
+            }
+            liveNewsList = loadedExternal;
+
+            internalCompanyPosts = [];
+            workflowPostsList = [];
+            try {
+                const articlesSnap = await db.collection('articles').get();
+                articlesSnap.forEach(docSnap => {
+                    let artData = docSnap.data();
+                    const itemObj = {
+                        'العنوان الأصلي': artData.title || 'مقال صحفي',
+                        'المقال المولد لحساب مجلة Gmarik': artData.content || artData.description || '',
+                        'الجهة والمؤسسة المصدر': artData.category || artData.reporterName || 'المجلة',
+                        'تاريخ وفحص وتوليد الخبر آلياً': artData.date || 'اليوم',
+                        'image': artData.image || artData.imageUrl || '',
+                        '_docId': docSnap.id,
+                        '_isEditorial': true,
+                        '_status': artData.status,
+                        '_author': artData.reporterName || 'محرر'
+                    };
+
+                    if (artData.status === 'pending_translator') {
+                        workflowPostsList.push(itemObj);
+                    } else if (artData.status === 'published' || artData.status === 'publish') {
+                        internalCompanyPosts.push(itemObj);
+                    }
+                });
+            } catch(e){}
+
+            if (document.getElementById('counter-workflow')) document.getElementById('counter-workflow').innerText = workflowPostsList.length;
+            if (document.getElementById('counter-external')) document.getElementById('counter-external').innerText = liveNewsList.length;
+            if (document.getElementById('counter-internal')) document.getElementById('counter-internal').innerText = internalCompanyPosts.length;
+
+            renderTranslatorInbox();
+        }
+
+        function switchMainSourceTab(type) {
+            currentMainTab = type;
+            if (document.getElementById('tabBtnWorkflow')) document.getElementById('tabBtnWorkflow').classList.toggle('active', type === 'workflow');
+            document.getElementById('tabBtnExternal').classList.toggle('active', type === 'external');
+            document.getElementById('tabBtnInternal').classList.toggle('active', type === 'internal');
+            
+            const titleEl = document.getElementById('tab-current-title');
+            if (type === 'workflow') {
+                titleEl.innerHTML = `<i class="fa-solid fa-file-circle-check" style="color:var(--accent);"></i> <span>المقالات الواردة للترجمة والتدقيق (المرحلة 4 -> 5)</span>`;
+            } else if (type === 'external') {
+                titleEl.innerHTML = `<i class="fa-solid fa-earth-americas"></i> <span>أخبار من مصادر خارجية</span>`;
+            } else {
+                titleEl.innerHTML = `<i class="fa-solid fa-newspaper"></i> <span>المقالات المنشورة بالمجلة</span>`;
+            }
+
+            renderTranslatorInbox();
+        }
+
+        function filterByLanguage(langCode, btn) {
+            currentLang = langCode;
+            document.querySelectorAll('.lang-filter-btn').forEach(b => b.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+            renderTranslatorInbox();
+        }
+
+        async function renderTranslatorInbox() {
+            const container = document.getElementById('translator-inbox');
+            let targetList = liveNewsList;
+            if (currentMainTab === 'workflow') targetList = workflowPostsList;
+            else if (currentMainTab === 'internal') targetList = internalCompanyPosts;
+
+            const customEdited = JSON.parse(localStorage.getItem('gmarik_custom_articles')) || {};
+
+            document.getElementById('active-count-badge').innerText = `${targetList.length} منشور`;
+
+            if (targetList.length === 0) {
+                container.innerHTML = `<div class="no-data"><i class="fa-solid fa-folder-open" style="font-size:2rem; color:var(--accent); margin-bottom:10px;"></i><br>✨ لا توجد مقالات بانتظار الترجمة في هذا القسم حالياً.</div>`;
+                return;
+            }
+
+            container.innerHTML = `<div class="no-data"><i class="fa-solid fa-spinner fa-spin" style="font-size:2rem; color:var(--accent); margin-bottom:10px;"></i><br>جاري ترجمة وعرض المنشورات بلغة (${currentLang.toUpperCase()})...</div>`;
+
+            let html = '';
+            for (let item of targetList) {
+                let rawTitle = item['العنوان الأصلي'] || item.processed_headline || item.title || item.name || 'خبر جمركي';
+                let rawContent = item['المقال المولد لحساب مجلة Gmarik'] || item.full_article || item.content || item.body || item.description || '';
+                let rawSource = item['الجهة والمؤسسة المصدر'] || item.source || item.category || (currentMainTab === 'workflow' ? 'مقالات التحرير' : 'أخبار عامة');
+                let rawDate = item['تاريخ وفحص وتوليد الخبر آلياً'] || item.date || 'اليوم';
+                let rawImg = item.image || item.imageUrl || item.thumbnail || '';
+
+                let postId = item._docId || getPostId(rawTitle);
+                let isEdited = !!customEdited[postId];
+
+                let titleToTranslate = isEdited ? customEdited[postId].title : rawTitle;
+                let currentCategory = (isEdited && customEdited[postId].category) ? customEdited[postId].category : rawSource;
+                let currentImg = (isEdited && customEdited[postId].image) ? customEdited[postId].image : rawImg;
+
+                let displayTitle = await translateText(titleToTranslate, currentLang);
+                let displayCategory = await translateText(currentCategory, currentLang);
+
+                let badgeHTML = '';
+                if (currentMainTab === 'workflow') {
+                    badgeHTML = `<span class="badge-source" style="border-color:#f59e0b; color:#fbbf24;"><i class="fa-solid fa-language"></i> بانتظار الترجمة (المرحلة 4)</span>`;
+                } else if (isEdited) {
+                    badgeHTML = `<span class="badge-source" style="border-color:#10b981; color:#34d399;"><i class="fa-solid fa-check-double"></i> تم التعديل والترجمة</span>`;
+                } else {
+                    badgeHTML = `<span class="badge-source"><i class="fa-solid fa-tag"></i> ${displayCategory}</span>`;
+                }
+
+                let imgHtml = currentImg 
+                    ? `<img src="${currentImg}" class="article-thumb-mini" alt="صورة المنشور">` 
+                    : `<div class="article-thumb-mini" style="display:flex; align-items:center; justify-content:center; color:var(--text-muted); font-size:1.5rem;"><i class="fa-solid fa-image"></i></div>`;
+
+                let workflowActionBtns = '';
+                if (currentMainTab === 'workflow' && item._docId) {
+                    workflowActionBtns = `
+                        <button class="btn-action" style="background:rgba(16,185,129,0.2); color:#34d399; border:1.5px solid #10b981;" onclick='approveWorkflowArticleToHead(${JSON.stringify(item._docId)}, ${JSON.stringify(rawTitle)})' title="اعتماد الترجمة وتمرير لرئيس القسم">
+                            <i class="fa-solid fa-stamp"></i> لرئيس القسم
+                        </button>
+                        <button class="btn-action-delete" style="border-color:#f59e0b; color:#fbbf24;" onclick='rejectWorkflowArticleToSecretary(${JSON.stringify(item._docId)})' title="إعادة لسكرتير التحرير">
+                            <i class="fa-solid fa-rotate-left"></i>
+                        </button>
+                    `;
+                }
+
+                html += `
+                    <div class="article-box">
+                        ${imgHtml}
+                        <div class="article-info">
+                            <h4>${displayTitle}</h4>
+                            <p>
+                                ${badgeHTML}
+                                <span><i class="fa-regular fa-calendar"></i> ${rawDate}</span>
+                            </p>
+                        </div>
+                        <div class="article-actions-group">
+                            <button class="btn-action-view" onclick='openPreviewModal(${JSON.stringify(titleToTranslate)}, ${JSON.stringify(rawContent)}, ${JSON.stringify(currentCategory)}, ${JSON.stringify(currentImg)}, ${JSON.stringify(rawDate)})'>
+                                <i class="fa-solid fa-eye"></i> عرض
+                            </button>
+                            <button class="btn-action" onclick='startEditingPost(${JSON.stringify(postId)}, ${JSON.stringify(rawTitle)}, ${JSON.stringify(rawContent)}, ${JSON.stringify(currentCategory)}, ${JSON.stringify(currentImg)}, ${JSON.stringify(item._docId || "")}, ${item._isEditorial})'>
+                                <i class="fa-solid fa-pen-to-square"></i> ترجمة وتعديل
+                            </button>
+                            ${workflowActionBtns}
+                            ${currentMainTab !== 'workflow' ? `
+                                <button class="btn-action-delete" onclick='removeArticlePermanently(${JSON.stringify(postId)}, ${JSON.stringify(item._docId || "")}, ${item._isEditorial}, ${JSON.stringify(rawTitle)})' title="إزالة المنشور نهائياً من الصفحة الرئيسية">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </button>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            }
+
+            container.innerHTML = html;
+        }
+
+        // دالة اعتماد الترجمة ونقل المادة لرئيس القسم (المرحلة 5: pending_head)
+        async function approveWorkflowArticleToHead(docId, title) {
+            if (!docId) return;
+            try {
+                await db.collection('articles').doc(docId).update({
+                    status: 'pending_head',
+                    workflowStage: 5,
+                    translatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                showBanner(`🎖️ تم اعتماد ترجمة المقال [${title}] وتمريره لرئيس القسم!`, 'success');
+                loadIndexPosts();
+            } catch(e) {
+                console.error(e);
+                showBanner('حدث خطأ أثناء التمرير لرئيس القسم', 'danger');
+            }
+        }
+
+        // دالة إعادة المادة لسكرتير التحرير
+        async function rejectWorkflowArticleToSecretary(docId) {
+            if (!docId) return;
+            if (confirm("هل تريد إعادة هذا المقال لسكرتير التحرير للتنسيق مجدداً؟")) {
+                try {
+                    await db.collection('articles').doc(docId).update({
+                        status: 'pending_secretary',
+                        workflowStage: 3
+                    });
+                    showBanner('⚠️ تم إعادة المقال لسكرتارية التحرير.', 'danger');
+                    loadIndexPosts();
+                } catch(e) {
+                    console.error(e);
+                }
+            }
+        }
+
+        // دالة اعتماد الترجمة من داخل نموذج التعديل
+        async function approveCurrentArticleToHead() {
+            const realDocId = document.getElementById('active-doc-real-id').value;
+            const title = document.getElementById('trans-title').value.trim();
+            const content = document.getElementById('trans-content').value.trim();
+            const imageUrl = document.getElementById('trans-image-url').value.trim();
+            const selectedCategory = document.getElementById('trans-category-select').value;
+
+            if (!realDocId) {
+                showBanner('⚠️ يرجى اختيار مقال تحريري أولاً من القائمة!', 'danger');
+                return;
+            }
+
+            try {
+                await db.collection('articles').doc(realDocId).update({
+                    title: title,
+                    content: content,
+                    category: selectedCategory,
+                    image: imageUrl,
+                    status: 'pending_head',
+                    workflowStage: 5,
+                    translatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                showBanner(`🎖️ تم حفظ الترجمة وتمرير المقال [${title}] لرئيس القسم!`, 'success');
+                loadIndexPosts();
+            } catch(e) {
+                console.error(e);
+                showBanner('حدث خطأ أثناء الحفظ', 'danger');
+            }
+        }
+
+        // دالة إعادة المادة من داخل النموذج لسكرتير التحرير
+        async function rejectCurrentArticleToSec() {
+            const realDocId = document.getElementById('active-doc-real-id').value;
+            if (!realDocId) return;
+            if (confirm("هل تريد إعادة هذا المقال لسكرتير التحرير؟")) {
+                try {
+                    await db.collection('articles').doc(realDocId).update({
+                        status: 'pending_secretary',
+                        workflowStage: 3
+                    });
+                    showBanner('⚠️ تم إعادة المقال لسكرتارية التحرير.', 'danger');
+                    loadIndexPosts();
+                } catch(e) {
+                    console.error(e);
+                }
+            }
+        }
+
+        // رفع وضغط الصورة من الجهاز تلقائياً
+        function handleImageFileUpload(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const maxW = 900;
+                    let w = img.width;
+                    let h = img.height;
+                    if (w > maxW) {
+                        h = Math.round((h * maxW) / w);
+                        w = maxW;
+                    }
+                    canvas.width = w;
+                    canvas.height = h;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, w, h);
+                    const compressedBase64 = canvas.toDataURL('image/jpeg', 0.85);
+
+                    document.getElementById('trans-image-url').value = compressedBase64;
+                    const previewEl = document.getElementById('trans-image-preview');
+                    previewEl.src = compressedBase64;
+                    previewEl.style.display = 'block';
+                    showBanner('📷 تم اختيار الصورة وضغطها بنجاح!');
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // بدء التعديل
+        function startEditingPost(postId, origTitle, origContent, source, currentImg, realDocId, isEditorial) {
+            const customEdited = JSON.parse(localStorage.getItem('gmarik_custom_articles')) || {};
+            const edited = customEdited[postId];
+
+            activeOriginalPost = {
+                id: postId,
+                realDocId: realDocId,
+                isEditorial: isEditorial,
+                origTitle: origTitle,
+                origContent: origContent,
+                source: source,
+                image: currentImg
+            };
+
+            document.getElementById('active-post-id').value = postId;
+            document.getElementById('active-doc-real-id').value = realDocId || '';
+            document.getElementById('active-is-editorial').value = isEditorial ? 'true' : 'false';
+
+            document.getElementById('trans-title').value = edited ? edited.title : origTitle;
+            document.getElementById('trans-content').value = edited ? edited.content : origContent;
+            
+            const finalImg = (edited && edited.image) ? edited.image : (currentImg || '');
+            document.getElementById('trans-image-url').value = finalImg;
+
+            const previewEl = document.getElementById('trans-image-preview');
+            if (finalImg) {
+                previewEl.src = finalImg;
+                previewEl.style.display = 'block';
+            } else {
+                previewEl.style.display = 'none';
+            }
+            
+            if (edited && edited.category) {
+                document.getElementById('trans-category-select').value = edited.category;
+            } else if (source) {
+                document.getElementById('trans-category-select').value = source;
+            }
+
+            document.getElementById('active-editing-badge').style.display = 'inline-block';
+
+            const card = document.getElementById('translation-card');
+            card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        // ترجمة آلية
+        async function performAutoTranslateForForm() {
+            if (!activeOriginalPost) {
+                showBanner('يرجى اختيار منشور أولاً بالضغط على [تعديل وترجمة]', 'danger');
+                return;
+            }
+            const targetLang = document.getElementById('target-language-select').value;
+            const titleInput = document.getElementById('trans-title');
+            const contentInput = document.getElementById('trans-content');
+
+            titleInput.value = "جاري الترجمة الآلية...";
+            contentInput.value = "جاري الترجمة...";
+
+            const translatedTitle = await translateText(activeOriginalPost.origTitle, targetLang);
+            const translatedContent = await translateText(activeOriginalPost.origContent, targetLang);
+
+            titleInput.value = translatedTitle || activeOriginalPost.origTitle;
+            contentInput.value = translatedContent || activeOriginalPost.origContent;
+        }
+
+        // حفظ التعديل ونشره في الصفحة الرئيسية
+        async function saveAndPublishTranslatedPost(e) {
+            e.preventDefault();
+            const postId = document.getElementById('active-post-id').value;
+            const realDocId = document.getElementById('active-doc-real-id').value;
+            const isEditorial = document.getElementById('active-is-editorial').value === 'true';
+
+            const title = document.getElementById('trans-title').value.trim();
+            const content = document.getElementById('trans-content').value.trim();
+            const imageUrl = document.getElementById('trans-image-url').value.trim();
+            const selectedCategory = document.getElementById('trans-category-select').value;
+
+            if (!postId) {
+                showBanner('⚠️ يرجى اختيار منشور أولاً من القائمة بالضغط على [تعديل وترجمة] قبل الحفظ!', 'danger');
+                return;
+            }
+
+            if (!title || !content) {
+                showBanner('⚠️ يرجى كتابة العنوان والمحتوى بالكامل قبل الحفظ!', 'danger');
+                return;
+            }
+
+            const updatedPost = {
+                id: postId,
+                title: title,
+                content: content,
+                category: selectedCategory,
+                image: imageUrl,
+                updatedAt: new Date().toISOString()
+            };
+
+            // 1. الحفظ في الـ LocalStorage
+            try {
+                let customArticles = JSON.parse(localStorage.getItem('gmarik_custom_articles')) || {};
+                customArticles[postId] = updatedPost;
+                localStorage.setItem('gmarik_custom_articles', JSON.stringify(customArticles));
+            } catch(e) {
+                console.warn('LocalStorage notice:', e);
+            }
+
+            // 2. التحديث في فايربيس
+            try {
+                await db.collection('customArticles').doc(postId).set(updatedPost, { merge: true });
+
+                if (isEditorial && realDocId) {
+                    await db.collection('articles').doc(realDocId).update({
+                        title: title,
+                        content: content,
+                        category: selectedCategory,
+                        image: imageUrl
+                    });
+                } else if (realDocId) {
+                    await db.collection('newsFeed').doc(realDocId).update({
+                        'العنوان الأصلي': title,
+                        'المقال المولد لحساب مجلة Gmarik': content,
+                        'الجهة والمؤسسة المصدر': selectedCategory,
+                        'image': imageUrl
+                    });
+                }
+            } catch (err) {
+                console.warn("Firebase update:", err);
+            }
+
+            showBanner('✨ تم حفظ المنشور والصورة والقسم بنجاح وتطبيقهما على الصفحة الرئيسية!');
+
+            document.getElementById('translator-form').reset();
+            document.getElementById('trans-image-preview').style.display = 'none';
+            document.getElementById('active-post-id').value = '';
+            document.getElementById('active-editing-badge').style.display = 'none';
+            activeOriginalPost = null;
+
+            await loadIndexPosts();
+        }
+
+        // معاينة المنشور
+        function openPreviewModal(title, content, category, image, date) {
+            document.getElementById('preview-title').innerText = title;
+            document.getElementById('preview-content').innerText = content;
+            document.getElementById('preview-category-badge').innerHTML = `<i class="fa-solid fa-tag"></i> ${category || 'عام'}`;
+            document.getElementById('preview-date').innerHTML = `<i class="fa-regular fa-calendar"></i> ${date || 'اليوم'}`;
+
+            const imgBox = document.getElementById('preview-image-container');
+            const imgEl = document.getElementById('preview-image');
+            if (image && image.trim() !== '') {
+                imgEl.src = image;
+                imgBox.style.display = 'block';
+            } else {
+                imgBox.style.display = 'none';
+            }
+
+            document.getElementById('preview-modal').classList.add('active');
+        }
+
+        function closePreviewModal() {
+            document.getElementById('preview-modal').classList.remove('active');
+        }
+
+        // إدارة الأقسام
+        function openManageSectionsModal() {
+            const tbody = document.getElementById('sections-table-body');
+            tbody.innerHTML = '';
+
+            DEFAULT_SECTIONS_OBJECTS.forEach((sec, idx) => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td><strong>${sec.name}</strong> <span style="color:#64748b; font-size:0.75rem;">(أساسي)</span></td>
+                        <td style="color:#94a3b8; font-size:0.82rem;">${sec.keywords.join(', ')}</td>
+                        <td>
+                            <button class="btn-action" style="padding:4px 8px; font-size:0.75rem;" onclick='openEditSingleSectionModal("default_${idx}", ${JSON.stringify(sec.name)}, ${JSON.stringify(sec.keywords.join(","))})'>
+                                <i class="fa-solid fa-pen"></i> تعديل
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            dynamicSectionsList.forEach(sec => {
+                const kw = Array.isArray(sec.keywords) ? sec.keywords.join(', ') : (sec.keywords || '');
+                tbody.innerHTML += `
+                    <tr>
+                        <td><strong style="color:var(--accent);">${sec.name}</strong></td>
+                        <td style="color:#94a3b8; font-size:0.82rem;">${kw}</td>
+                        <td style="display:flex; gap:6px;">
+                            <button class="btn-action" style="padding:4px 8px; font-size:0.75rem;" onclick='openEditSingleSectionModal(${JSON.stringify(sec.id)}, ${JSON.stringify(sec.name)}, ${JSON.stringify(kw)})'>
+                                <i class="fa-solid fa-pen"></i> تعديل
+                            </button>
+                            <button class="btn-action-delete" style="padding:4px 8px; font-size:0.75rem;" onclick='deleteCustomSectionDirectly(${JSON.stringify(sec.id)}, ${JSON.stringify(sec.name)})'>
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            document.getElementById('manage-sections-modal').classList.add('active');
+        }
+
+        function closeManageSectionsModal() {
+            document.getElementById('manage-sections-modal').classList.remove('active');
+        }
+
+        function openEditSingleSectionModal(id, name, keywords) {
+            document.getElementById('edit-sec-id').value = id;
+            document.getElementById('edit-sec-old-name').value = name;
+            document.getElementById('edit-sec-name').value = name;
+            document.getElementById('edit-sec-keywords').value = keywords;
+            document.getElementById('edit-single-section-modal').classList.add('active');
+        }
+
+        function closeEditSingleSectionModal() {
+            document.getElementById('edit-single-section-modal').classList.remove('active');
+        }
+
+        async function submitEditCustomSection(e) {
+            e.preventDefault();
+            const id = document.getElementById('edit-sec-id').value;
+            const newName = document.getElementById('edit-sec-name').value.trim();
+            const kwInput = document.getElementById('edit-sec-keywords').value.trim();
+            const keywords = kwInput ? kwInput.split(',').map(k => k.trim()).filter(Boolean) : [newName];
+
+            if (!newName) return;
+
+            try {
+                if (id && !id.startsWith('default_')) {
+                    await db.collection("customSections").doc(id).update({
+                        name: newName,
+                        keywords: keywords
+                    });
+                } else {
+                    await db.collection("customSections").add({
+                        name: newName,
+                        keywords: keywords,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                }
+                showBanner(`📁 تم حفظ وتعديل القسم [${newName}] في الصفحة الرئيسية!`);
+                closeEditSingleSectionModal();
+                closeManageSectionsModal();
+                await loadCustomSections();
+            } catch(err) {
+                alert('حدث خطأ أثناء تعديل القسم');
+            }
+        }
+
+        async function deleteCustomSectionDirectly(id, name) {
+            if (!confirm(`هل أنت متأكد من حذف القسم [${name}] نهائياً من الصفحة الرئيسية؟`)) return;
+
+            try {
+                await db.collection("customSections").doc(id).delete();
+                showBanner(`🗑️ تم حذف القسم [${name}] بنجاح!`, 'danger');
+                closeManageSectionsModal();
+                await loadCustomSections();
+            } catch(err) {
+                alert('حدث خطأ أثناء حذف القسم');
+            }
+        }
+
+        function openAddSectionModal() {
+            document.getElementById('new-sec-name').value = '';
+            document.getElementById('new-sec-keywords').value = '';
+            document.getElementById('add-section-modal').classList.add('active');
+        }
+
+        function closeAddSectionModal() {
+            document.getElementById('add-section-modal').classList.remove('active');
+        }
+
+        async function submitNewCustomSection(e) {
+            e.preventDefault();
+            const name = document.getElementById('new-sec-name').value.trim();
+            const keywordsInput = document.getElementById('new-sec-keywords').value.trim();
+            if (!name) return;
+
+            const keywords = keywordsInput ? keywordsInput.split(',').map(k => k.trim()).filter(Boolean) : [name];
+
+            try {
+                await db.collection("customSections").add({
+                    name: name,
+                    keywords: keywords,
+                    keepOriginal: false,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                showBanner(`📁 تم إنشاء القسم الجديد [${name}] بنجاح وتثبيته في الصفحة الرئيسية!`);
+                closeAddSectionModal();
+                await loadCustomSections();
+            } catch(err) {
+                alert('حدث خطأ أثناء إضافة القسم');
+            }
+        }
+
+        async function removeArticlePermanently(postId, realDocId, isEditorial, title) {
+            if (!confirm(`هل أنت متأكد من إزالة المنشور [${title}] نهائياً من الصفحة الرئيسية؟`)) return;
+
+            try {
+                if (isEditorial && realDocId) {
+                    await db.collection('articles').doc(realDocId).update({ status: 'archived', hiddenFromIndex: true });
+                } else if (realDocId) {
+                    await db.collection('newsFeed').doc(realDocId).delete();
+                }
+
+                let customArticles = JSON.parse(localStorage.getItem('gmarik_custom_articles')) || {};
+                delete customArticles[postId];
+                localStorage.setItem('gmarik_custom_articles', JSON.stringify(customArticles));
+
+                try { await db.collection('customArticles').doc(postId).delete(); } catch(e){}
+
+                showBanner(`🗑️ تم إزالة المنشور بنجاح!`, 'danger');
+                loadIndexPosts();
+            } catch (err) {
+                showBanner('⚠️ حدث خطأ أثناء الحذف', 'danger');
+            }
+        }
+
+        function showBanner(text, type = 'success') {
+            const banner = document.getElementById('customBanner');
+            if (!banner) return;
+            banner.innerHTML = text;
+            banner.style.borderColor = type === 'success' ? 'var(--accent)' : 'var(--danger)';
+            banner.style.display = 'block';
+            setTimeout(() => { banner.style.display = 'none'; }, 4000);
+        }
+
+        try {
+            db.collection('articles').onSnapshot(() => loadIndexPosts());
+            db.collection('newsFeed').onSnapshot(() => loadIndexPosts());
+            db.collection('customSections').onSnapshot(() => loadCustomSections());
+        } catch(e){}
+
+        window.onload = loadIndexPosts;
+    </script>
+</body>
+</html>

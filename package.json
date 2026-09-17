@@ -1,0 +1,32 @@
+{
+  "name": "gamarek-magazine",
+  "version": "1.0.0",
+  "description": "",
+  "main": "chatbot.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@whiskeysockets/baileys": "^7.0.0-rc14",
+    "axios": "^1.19.0",
+    "body-parser": "^2.3.0",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "ejs": "^6.0.1",
+    "express": "^5.2.1",
+    "firebase": "^12.17.1",
+    "firebase-admin": "^14.2.0",
+    "mysql": "^2.18.1",
+    "node-cron": "^4.6.0",
+    "nodemailer": "^9.0.3",
+    "pino": "^10.3.1",
+    "qrcode-terminal": "^0.12.0",
+    "rss-parser": "^3.13.0",
+    "whatsapp-web.js": "^1.34.7"
+  }
+}

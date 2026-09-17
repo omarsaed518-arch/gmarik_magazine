@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>متابعة حالة الطلب - Gmarik Magazine</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
+
+        :root {
+            --bg-deep: #0b0f19;
+            --card-bg: rgba(17, 24, 39, 0.85);
+            --primary-glow: #3b82f6;
+            --accent-gold: #f59e0b;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --border-glass: rgba(255, 255, 255, 0.08);
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            margin: 0;
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 650px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border-glass);
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            border-top: 4px solid var(--accent-gold);
+        }
+
+        h2 {
+            margin-top: 0;
+            color: #fff;
+            font-size: 1.6rem;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+
+        input[type="text"], input[type="password"] {
+            flex: 1;
+            padding: 14px 18px;
+            background: rgba(17, 24, 39, 0.8);
+            border: 1px solid var(--border-glass);
+            border-radius: 14px;
+            color: #fff;
+            font-family: 'Cairo', sans-serif;
+            font-size: 1rem;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        input:focus {
+            border-color: var(--primary-glow);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
+        }
+
+        .btn-search {
+            background: var(--primary-glow);
+            color: #fff;
+            border: none;
+            padding: 0 25px;
+            border-radius: 14px;
+            font-family: 'Cairo', sans-serif;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: 0.3s;
+        }
+
+        .btn-search:hover {
+            background: #2563eb;
+        }
+
+        .btn-search:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .result-box {
+            display: none;
+            background: rgba(11, 15, 25, 0.9);
+            border: 1px solid var(--border-glass);
+            padding: 25px;
+            border-radius: 16px;
+            margin-top: 20px;
+        }
+
+        .result-box.active {
+            display: block;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            margin-bottom: 20px;
+        }
+
+        .status-pending { background: rgba(245, 158, 11, 0.15); color: var(--warning); border: 1px solid var(--warning); }
+        .status-approved { background: rgba(16, 185, 129, 0.15); color: var(--success); border: 1px solid var(--success); }
+        .status-rejected { background: rgba(239, 68, 68, 0.15); color: var(--danger); border: 1px solid var(--danger); }
+
+        .info-row {
+            margin-bottom: 12px;
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
+
+        .info-row span {
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .password-section {
+            margin-top: 25px;
+            border-top: 1px dashed var(--border-glass);
+            padding-top: 20px;
+        }
+
+        .password-section h4 {
+            color: var(--accent-gold);
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+
+        .btn-save {
+            background: linear-gradient(135deg, var(--accent-gold), #d97706);
+            color: #0b0f19;
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Cairo', sans-serif;
+            font-weight: 900;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 10px;
+            transition: 0.3s;
+        }
+
+        .btn-save:hover {
+            opacity: 0.9;
+        }
+
+        .btn-save:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .msg-alert {
+            margin-top: 15px;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.88rem;
+            transition: color 0.2s;
+        }
+        .back-link:hover {
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="card">
+            <h2>🔍 استعلام عن حالة طلب الانضمام</h2>
+
+            <div class="search-box">
+                <input type="text" id="trackingInput" placeholder="أدخل كود التتبع (مثال: PRF-123456 أو HEAD-867221 أو SEC-123456...)">
+                <button class="btn-search" id="searchBtn" onclick="checkStatus()">بحث</button>
+            </div>
+
+            <div class="result-box" id="resultContainer">
+                <div id="badgeContainer"></div>
+                <div class="info-row">المسمى الوظيفي / القسم: <span id="resRole" style="color:var(--accent-gold);">--</span></div>
+                <div class="info-row">اسم المتقدم: <span id="resName">--</span></div>
+                <div class="info-row">المؤهل / الدولة: <span id="resLocation">--</span></div>
+                <div class="info-row">تاريخ التقديم: <span id="resDate">--</span></div>
+                <p class="msg-alert" id="resMessage"></p>
+
+                <div class="password-section" id="passwordBox" style="display: none;">
+                    <h4 id="passwordSectionTitle">🔒 تعيين كلمة المرور لتفعيل الحساب</h4>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px;">تم قبول طلبك رسمياً! أنشئ كلمة مرور لتفعيل حسابك بالمجلة:</p>
+                    <div style="margin-bottom: 12px;">
+                        <input type="password" id="newPass" placeholder="كلمة المرور الجديدة...">
+                    </div>
+                    <div style="margin-bottom: 12px;">
+                        <input type="password" id="confirmPass" placeholder="تأكيد كلمة المرور...">
+                    </div>
+                    <button class="btn-save" id="saveBtn" onclick="savePassword()">حفظ وتفعيل الحساب</button>
+                </div>
+            </div>
+
+            <a href="index.html" class="back-link">← العودة للصفحة الرئيسية للمجلة</a>
+        </div>
+    </div>
+
+    <!-- نظام الاستعلام الشامل المطور من فايربيس للمدققين، رؤساء الأقسام، سكرتارية التحرير، والمراسلين -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import {
+            getFirestore, collection, getDocs, doc, updateDoc
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyD_pyEgRtBzObOTf-msTwC0nbhsyCmJ92s",
+            authDomain: "gamarek.firebaseapp.com",
+            databaseURL: "https://gamarek-default-rtdb.firebaseio.com",
+            projectId: "gamarek",
+            storageBucket: "gamarek.firebasestorage.app",
+            messagingSenderId: "139734553489",
+            appId: "1:139734553489:web:1339f96b98cebd32610030",
+            measurementId: "G-H1FRFXK1FG"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        let currentApp = null;
+        let currentDocId = null;
+        let currentCollectionName = null;
+
+        window.checkStatus = async function checkStatus() {
+            const inputCode = document.getElementById('trackingInput').value.trim();
+            const resultBox = document.getElementById('resultContainer');
+            const badgeContainer = document.getElementById('badgeContainer');
+            const resRole = document.getElementById('resRole');
+            const resName = document.getElementById('resName');
+            const resLocation = document.getElementById('resLocation');
+            const resDate = document.getElementById('resDate');
+            const resMessage = document.getElementById('resMessage');
+            const passwordBox = document.getElementById('passwordBox');
+            const searchBtn = document.getElementById('searchBtn');
+
+            if (!inputCode) {
+                alert('⚠️ برجاء إدخال كود التتبع أولاً!');
+                return;
+            }
+
+            searchBtn.disabled = true;
+            const originalText = searchBtn.innerText;
+            searchBtn.innerText = 'جاري البحث...';
+
+            try {
+                let foundDoc = null;
+                const normalizedInput = inputCode.toLowerCase();
+
+                // 1. 🌟 البحث في طلبات المدققين والمراجعين اللغويين (proofreaderApplications) 🌟
+                try {
+                    const proofSnapshot = await getDocs(collection(db, "proofreaderApplications"));
+                    proofSnapshot.forEach((docSnap) => {
+                        const data = docSnap.data();
+                        const code = (data.trackingCode || docSnap.id || '').toString().trim().toLowerCase();
+                        if (code && code === normalizedInput) {
+                            foundDoc = { 
+                                id: docSnap.id, 
+                                data: data, 
+                                collectionName: "proofreaderApplications", 
+                                defaultRole: "مدقق ومصحح لغوي" 
+                            };
+                        }
+                    });
+                } catch(e) {}
+
+                // 2. 🌟 البحث في طلبات رؤساء الأقسام (departmentHeadApplications) 🌟
+                if (!foundDoc) {
+                    try {
+                        const headSnapshot = await getDocs(collection(db, "departmentHeadApplications"));
+                        headSnapshot.forEach((docSnap) => {
+                            const data = docSnap.data();
+                            const code = (data.trackingCode || docSnap.id || '').toString().trim().toLowerCase();
+                            if (code && code === normalizedInput) {
+                                foundDoc = { 
+                                    id: docSnap.id, 
+                                    data: data, 
+                                    collectionName: "departmentHeadApplications", 
+                                    defaultRole: data.targetDepartment ? `رئيس ${data.targetDepartment}` : "رئيس قسم صحفي" 
+                                };
+                            }
+                        });
+                    } catch(e) {}
+                }
+
+                // 3. البحث في طلبات سكرتارية التحرير (editorialSecretaryApplications)
+                if (!foundDoc) {
+                    try {
+                        const secSnapshot = await getDocs(collection(db, "editorialSecretaryApplications"));
+                        secSnapshot.forEach((docSnap) => {
+                            const data = docSnap.data();
+                            const code = (data.trackingCode || docSnap.id || '').toString().trim().toLowerCase();
+                            if (code && code === normalizedInput) {
+                                foundDoc = { 
+                                    id: docSnap.id, 
+                                    data: data, 
+                                    collectionName: "editorialSecretaryApplications", 
+                                    defaultRole: "سكرتير تحرير" 
+                                };
+                            }
+                        });
+                    } catch(e) {}
+                }
+
+                // 4. البحث في طلبات المراسلين (reporterApplications)
+                if (!foundDoc) {
+                    try {
+                        const repSnapshot = await getDocs(collection(db, "reporterApplications"));
+                        repSnapshot.forEach((docSnap) => {
+                            const data = docSnap.data();
+                            const code = (data.trackingCode || docSnap.id || '').toString().trim().toLowerCase();
+                            if (code && code === normalizedInput) {
+                                foundDoc = { 
+                                    id: docSnap.id, 
+                                    data: data, 
+                                    collectionName: "reporterApplications", 
+                                    defaultRole: data.role || "مراسل صحفي" 
+                                };
+                            }
+                        });
+                    } catch(e) {}
+                }
+
+                // 5. فحص الذاكرة المحلية كاحتياط
+                if (!foundDoc) {
+                    const localProofs = JSON.parse(localStorage.getItem('gmarik_proofreader_applications')) || [];
+                    const foundProof = localProofs.find(item => (item.trackingCode || '').toString().trim().toLowerCase() === normalizedInput);
+                    if (foundProof) {
+                        foundDoc = { id: 'local_proof', data: foundProof, collectionName: "proofreaderApplications", defaultRole: "مدقق ومصحح لغوي" };
+                    }
+                }
+
+                if (!foundDoc) {
+                    const localHeads = JSON.parse(localStorage.getItem('gmarik_dept_head_applications')) || [];
+                    const foundHeadLocal = localHeads.find(item => (item.trackingCode || '').toString().trim().toLowerCase() === normalizedInput);
+                    if (foundHeadLocal) {
+                        foundDoc = { id: 'local_head', data: foundHeadLocal, collectionName: "departmentHeadApplications", defaultRole: foundHeadLocal.targetDepartment || "رئيس قسم صحفي" };
+                    }
+                }
+
+                if (!foundDoc) {
+                    const localSec = JSON.parse(localStorage.getItem('gmarik_editorial_secretary_applications')) || [];
+                    const foundLocal = localSec.find(item => (item.trackingCode || '').toString().trim().toLowerCase() === normalizedInput);
+                    if (foundLocal) {
+                        foundDoc = { id: 'local_sec', data: foundLocal, collectionName: "editorialSecretaryApplications", defaultRole: "سكرتير تحرير" };
+                    }
+                }
+
+                resultBox.classList.add('active');
+
+                if (!foundDoc) {
+                    badgeContainer.innerHTML = `<span class="status-badge status-rejected">❌ غير موجود</span>`;
+                    resRole.innerText = "--";
+                    resName.innerText = "--";
+                    resLocation.innerText = "--";
+                    resDate.innerText = "--";
+                    resMessage.innerText = "عذراً، كود التتبع غير صحيح أو غير مسجل في النظام. يرجى التأكد من كتابة الكود بدقة.";
+                    passwordBox.style.display = 'none';
+                    currentApp = null;
+                    currentDocId = null;
+                    currentCollectionName = null;
+                    return;
+                }
+
+                const appData = foundDoc.data;
+                currentApp = appData;
+                currentDocId = foundDoc.id;
+                currentCollectionName = foundDoc.collectionName;
+
+                resRole.innerText = appData.targetDepartment || appData.role || appData.jobTitle || foundDoc.defaultRole;
+                resName.innerText = appData.fullName || "غير محدد";
+                
+                const locInfo = appData.qualification || `${appData.country || ''} ${appData.city ? '- ' + appData.city : ''}`.trim() || 'غير محدد';
+                resLocation.innerText = locInfo;
+
+                let dateObj = null;
+                if (appData.date && appData.date.seconds) {
+                    dateObj = new Date(appData.date.seconds * 1000);
+                } else if (appData.date) {
+                    dateObj = new Date(appData.date);
+                }
+                resDate.innerText = dateObj && !isNaN(dateObj) ? dateObj.toLocaleDateString('ar-EG') : "--";
+
+                if (appData.status === 'approved') {
+                    badgeContainer.innerHTML = `<span class="status-badge status-approved">✅ مقبول رسمياً</span>`;
+                    resMessage.innerHTML = `مرحباً بك في عائلة مجلة جمارك يا <span>${appData.fullName}</span>. لقد وافق رئيس التحرير (الأستاذ / محمد الجزار) على انضمامك لفريق المجلة!`;
+                    passwordBox.style.display = 'block';
+
+                    if (appData.accountActivated) {
+                        resMessage.innerHTML += `<br><strong style="color: var(--success);">✔ تم تفعيل حسابك مسبقاً، يمكنك تسجيل الدخول في أي وقت.</strong>`;
+                    }
+                } else if (appData.status === 'rejected') {
+                    badgeContainer.innerHTML = `<span class="status-badge status-rejected">🚫 مرفوض</span>`;
+                    resMessage.innerText = `عذراً يا ${appData.fullName}، لم يتم قبول طلب الانضمام في الوقت الحالي. نشكر اهتمامك وتمنياتنا لك بالتوفيق.`;
+                    passwordBox.style.display = 'none';
+                } else {
+                    badgeContainer.innerHTML = `<span class="status-badge status-pending">⏳ قيد المراجعة</span>`;
+                    resMessage.innerText = `أهلاً بك يا ${appData.fullName}. طلبك مسجل بنجاح وقيد المراجعة والفحص حالياً من قبل إدارة التحرير.`;
+                    passwordBox.style.display = 'none';
+                }
+
+            } catch (error) {
+                console.error("خطأ أثناء الاستعلام: ", error);
+                alert('⚠️ حدث خطأ أثناء الاتصال بقاعدة البيانات، برجاء المحاولة مرة أخرى.');
+            } finally {
+                searchBtn.disabled = false;
+                searchBtn.innerText = originalText;
+            }
+        };
+
+        window.savePassword = async function savePassword() {
+            if (!currentApp || !currentDocId || !currentCollectionName) return;
+
+            const p1 = document.getElementById('newPass').value.trim();
+            const p2 = document.getElementById('confirmPass').value.trim();
+            const saveBtn = document.getElementById('saveBtn');
+
+            if (p1.length < 4) {
+                alert('⚠️ كلمة المرور يجب ألا تقل عن 4 أحرف أو أرقام.');
+                return;
+            }
+            if (p1 !== p2) {
+                alert('⚠️ كلمتا المرور غير متطابقتين!');
+                return;
+            }
+
+            saveBtn.disabled = true;
+            const originalText = saveBtn.innerText;
+            saveBtn.innerText = 'جاري الحفظ...';
+
+            try {
+                if (!currentDocId.startsWith('local_')) {
+                    const docRef = doc(db, currentCollectionName, currentDocId);
+                    await updateDoc(docRef, {
+                        password: p1,
+                        accountActivated: true
+                    });
+                }
+
+                currentApp.accountActivated = true;
+
+                alert('🎉 تم حفظ كلمة المرور وتفعيل حسابك بنجاح! يمكنك الآن تسجيل الدخول.');
+                document.getElementById('newPass').value = '';
+                document.getElementById('confirmPass').value = '';
+                checkStatus();
+
+            } catch (error) {
+                console.error("خطأ أثناء حفظ كلمة المرور: ", error);
+                alert('⚠️ حدث خطأ أثناء حفظ كلمة المرور، برجاء المحاولة مرة أخرى.');
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.innerText = originalText;
+            }
+        };
+
+        // قراءة كود التتبع تلقائياً إذا كان ممرراً في الرابط (مثل ?code=PRF-123456)
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const codeParam = urlParams.get('code') || urlParams.get('trackingCode');
+            if (codeParam) {
+                const input = document.getElementById('trackingInput');
+                if (input) {
+                    input.value = decodeURIComponent(codeParam).trim();
+                    window.checkStatus();
+                }
+            }
+        });
+    </script>
+</body>
+</html>

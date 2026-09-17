@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بث مباشر - [جمارك]</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- مكتبة Agora للبث السحابي - نفس المكتبة المستخدمة في لوحة رئيس التحرير -->
+    <script src="https://download.agora.io/sdk/release/AgoraRTC_N-4.20.0.js"></script>
+    <style>
+        body {
+            background-color: #0d1117;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            justify-content: center;
+            align-items: center;
+            font-size: 18px;
+        }
+        .main-container {
+            display: flex;
+            width: 95%;
+            max-width: 1300px;
+            height: 88vh;
+            background-color: #161b22;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid #30363d;
+            position: relative;
+        }
+        .chat-sidebar {
+            width: 360px;
+            background-color: #0d1117;
+            border-left: 1px solid #30363d;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .chat-header {
+            font-size: 18px;
+            font-weight: bold;
+            color: #f0b429;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #30363d;
+            padding-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            font-size: 16px;
+            color: #c9d1d9;
+            margin-bottom: 15px;
+        }
+        .chat-msg-owner { color: #f0b429; }
+        .chat-input-area {
+            display: flex;
+            gap: 10px;
+        }
+        .chat-input-area.locked input,
+        .chat-input-area.locked button { opacity: 0.5; cursor: not-allowed; pointer-events: none; }
+        .chat-input {
+            flex: 1;
+            background-color: #21262d;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 12px;
+            color: #fff;
+            outline: none;
+            font-family: Arial, sans-serif;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        .chat-send-btn {
+            background-color: #238636;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 0 16px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+        .video-container {
+            flex: 1;
+            position: relative;
+            background-color: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        #liveVideo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .placeholder-icon {
+            position: absolute;
+            color: #8b949e;
+            font-size: 60px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            z-index: 2;
+            text-align: center;
+        }
+        .placeholder-icon p { font-size: 18px; margin: 0; }
+        .placeholder-icon.hidden { display: none !important; }
+        .live-badge {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: #da3633;
+            color: #fff;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 14px;
+            display: none;
+            align-items: center;
+            gap: 8px;
+            z-index: 10;
+        }
+        .live-badge.show { display: flex; }
+        .live-badge i { animation: pulse-dot 1.5s infinite; }
+        @keyframes pulse-dot { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
+        .stream-title-bar {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(22,27,34,0.85);
+            padding: 8px 18px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 15px;
+            z-index: 10;
+            max-width: 60%;
+        }
+        .controls-bar {
+            position: absolute;
+            bottom: 25px;
+            display: flex;
+            gap: 20px;
+            background: rgba(22, 27, 34, 0.85);
+            padding: 12px 25px;
+            border-radius: 35px;
+            backdrop-filter: blur(5px);
+            z-index: 10;
+        }
+        .control-btn {
+            background-color: #21262d;
+            color: #fff;
+            border: none;
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 20px;
+            transition: background 0.2s;
+        }
+        .control-btn.active { background-color: #238636; }
+        .control-btn.muted { background-color: #da3633; }
+    </style>
+</head>
+<body>
+
+    <div class="main-container">
+        <!-- شاشة الدردشة -->
+        <div class="chat-sidebar">
+            <div style="display:flex; flex-direction:column; flex:1; min-height:0;">
+                <div class="chat-header">
+                    <i class="fa-solid fa-comments"></i> الدردشة الحية للمنصة
+                </div>
+                <div id="chatMessages" class="chat-messages">
+                    <div><strong>النظام:</strong> جاري البحث عن بث مباشر شغال حالياً...</div>
+                </div>
+            </div>
+            <div class="chat-input-area" id="chatInputArea">
+                <input type="text" id="chatInput" class="chat-input" placeholder="اكتب تعليقاً للبث...">
+                <button id="sendBtn" class="chat-send-btn"><i class="fa-solid fa-paper-plane"></i></button>
+            </div>
+        </div>
+
+        <!-- شاشة الفيديو -->
+        <div class="video-container">
+            <span class="live-badge" id="liveBadge"><i class="fa-solid fa-circle"></i> بث مباشر</span>
+            <span class="stream-title-bar" id="streamTitleBar" style="display:none;"></span>
+
+            <div id="placeholder" class="placeholder-icon">
+                <i class="fa-solid fa-video-slash"></i>
+                <p id="placeholderText">لا يوجد بث مباشر حالياً</p>
+            </div>
+
+            <video id="liveVideo" autoplay playsinline></video>
+
+            <div class="controls-bar">
+                <button id="muteBtn" class="control-btn active" title="كتم/تشغيل صوت البث">
+                    <i class="fa-solid fa-volume-high"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import {
+            getFirestore, collection, query, where, onSnapshot,
+            addDoc, serverTimestamp, orderBy
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // نفس إعدادات فايربيس المستخدمة في لوحة رئيس التحرير
+        const firebaseConfig = {
+            apiKey: "AIzaSyD_pyEgRtBzObOTf-msTwC0nbhsyCmJ92s",
+            authDomain: "gamarek.firebaseapp.com",
+            databaseURL: "https://gamarek-default-rtdb.firebaseio.com",
+            projectId: "gamarek",
+            storageBucket: "gamarek.firebasestorage.app",
+            messagingSenderId: "139734553489",
+            appId: "1:139734553489:web:1339f96b98cebd32610030",
+            measurementId: "G-H1FRFXK1FG"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // نفس الـ App ID المستخدم في جهة البث بلوحة رئيس التحرير
+        const AGORA_APP_ID = "e593ed530e5a4af6b7343d34a5a8238d".trim();
+
+        const videoEl = document.getElementById('liveVideo');
+        const placeholder = document.getElementById('placeholder');
+        const placeholderText = document.getElementById('placeholderText');
+        const liveBadge = document.getElementById('liveBadge');
+        const titleBar = document.getElementById('streamTitleBar');
+        const chatMessages = document.getElementById('chatMessages');
+        const chatInput = document.getElementById('chatInput');
+        const chatInputArea = document.getElementById('chatInputArea');
+        const sendBtn = document.getElementById('sendBtn');
+        const muteBtn = document.getElementById('muteBtn');
+
+        // اسم عشوائي ثابت للزائر يُحفظ محلياً
+        let viewerName = localStorage.getItem('gmarik_viewer_name');
+        if (!viewerName) {
+            viewerName = 'زائر_' + Math.floor(1000 + Math.random() * 9000);
+            localStorage.setItem('gmarik_viewer_name', viewerName);
+        }
+
+        let agoraClient = null;
+        let remoteAudioTrack = null;
+        let remoteVideoTrack = null;
+        let chatUnsub = null;
+        let currentStreamId = null;
+        let currentChannelName = null;
+        let isMuted = false;
+        let isConnecting = false;
+
+        // 1) الاستماع اللحظي على مجموعة البثوث النشطة في فايربيز
+        onSnapshot(collection(db, "activeLiveStreams"), async (snapshot) => {
+            if (snapshot.empty) {
+                if (currentStreamId) await leaveStream();
+                showEndedState('لا يوجد بث مباشر حالياً');
+                return;
+            }
+
+            const streamDoc = snapshot.docs[0];
+            const data = streamDoc.data();
+
+            // فيه بث نشط ومختلف عن اللي متصل بيه المشاهد حالياً
+            if (streamDoc.id !== currentStreamId) {
+                if (currentStreamId) await leaveStream();
+                await joinStream(streamDoc.id, data);
+            } else {
+                // تحديث حالة قفل التعليقات لو تغيرت أثناء البث
+                updateCommentsLockState(!!data.commentsLocked);
+                titleBar.textContent = data.title || '';
+            }
+        }, (err) => {
+            console.error('تعذر الاتصال بفايربيز:', err);
+            showEndedState('تعذر الاتصال بالخادم');
+        });
+
+        async function joinStream(streamId, data) {
+            if (isConnecting) return;
+            isConnecting = true;
+            currentStreamId = streamId;
+            currentChannelName = data.channelName || 'editor_live_channel';
+
+            titleBar.style.display = 'block';
+            titleBar.textContent = data.title || 'بث مباشر';
+            liveBadge.classList.add('show');
+            placeholderText.textContent = 'جاري الاتصال بالبث...';
+
+            updateCommentsLockState(!!data.commentsLocked);
+            startChatListener(streamId);
+
+            try {
+                agoraClient = AgoraRTC.createClient({ mode: "live", codec: "vp8" });
+                await agoraClient.setClientRole("audience");
+
+                agoraClient.on("user-published", async (user, mediaType) => {
+                    await agoraClient.subscribe(user, mediaType);
+                    if (mediaType === "video") {
+                        remoteVideoTrack = user.videoTrack;
+                        remoteVideoTrack.play(videoEl);
+                        placeholder.classList.add('hidden');
+                    }
+                    if (mediaType === "audio") {
+                        remoteAudioTrack = user.audioTrack;
+                        if (!isMuted) remoteAudioTrack.play();
+                    }
+                });
+
+                agoraClient.on("user-unpublished", (user, mediaType) => {
+                    if (mediaType === "video") {
+                        placeholder.classList.remove('hidden');
+                        placeholderText.textContent = 'المذيع أوقف الكاميرا مؤقتاً';
+                    }
+                });
+
+                const uid = Math.floor(10000 + Math.random() * 90000);
+                await agoraClient.join(AGORA_APP_ID, currentChannelName, null, uid);
+            } catch (err) {
+                console.error('تعذر الاتصال ببث Agora:', err);
+                placeholderText.textContent = 'تعذر الاتصال بالبث، حاول تحديث الصفحة';
+            } finally {
+                isConnecting = false;
+            }
+        }
+
+        async function leaveStream() {
+            try {
+                if (agoraClient) {
+                    await agoraClient.leave();
+                    agoraClient = null;
+                }
+            } catch (e) { console.warn(e); }
+            remoteAudioTrack = null;
+            remoteVideoTrack = null;
+            if (chatUnsub) { chatUnsub(); chatUnsub = null; }
+            currentStreamId = null;
+            currentChannelName = null;
+        }
+
+        function showEndedState(message) {
+            liveBadge.classList.remove('show');
+            titleBar.style.display = 'none';
+            placeholder.classList.remove('hidden');
+            placeholderText.textContent = message;
+            chatInputArea.classList.add('locked');
+        }
+
+        function updateCommentsLockState(locked) {
+            if (locked) {
+                chatInputArea.classList.add('locked');
+            } else {
+                chatInputArea.classList.remove('locked');
+            }
+        }
+
+        function startChatListener(streamId) {
+            const chatQuery = query(collection(db, `activeLiveStreams/${streamId}/chat`), orderBy('time', 'asc'));
+            chatUnsub = onSnapshot(chatQuery, (snap) => {
+                chatMessages.innerHTML = '';
+                if (snap.empty) {
+                    chatMessages.innerHTML = `<div><strong>النظام:</strong> تم بدء البث وبثه لجميع مستخدمي المنصة بنجاح.</div>`;
+                    return;
+                }
+                snap.forEach(docSnap => {
+                    const msg = docSnap.data();
+                    const isOwner = msg.senderRole === 'editor';
+                    const div = document.createElement('div');
+                    div.innerHTML = `<strong class="${isOwner ? 'chat-msg-owner' : ''}">[${msg.senderName || 'مستخدم'}]:</strong> ${msg.text}`;
+                    chatMessages.appendChild(div);
+                });
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            });
+        }
+
+        async function sendComment() {
+            const text = chatInput.value.trim();
+            if (!text || !currentStreamId || chatInputArea.classList.contains('locked')) return;
+            chatInput.value = '';
+            try {
+                await addDoc(collection(db, `activeLiveStreams/${currentStreamId}/chat`), {
+                    text: text,
+                    senderName: viewerName,
+                    senderRole: 'viewer',
+                    time: new Date().toISOString(),
+                    createdAt: serverTimestamp()
+                });
+            } catch (e) { console.error(e); }
+        }
+
+        sendBtn.addEventListener('click', sendComment);
+        chatInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendComment(); });
+
+        muteBtn.addEventListener('click', () => {
+            isMuted = !isMuted;
+            if (remoteAudioTrack) {
+                if (isMuted) remoteAudioTrack.stop();
+                else remoteAudioTrack.play();
+            }
+            muteBtn.classList.toggle('active', !isMuted);
+            muteBtn.classList.toggle('muted', isMuted);
+            muteBtn.innerHTML = isMuted
+                ? '<i class="fa-solid fa-volume-xmark"></i>'
+                : '<i class="fa-solid fa-volume-high"></i>';
+        });
+
+        window.addEventListener('beforeunload', () => { leaveStream(); });
+    </script>
+</body>
+</html>

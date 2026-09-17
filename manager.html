@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم الذهبية | مدير مجلة جمارك مجازين</title>
+    <style>
+        :root {
+            --primary-gold: #d4af37;
+            --dark-bg: #0b0f19;
+            --card-bg: #111827;
+            --accent-blue: #1e3a8a;
+            --text-light: #f3f4f6;
+        }
+
+        body {
+            background-color: var(--dark-bg);
+            color: var(--text-light);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        /* انيميشن الظهور التدريجي */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes goldGlow {
+            0% { box-shadow: 0 0 5px var(--primary-gold); }
+            50% { box-shadow: 0 0 20px var(--primary-gold); }
+            100% { box-shadow: 0 0 5px var(--primary-gold); }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+
+        /* شاشة تسجيل الدخول */
+        #auth-screen {
+            background: var(--card-bg);
+            border: 2px solid var(--primary-gold);
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            max-width: 450px;
+            margin: 100px auto;
+            animation: fadeIn 0.8s ease-out, goldGlow 3s infinite;
+        }
+
+        h2 {
+            color: var(--primary-gold);
+            margin-bottom: 20px;
+        }
+
+        input[type="text"] {
+            width: 80%;
+            padding: 12px;
+            margin: 15px 0;
+            background: #1f2937;
+            border: 1px solid #374151;
+            border-radius: 8px;
+            color: white;
+            text-align: center;
+            font-size: 18px;
+            letter-spacing: 2px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--primary-gold);
+            box-shadow: 0 0 8px rgba(212, 175, 55, 0.4);
+        }
+
+        .btn-gold {
+            background: linear-gradient(135deg, #d4af37 0%, #aa820a 100%);
+            color: #000;
+            font-weight: bold;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+        }
+
+        .btn-gold:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.5);
+        }
+
+        /* لوحة التحكم الرئيسية */
+        #dashboard-screen {
+            display: none;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .dashboard-header {
+            background: linear-gradient(135deg, #111827 0%, var(--accent-blue) 100%);
+            border-bottom: 3px solid var(--primary-gold);
+            padding: 20px;
+            text-align: center;
+            border-radius: 12px 12px 0 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--card-bg);
+            border-radius: 0 0 12px 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: right;
+            border-bottom: 1px solid #1f2937;
+        }
+
+        th {
+            background: #1f2937;
+            color: var(--primary-gold);
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        select.styled-dropdown {
+            background: #1f2937;
+            color: white;
+            border: 1px solid #374151;
+            padding: 8px;
+            border-radius: 6px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        select.styled-dropdown:focus {
+            border-color: var(--primary-gold);
+        }
+
+        .action-btns button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.2s;
+            margin-left: 5px;
+        }
+
+        .btn-save {
+            background: #059669;
+            color: white;
+        }
+        .btn-save:hover { background: #047857; }
+
+        .btn-ban {
+            background: #dc2626;
+            color: white;
+        }
+        .btn-ban:hover { background: #b91c1c; }
+
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: var(--primary-gold);
+            color: #000;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            display: none;
+            animation: fadeIn 0.3s;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- شاشة تسجيل الدخول الآمن بالـ OTP -->
+        <div id="auth-screen">
+            <h2>الدخول الآمن لمدير المجلة</h2>
+            <p style="color: #9ca3af; font-size: 14px; margin-bottom: 20px;">نظام الحماية الفائق لمجلة جمارك مجازين</p>
+            <p style="color: var(--primary-gold); font-size: 13px; margin-bottom: 15px;">الرقم المعتمد: +201207878060</p>
+            <button class="btn-gold" id="send-otp-btn" onclick="requestOTP()">أرسل رمز التحقق إلى هاتفي</button>
+            
+            <div id="otp-input-area" style="display:none; margin-top: 25px;">
+                <input type="text" id="otp-code" placeholder="------" maxlength="6">
+                <br>
+                <button class="btn-gold" onclick="verifyOTP()">تأكيد ودخول اللوحة</button>
+            </div>
+        </div>
+
+        <!-- لوحة التحكم الذهبية الكبرى -->
+        <div id="dashboard-screen">
+            <div class="dashboard-header">
+                <h2 style="margin: 0; color: var(--primary-gold);">لوحة التحكم والمكرمات الرئاسية للمجلة</h2>
+                <p style="margin: 5px 0 0 0; color: #9ca3af; font-size: 14px;">إدارة الصدارة، النسب الكبرى (حتى 75%)، والقفزات المليونية (حتى 20 مليون)</p>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>اسم المشترك</th>
+                        <th>الفئة</th>
+                        <th>النسبة الاستثنائية للمدير (50% إلى 75%)</th>
+                        <th>منح قفزة مشاهدات (حتى 20 مليون)</th>
+                        <th>التحكم بالحساب</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>أحمد ممدوح السعيد</strong></td>
+                        <td><span style="color: #60a5fa;">الموظفين</span></td>
+                        <td>
+                            <select id="pct-boost" class="styled-dropdown">
+                                <option value="0">0 - بدون نسبة إضافية</option>
+                                <option value="50">50% (النسبة الاستثنائية)</option>
+                                <option value="55">55%</option>
+                                <option value="60">60%</option>
+                                <option value="65">65%</option>
+                                <option value="70">70%</option>
+                                <option value="75">75% (الحد الأقصى)</option>
+                            </select>
+                        </td>
+                        <td>
+                            <select id="views-boost" class="styled-dropdown">
+                                <option value="0">بدون مشاهدات إضافية</option>
+                                <option value="50000">50,000 مشاهدة</option>
+                                <option value="100000">100,000 مشاهدة</option>
+                                <option value="1000000">1,000,000 (مليون)</option>
+                                <option value="5000000">5,000,000 (5 ملايين)</option>
+                                <option value="20000000">20,000,000 (20 مليون)</option>
+                            </select>
+                        </td>
+                        <td class="action-btns">
+                            <button class="btn-save" onclick="applyDirectorChanges(1)">حفظ وتحديث فوري</button>
+                            <button class="btn-ban" onclick="banUser(1)">طرد وإلغاء</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- إشعار منبثق متحرك للتنبيهات -->
+    <div id="notification" class="notification">تم التحديث بنجاح!</div>
+
+    <script>
+        const DIRECTOR_PHONE = "+201207878060";
+
+        function showNotification(text) {
+            const notif = document.getElementById('notification');
+            notif.innerText = text;
+            notif.style.display = 'block';
+            setTimeout(() => {
+                notif.style.display = 'none';
+            }, 3000);
+        }
+
+        function requestOTP() {
+            document.getElementById('otp-input-area').style.display = 'block';
+            document.getElementById('send-otp-btn').innerText = 'إعادة إرسال الرمز';
+            showNotification(`تم إرسال رمز التحقق إلى الرقم ${DIRECTOR_PHONE} بنجاح!`);
+        }
+
+        function verifyOTP() {
+            const code = document.getElementById('otp-code').value;
+            if(code.length === 6) {
+                // تأثير انتقال انسيابي بين الشاشات
+                document.getElementById('auth-screen').style.transition = '0.5s';
+                document.getElementById('auth-screen').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('auth-screen').style.display = 'none';
+                    document.getElementById('dashboard-screen').style.display = 'block';
+                }, 400);
+                showNotification("مرحباً بك يا سيادة المدير، تم التحقق بنجاح!");
+            } else {
+                alert("يرجى إدخال الرمز المكون من 6 أرقام بشكل صحيح.");
+            }
+        }
+
+        function applyDirectorChanges(nomineeId) {
+            const pct = document.getElementById('pct-boost').value;
+            const views = document.getElementById('views-boost').value;
+            showNotification(`تم التحديث الفوري! قفز المشترك للقمة بنسبة (+${pct}%) وعداد (+${views} مشاهدة) 🚀`);
+        }
+
+        function banUser(nomineeId) {
+            if(confirm("هل أنت متأكد من إلغاء اشتراك وطرد هذا العضو نهائياً من لوحة الصدارة؟")) {
+                showNotification("تم شطب العضو وحذفه تماماً من النظام.");
+            }
+        }
+    </script>
+</body>
+</html>
