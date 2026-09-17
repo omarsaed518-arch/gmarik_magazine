@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl" id="html-root" data-theme="light">
 <head>
+    <script>
+        // إذا فتح الزائر الموقع لأول مرة، نوجهه لصفحة اختيار اللغة أولاً
+        if (!sessionStorage.getItem('has_seen_intro')) {
+            window.location.replace('choose-lang.html');
+        }
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title id="meta-title">مجلة جمارك مجازين الدولية | Gmarik Magazine</title>
@@ -1402,7 +1408,7 @@
             meta_title: "Rivista Internazionale delle Dogane Gmarik", logo: "Dogana <span>Rivista</span>", nav_home: "Home", nav_guide: "Guida Doganale", nav_calc: "Calcolatore", nav_about: "Chi siamo", nav_honors: "Riconoscimenti", drawer_news_label: "Notizie", drawer_current_news: "Ultime Notizie", drawer_sections_label: "Sezioni Doganali", login_text: "Accedi", logout_text: "Esci", floating_assistant: "Assistente Doganale", live_hub_btn: "Dirette", chat_header_title: "Assistente Intelligente", chat_welcome: "Benvenuto! Come posso aiutarti con le procedure doganali oggi?", chat_placeholder: "Scrivi qui...", ticker_title: "Notizie Doganali", no_posts_message: "Nessun nuovo articolo pubblicato nelle ultime 24 ore.", calc_page_title: "🧮 Calcolatore Tariffario", calc_back: "⬅ Torna alla Home", calc_btn_submit: "Calcola", views_suffix: "visualizzazioni", comments_suffix: "commenti", share_btn: "Condividi", comments_title: "Commenti", no_comments: "Nessun commento finora.", comment_send: "Invia"
         },
         el: {
-            meta_title: "Διεθνές Τελωνειακό Περιοδικό Gmarik", logo: "Τελωνείο <span>Περιοδικό</span>", nav_home: "Αρχική", nav_guide: "Τελωνειακός Οδηγός", nav_calc: "Υπολογιστής Δασμών", nav_about: "Σχετικά με εμάς", nav_honors: "Διακρίσεις", drawer_news_label: "Ειδήσεις", drawer_current_news: "Τρέχουσες Ειδήσεις", drawer_sections_label: "Τμήματα", login_text: "Σύνδεση", logout_text: "Αποσύνδεση", floating_assistant: "Τελωνειακός Βοηθός", live_hub_btn: "Ζωντανά", chat_header_title: "Έξυπνος Βοηθός", chat_welcome: "Καλώς ήρθατε! Πώς μπορώ να σας βοηθήσω σήμερα;", chat_placeholder: "Γράψτε εδώ...", ticker_title: "Τελωνειακά Νέα", no_posts_message: "Δεν υπάρχουν νέα άρθρα τις τελευταίες 24 ώρες.", calc_page_title: "🧮 Υπολογιστής Δασμών", calc_back: "⬅ Πίσω", calc_btn_submit: "Υπολογισμός", views_suffix: "προβολές", comments_suffix: "σχόλια", share_btn: "Κοινοποίηση", comments_title: "Σχόλια", no_comments: "Δεν υπάρχουν σχόλια ακόμα.", comment_send: "Αποστολή"
+            meta_title: "Διεθνές Τελωνειακό Περιοδικό Gmarik", logo: "Τελωνείο <span>Περιοδικό</span>", nav_home: "Αρχική", nav_guide: "Τελωνειακός Οδηγός", nav_calc: "Υπολογιστής Δασμών", nav_about: "Σχετικά με εμάς", nav_honors: "Διακρίσεις", drawer_news_label: "Ειδήσεις", drawer_current_news: "Τρέχουσες Ειδήσεις", drawer_sections_label: "Τμήματα", login_text: "Σύνδεση", logout_text: "Αποσύνδεση", floating_assistant: "Τελωνειακός Βοηθός", live_hub_btn: "Ζωντανά", chat_header_title: "Έξυπνος Βοηθός", chat_welcome: "Καλώς ήρθατε! Πώς μπορώ να σας βοηθήσω σήμερα;", chat_placeholder: "Γράψτε هنا...", ticker_title: "Τελωνειακά Νέα", no_posts_message: "Δεν υπάρχουν νέα άρθρα τις τελευταίες 24 ώρες.", calc_page_title: "🧮 Υπολογιστής Δασμών", calc_back: "⬅ Πίσω", calc_btn_submit: "Υπολογισμός", views_suffix: "προβολές", comments_suffix: "σχόλια", share_btn: "Κοινοποίηση", comments_title: "Σχόλια", no_comments: "Δεν υπάρχουν σχόλια ακόμα.", comment_send: "Αποστολή"
         }
     };
 
